@@ -1,0 +1,50 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "espmui"
+version = "0.1.0"
+description = "Modern, lightweight reactive web dashboard for MicroPython (ESP32, Pico W)"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "csseeker", email = "shripad.learn@gmail.com" }
+]
+requires-python = ">=3.8"
+keywords = ["micropython", "esp32", "dashboard", "iot", "websocket", "webui", "reactive"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Embedded Systems",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/csseeker/espmui"
+Documentation = "https://github.com/csseeker/espmui/tree/main/docs"
+Repository = "https://github.com/csseeker/espmui.git"
+Issues = "https://github.com/csseeker/espmui/issues"
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.4.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "UP"]
+ignore = ["E501"]
