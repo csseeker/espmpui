@@ -71,58 +71,72 @@ _sd_card_obj = None
 _sd_mounted = False
 _sd_probed = False
 
+_sd_last_error = ""
+
 def init_sdcard():
-    global _sd_card_obj, _sd_mounted, _sd_probed
+    global _sd_card_obj, _sd_mounted, _sd_probed, _sd_last_error
     _sd_probed = True
     if _sd_mounted:
         return True
-    try:
-        import machine
-        # Strategy 1: Freenove SDMMC with GPIO Matrix Remap
+
+    import machine
+
+    strategies = [
+        # Strategy A: SDMMC Slot 1 with native pin arguments (sck=39, cmd=38, data=(40,))
+        ("SDMMC Slot 1 (sck=39, cmd=38, data=[40])", lambda: machine.SDCard(slot=1, width=1, sck=39, cmd=38, data=(40,))),
+        # Strategy B: SDMMC Slot 1 with Pin objects
+        ("SDMMC Slot 1 (Pin objs)", lambda: machine.SDCard(slot=1, width=1, sck=machine.Pin(39), cmd=machine.Pin(38), data=(machine.Pin(40),))),
+        # Strategy C: SDMMC Slot 0 with pin arguments
+        ("SDMMC Slot 0 (sck=39, cmd=38, data=[40])", lambda: machine.SDCard(slot=0, width=1, sck=39, cmd=38, data=(40,))),
+        # Strategy D: SDMMC Slot 1 with GPIO Matrix register override (CCLK=172, CCMD=178, D0=180)
+        ("SDMMC Slot 1 (Matrix Remap)", None),
+        # Strategy E: SPI mode on Slot 2 (if hardware supports SPI fallback)
+        ("SPI Slot 2 (sck=39, mosi=38, miso=40)", lambda: machine.SDCard(slot=2, sck=machine.Pin(39), mosi=machine.Pin(38), miso=machine.Pin(40), cs=machine.Pin(47))),
+    ]
+
+    for name, init_fn in strategies:
         _sd = None
         try:
-            _ = machine.Pin(38, machine.Pin.OUT)
-            _ = machine.Pin(40, machine.Pin.OUT)
-            _ = machine.Pin(39, machine.Pin.IN, machine.Pin.PULL_UP)
-            machine.mem32[0x60004554 + 4 * 38] = 173
-            machine.mem32[0x60004554 + 4 * 40] = 179
-            machine.mem32[0x60004554 + 4 * 39] = 213
-            machine.mem32[0x60004420] = 0x80 | 40
-            machine.mem32[0x600044A8] = 0x80 | 39
-            _sd = machine.SDCard(slot=1, width=1)
-            # Re-apply remap
-            machine.mem32[0x60004554 + 4 * 38] = 173
-            machine.mem32[0x60004554 + 4 * 40] = 179
-            machine.mem32[0x60004554 + 4 * 39] = 213
-            machine.mem32[0x60004420] = 0x80 | 40
-            machine.mem32[0x600044A8] = 0x80 | 39
+            if init_fn is not None:
+                _sd = init_fn()
+            else:
+                # Direct GPIO Matrix mapping for Freenove ESP32-S3 SDMMC Slot 1
+                # Pin 39 = SDMMC_CLK (out sig 172)
+                # Pin 38 = SDMMC_CMD (out sig 178, in sig 178)
+                # Pin 40 = SDMMC_D0  (out sig 180, in sig 180)
+                _ = machine.Pin(39, machine.Pin.OUT)
+                _ = machine.Pin(38, machine.Pin.OUT)
+                _ = machine.Pin(40, machine.Pin.IN, machine.Pin.PULL_UP)
+                machine.mem32[0x60004554 + 4 * 39] = 172  # GPIO_FUNC39_OUT_SEL
+                machine.mem32[0x60004554 + 4 * 38] = 178  # GPIO_FUNC38_OUT_SEL
+                machine.mem32[0x60004554 + 4 * 40] = 180  # GPIO_FUNC40_OUT_SEL
+                # GPIO input matrix configuration for ESP32-S3:
+                # Reg for signal S is 0x60004154 + 4 * (S - 36)
+                machine.mem32[0x60004154 + 4 * (178 - 36)] = 0x80 | 38  # CCMD_IN_1
+                machine.mem32[0x60004154 + 4 * (180 - 36)] = 0x80 | 40  # CDATA_IN_10
+                _sd = machine.SDCard(slot=1, width=1)
+                # Re-verify GPIO matrix after host init
+                machine.mem32[0x60004554 + 4 * 39] = 172
+                machine.mem32[0x60004554 + 4 * 38] = 178
+                machine.mem32[0x60004554 + 4 * 40] = 180
+                machine.mem32[0x60004154 + 4 * (178 - 36)] = 0x80 | 38
+                machine.mem32[0x60004154 + 4 * (180 - 36)] = 0x80 | 40
+
             os.mount(_sd, "/sd")
             _sd_card_obj = _sd
             _sd_mounted = True
+            _sd_last_error = f"Success ({name})"
+            print(f"[SD Card] Successfully mounted via {name}")
             return True
-        except Exception:
+        except Exception as exc:
+            _sd_last_error = f"{name}: {exc}"
+            print(f"[SD Card] {name} failed: {exc}")
             if _sd is not None and hasattr(_sd, "deinit"):
                 try:
                     _sd.deinit()
                 except Exception:
                     pass
 
-        # Strategy 2: SPI Slot 2
-        _sd = None
-        try:
-            _sd = machine.SDCard(slot=2, sck=machine.Pin(38), mosi=machine.Pin(40), miso=machine.Pin(39), cs=machine.Pin(47))
-            os.mount(_sd, "/sd")
-            _sd_card_obj = _sd
-            _sd_mounted = True
-            return True
-        except Exception:
-            if _sd is not None and hasattr(_sd, "deinit"):
-                try:
-                    _sd.deinit()
-                except Exception:
-                    pass
-    except Exception:
-        pass
     _sd_mounted = False
     return False
 
@@ -297,7 +311,10 @@ def capture_jpeg_frame():
     return FALLBACK_JPEG
 
 # 7. Wi-Fi & Network Status
+_CACHED_MAC = None
+
 def get_network_info():
+    global _CACHED_MAC
     try:
         import network
         import ubinascii
@@ -305,9 +322,10 @@ def get_network_info():
         if wlan.isconnected():
             rssi = wlan.status('rssi')
             ip = wlan.ifconfig()[0]
-            mac = ubinascii.hexlify(wlan.config('mac'), ':').decode()
+            if _CACHED_MAC is None:
+                _CACHED_MAC = ubinascii.hexlify(wlan.config('mac'), ':').decode()
             quality = max(0, min(100, 2 * (rssi + 100)))
-            return "Connected", rssi, quality, ip, mac
+            return "Connected", rssi, quality, ip, _CACHED_MAC
     except Exception:
         pass
     return "Offline / AP", -65, 70, "127.0.0.1", "7c:e8:b1:a6:91:50"
@@ -516,10 +534,10 @@ sd_prog = tab_storage.progress("SD Card Utilization", max=100, unit="%", value=0
 sd_files = tab_storage.file_manager("SD Card File Explorer (/sd)", root_path="/sd")
 
 async def on_mount_sd_click(w):
-    global _sd_mounted, _sd_probed
+    global _sd_mounted, _sd_probed, _sd_last_error
     _sd_mounted = False
     _sd_probed = False
-    terminal.log("[SD Card] Probing for MicroSD Card...")
+    terminal.log("[SD Card] Probing MicroSD (CMD=38, CLK=39, D0=40)...")
     if init_sdcard():
         info = get_sdcard_stats()
         sd_status_metric.value = "Mounted (FAT32)"
@@ -527,15 +545,16 @@ async def on_mount_sd_click(w):
         sd_free_metric.value = str(info['free_gb'])
         sd_prog.value = info['pct']
         sd_files.refresh()
-        terminal.log(f"[SD Card] Detected & mounted! Capacity: {info['total_gb']} GB")
+        terminal.log(f"[SD Card] ✅ Successfully mounted! Capacity: {info['total_gb']} GB")
+        terminal.log(f"[SD Card] Strategy: {_sd_last_error}")
         await app._broadcast_toast(f"SD Card Mounted ({info['total_gb']} GB)", level="info")
     else:
         sd_status_metric.value = "Not Inserted"
         sd_status_metric.badge = "Standby"
         sd_free_metric.value = "--"
         sd_prog.value = 0
-        terminal.log("[SD Card] No card detected or mount failed.")
-        await app._broadcast_toast("No SD card detected. Ensure FAT32 format.", level="error")
+        terminal.log(f"[SD Card] ❌ Mount failed: {_sd_last_error}")
+        await app._broadcast_toast(f"SD mount failed: {_sd_last_error}", level="error")
 
 tab_storage.button("", text="🔍 Scan & Mount SD Card", accent="primary", on_click=on_mount_sd_click)
 
@@ -570,6 +589,10 @@ async def sensor_loop():
     cycle = 0
     while True:
         cycle += 1
+        # Run periodic garbage collection to reclaim transient strings & buffers
+        if cycle % 2 == 1:
+            gc.collect()
+
         temp = get_die_temperature()
         free_kb = get_free_kb()
         alloc_kb = get_alloc_kb()
@@ -616,7 +639,10 @@ async def sensor_loop():
                 sd_free_metric.value = "--"
                 sd_prog.value = 0
 
-        terminal.log(f"[{uptime}] Core: {temp}°C | Heap: {free_kb}KB free | Uptime: {uptime}")
+        # Log system heartbeat every 10 seconds (5 cycles) to keep terminal buffer light
+        if cycle % 5 == 1:
+            terminal.log(f"[{uptime}] Core: {temp}°C | Heap: {free_kb}KB free | Uptime: {uptime}")
+
         await asyncio.sleep(2)
 
 

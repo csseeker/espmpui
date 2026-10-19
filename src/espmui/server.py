@@ -252,18 +252,28 @@ class AsyncServer:
                 except Exception as ex:
                     print_exception(ex)
 
-    async def broadcast_text(self, text: str, exclude: WSClient = None):
-        """Broadcasts text message to all connected WebSocket clients."""
+    def broadcast_sync(self, text: str, exclude: WSClient = None):
+        """Broadcasts text message immediately to connected WebSocket clients (zero task overhead)."""
+        if not self.clients:
+            return
         frame = encode_ws_frame(text, opcode=WS_OP_TEXT)
         for client in list(self.clients):
             if client != exclude and client.is_alive:
                 client.send_frame(frame)
 
-    async def send_text(self, client: WSClient, text: str):
-        """Sends text message to a specific client."""
+    async def broadcast_text(self, text: str, exclude: WSClient = None):
+        """Async broadcast helper (compatible with existing await callers)."""
+        self.broadcast_sync(text, exclude)
+
+    def send_sync(self, client: WSClient, text: str):
+        """Sends text message to a specific client synchronously."""
         if client and client.is_alive:
             frame = encode_ws_frame(text, opcode=WS_OP_TEXT)
             client.send_frame(frame)
+
+    async def send_text(self, client: WSClient, text: str):
+        """Sends text message to a specific client."""
+        self.send_sync(client, text)
 
     async def _handle_connection(self, reader, writer):
         """Handles inbound connection (either HTTP or WebSocket upgrade)."""

@@ -135,20 +135,20 @@ class App:
         """Broadcasts a property diff to connected clients."""
         if self._on_diff:
             self._on_diff(diff)
-        if self.server:
+        if self.server and getattr(self.server, "clients", None):
             msg = json.dumps(diff)
-            asyncio.create_task(self.server.broadcast_text(msg))
+            self.server.broadcast_sync(msg)
 
     async def _broadcast_toast(self, message: str, level: str = "info"):
         """Broadcasts an error/info toast to connected clients."""
         payload = {"op": "toast", "msg": message, "type": level}
-        if self.server:
-            await self.server.broadcast_text(json.dumps(payload))
+        if self.server and getattr(self.server, "clients", None):
+            self.server.broadcast_sync(json.dumps(payload))
 
     def _on_ws_connect(self, client):
         """Called by server when a new WebSocket client connects: sync full state."""
         schema = self.get_init_schema()
-        asyncio.create_task(self.server.send_text(client, json.dumps(schema)))
+        self.server.send_sync(client, json.dumps(schema))
 
     async def handle_inbound_message(self, client, text: str):
         """Parses inbound JSON event from browser and dispatches through fault barrier."""
