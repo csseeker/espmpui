@@ -115,51 +115,117 @@ flowchart LR
 
 ---
 
-## 5. Actionable Work Items (Must-Haves)
+## 5. Detailed Justifications & Actionable Work Items
+
+This section breaks down each feature and task with explicit answers to:
+- **Why do we need it?** (Problem solved and pain point eliminated)
+- **When & Where is it useful?** (Operational environment, context, and user journey)
+- **How often is it needed?** (Operational lifecycle and usage frequency)
+
+---
 
 ### 📌 Milestone 1: Wi-Fi Provisioner & Captive Portal (Priority: P0)
-*Eliminate hardcoded Wi-Fi credentials and provide instant zero-friction device setup.*
+*Target: Eliminate hardcoded Wi-Fi credentials and provide instant zero-friction onboarding.*
 
-- [ ] **Task 1.1: SoftAP & DNS Captive Redirection Server**
-  - Implement a lightweight DNS server (`port 53`) intercepting all queries and redirecting to `192.168.4.1`.
-  - Handle OS captive detection endpoints (`/generate_204` for Android, `/hotspot-detect.html` for Apple, `/ncsi.txt` for Windows).
-- [ ] **Task 1.2: Asynchronous Wi-Fi Scanner & Credential Handler**
-  - Background scanning of available SSIDs with RSSI signal metrics and auth types.
-  - Safe credential validation: Test connection to target AP before disabling SoftAP.
-- [ ] **Task 1.3: Captive Portal Frontend View**
-  - Ultra-clean mobile-first onboarding screen embedded directly into the bundle.
-  - One-click network selection, password input, and visual connection status.
+#### Task 1.1: SoftAP & DNS Captive Redirection Server
+* **Why do we need it:**
+  Without DNS interception (`port 53`), connecting to an unconfigured device AP displays an annoying "Connected without internet" warning on phones and silently fails to prompt the user. Captive redirection intercepts standard probe requests (`/generate_204` for Android, `/hotspot-detect.html` for iOS/macOS, `/ncsi.txt` for Windows) and instantly pops up the setup page on the user's screen without requiring them to know or type `192.168.4.1`.
+* **When & Where is it useful:**
+  - **First-time out-of-the-box setup:** Unboxing a new device.
+  - **Network migration:** Relocating a device to a new room, office, or field site where the previous Wi-Fi is out of range.
+  - **Credential recovery:** Recovering a device after router passwords or SSIDs are updated.
+* **How often is it needed:**
+  - **Usage Frequency:** Low in terms of daily runtime (1–2 times per device lifecycle, or occasionally when moving portable units).
+  - **Impact Severity:** **Critical (P0)**. Even though it is used infrequently, if onboarding is broken or difficult, 90% of non-technical users abandon the device. It is the gatekeeper to all other functionality.
+
+#### Task 1.2: Asynchronous Wi-Fi Scanner & Credential Handler
+* **Why do we need it:**
+  Typing 24-character hex Wi-Fi passwords and exact SSIDs on a mobile touch screen is error-prone. Background scanning populates nearby networks with visual signal strength (RSSI) bars so users simply tap their SSID. Furthermore, verifying credentials asynchronously before tearing down the SoftAP prevents "bricking" connectivity if the user mistypes their password.
+* **When & Where is it useful:**
+  Directly inside the onboarding captive portal flow on the user's mobile or laptop browser.
+* **How often is it needed:**
+  Every time the device is provisioned or re-configured.
+
+#### Task 1.3: Captive Portal Mobile-First Frontend View
+* **Why do we need it:**
+  Over 95% of captive portal interactions occur on mobile devices. Standard desktop dashboards are cramped and hard to navigate on phones. A dedicated, clean, single-purpose mobile onboarding dialog ensures immediate clarity and confidence.
+* **When & Where is it useful:**
+  Rendered immediately when the mobile OS captive sheet opens.
+* **How often is it needed:**
+  Whenever entering setup/provisioning mode.
 
 ---
 
 ### 📌 Milestone 2: Persistent Parameter & Config Store (Priority: P0)
-*Enable settings that persist across reboots without writing custom file parsing code.*
+*Target: Enable settings that persist across power cycles without custom file parsing code.*
 
-- [ ] **Task 2.1: Schema-Driven Form Generation**
-  - Add `app.config_page()` or `tab.form()` accepting typed field definitions (text, number, slider, boolean, dropdown).
-- [ ] **Task 2.2: Atomic Flash Persistence Layer**
-  - Auto-commit changes to `/config.json` with write-and-rename atomic semantics to prevent flash corruption on sudden power loss.
-- [ ] **Task 2.3: Python Variable Binding**
-  - Automatically synchronize config keys to Python attributes with change hooks (e.g. `cfg.mqtt_broker = "192.168.1.50"`).
+#### Task 2.1: Schema-Driven Form Generation
+* **Why do we need it:**
+  Firmware developers typically spend days writing custom HTML forms, parsing POST bodies, and validating string inputs for application settings (e.g. MQTT broker IP, sensor sample interval, alarm thresholds, motor PID gains). A schema-driven generator creates styled, validated inputs (numeric ranges, dropdowns, toggles) automatically from a simple Python dictionary.
+* **When & Where is it useful:**
+  - In every commercial IoT product requiring runtime customization (calibrations, URLs, tokens).
+  - In lab and field testing to tune parameters without re-compiling and re-flashing firmware.
+* **How often is it needed:**
+  - **Setup & Commissioning:** During initial configuration.
+  - **Operational Lifecycle:** Periodically as operating conditions change or calibration is needed (weekly to monthly).
+
+#### Task 2.2: Atomic Flash Persistence Layer (`/config.json`)
+* **Why do we need it:**
+  Microcontrollers in real-world deployments frequently experience unexpected power cuts, brownouts, or watchdog reboots. Naive file writes (`open('config.json', 'w')`) truncate files upon opening; if power cuts during the write, the file is corrupted to 0 bytes, permanently losing all settings. An atomic write-to-temp and rename pattern (`config.tmp` $\to$ `config.json`) guarantees data integrity under all power failure conditions.
+* **When & Where is it useful:**
+  Whenever any configuration variable is updated via the web interface or programmatically from Python.
+* **How often is it needed:**
+  Invoked on every settings save. While write frequency is moderate to protect flash endurance, bulletproof reliability is **mandatory**.
+
+#### Task 2.3: Python Variable Binding & Change Hooks
+* **Why do we need it:**
+  Embedded code needs direct, idiomatic access to configuration values (e.g., `app.config.sample_rate`) without manual JSON parsing. Change hooks allow firmware to immediately reconfigure hardware (e.g. updating PWM frequency or reconnecting MQTT) without requiring a full device reboot.
+* **When & Where is it useful:**
+  Throughout main application code and background sensor loops.
+* **How often is it needed:**
+  Read continuously during startup and main loops; hooks trigger whenever the user modifies a setting.
 
 ---
 
 ### 📌 Milestone 3: Live Diagnostics & Telemetry Dashboard (Priority: P1)
-*Provide immediate system health visibility for monitoring and debugging.*
+*Target: Provide immediate system health visibility for monitoring and debugging without a serial cable.*
 
-- [ ] **Task 3.1: Built-in System Metrics Collector**
-  - Non-blocking polling of `gc.mem_free()`, `gc.mem_alloc()`, `network.WLAN.status()`, RSSI, and `time.ticks_ms()` uptime.
-- [ ] **Task 3.2: Diagnostics Tab in UI**
-  - Visual memory meter (RAM usage & GC garbage triggers).
-  - Live Wi-Fi signal gauge with reconnection metrics.
-  - System commands: Soft reboot, manual `gc.collect()`, flash storage usage.
+#### Task 3.1: Built-in System Metrics Collector
+* **Why do we need it:**
+  MicroPython runs in a garbage-collected heap (often as small as 100–300 KB). Heap fragmentation and gradual memory leaks are the #1 reasons MicroPython devices mysteriously freeze after days of operation. Live metrics tracking of `gc.mem_free()`, `gc.mem_alloc()`, Wi-Fi RSSI, and uptime lets engineers spot memory leaks and poor Wi-Fi reception instantly.
+* **When & Where is it useful:**
+  - **Bench testing:** Identifying coroutine leaks and garbage collector behavior during development.
+  - **Field troubleshooting:** Checking devices deployed in hard-to-reach locations (ceilings, waterproof boxes, remote poles) where plugging in an FTDI/USB cable is impossible.
+* **How often is it needed:**
+  - **Frequency:** Continuously collected at low rate (e.g. 1 Hz) only while an operator has the diagnostics tab open. Suspends collection when inactive to conserve CPU and RAM.
+
+#### Task 3.2: Diagnostics Tab in UI
+* **Why do we need it:**
+  Provides an out-of-the-box "System" tab requiring zero setup lines by the developer. Includes visual RAM meters, Wi-Fi signal gauge, uptime counter, and actionable maintenance controls (manual GC trigger, soft reboot button, flash storage usage).
+* **When & Where is it useful:**
+  Available on every `espmui` dashboard out of the box as an administrative view.
+* **How often is it needed:**
+  Regularly during development and debugging sessions; on-demand during maintenance checks.
 
 ---
 
 ### 📌 Milestone 4: Web-Based Drag-and-Drop OTA Updater (Priority: P1)
-*Eliminate USB cable tethering for firmware updates.*
+*Target: Eliminate USB cable tethering for firmware updates.*
 
-- [ ] **Task 4.1: Streaming Multipart File Upload Handler**
-  - Asynchronously stream uploaded files in 512/1024-byte chunks directly to flash or ESP32 OTA partitions without buffering the full binary in RAM.
-- [ ] **Task 4.2: Frontend Upload Dialog & Progress Bar**
-  - Modal with drag-and-drop target, upload percentage, SHA-256 verification, and reboot countdown.
+#### Task 4.1: Streaming Multipart File Upload Handler
+* **Why do we need it:**
+  ESP32 boards have very limited RAM (typically 320 KB SRAM without external PSRAM). A firmware binary or filesystem image is typically 1 MB to 3 MB. Attempting to buffer the uploaded file in RAM causes an immediate Out-Of-Memory (OOM) crash. A chunked streaming handler reads incoming HTTP multipart streams in small 512–1024 byte buffers and streams them directly into the inactive OTA flash partition.
+* **When & Where is it useful:**
+  - When updating deployed devices in consumer homes, agricultural fields, or industrial ceilings.
+  - Rapid iterative testing across the local Wi-Fi network without unplugging/replugging physical cables.
+* **How often is it needed:**
+  - **Usage Frequency:** Occasional (every firmware release or patch cycle, e.g. monthly).
+  - **Value Proposition:** Immense convenience and a mandatory prerequisite for any commercially deployable IoT product.
+
+#### Task 4.2: Frontend Upload Dialog & Progress Bar
+* **Why do we need it:**
+  Flashing firmware is high-risk. If a user closes the browser mid-upload or doesn't know if the board is still flashing, they might power-cycle the board mid-write. A clear modal with upload percentage, byte counter, SHA-256 verification indicator, and automatic post-reboot reconnect countdown prevents user panic and corrupted flash states.
+* **When & Where is it useful:**
+  Integrated into the System / Settings tab of the dashboard.
+* **How often is it needed:**
+  Every time a firmware update is executed.
