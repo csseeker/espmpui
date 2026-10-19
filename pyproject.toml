@@ -39,6 +39,7 @@ Issues = "https://github.com/csseeker/espmui/issues"
 [project.optional-dependencies]
 dev = [
     "ruff>=0.4.0",
+    "mpremote>=1.20.0",
 ]
 
 [tool.ruff]

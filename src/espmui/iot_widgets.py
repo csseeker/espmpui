@@ -111,8 +111,23 @@ class FileManager(Widget):
         d = super().to_dict()
         d.update({
             "root_path": self.root_path,
+            "files": self.list_files(),
         })
         return d
+
+    def refresh(self):
+        """Scans filesystem and broadcasts updated file list to connected browsers."""
+        files = self.list_files()
+        if self.app:
+            self.app._queue_diff({
+                "op": "files",
+                "id": self.id,
+                "files": files,
+            })
+
+    async def handle_event(self, event_name: str, value=None):
+        if event_name == "refresh":
+            self.refresh()
 
     def list_files(self) -> list:
         """Returns list of files and sizes."""

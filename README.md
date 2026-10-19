@@ -68,6 +68,20 @@ if __name__ == "__main__":
 
 ## 📦 Installation & Deployment
 
+### 🛠️ Local Development & Flashing Setup
+
+To develop locally, run tests, or upload to your board:
+
+```bash
+# 1. Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 2. Install dependencies & dev tools (mpremote, ruff)
+pip install -r requirements-dev.txt
+# or: make install-dev
+```
+
 ### Option 1: Direct via MicroPython `mip` (Recommended)
 Connect your board to Wi-Fi and install `espmui` with one line:
 

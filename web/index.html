@@ -651,6 +651,14 @@
         label.className = 'card-title';
         label.textContent = w.label;
         headRow.appendChild(label);
+
+        const refBtn = document.createElement('button');
+        refBtn.className = 'btn-sm';
+        refBtn.textContent = '🔄 Refresh';
+        refBtn.onclick = () => {
+          ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'refresh' }));
+        };
+        headRow.appendChild(refBtn);
         card.appendChild(headRow);
 
         const table = document.createElement('table');

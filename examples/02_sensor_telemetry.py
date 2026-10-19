@@ -66,7 +66,96 @@ def get_alloc_kb():
     except Exception:
         return 480
 
-# 4. Flash File System Storage
+# 4. Storage & SD Card Telemetry
+_sd_card_obj = None
+_sd_mounted = False
+_sd_probed = False
+
+def init_sdcard():
+    global _sd_card_obj, _sd_mounted, _sd_probed
+    _sd_probed = True
+    if _sd_mounted:
+        return True
+    try:
+        import machine
+        # Strategy 1: Freenove SDMMC with GPIO Matrix Remap
+        _sd = None
+        try:
+            _ = machine.Pin(38, machine.Pin.OUT)
+            _ = machine.Pin(40, machine.Pin.OUT)
+            _ = machine.Pin(39, machine.Pin.IN, machine.Pin.PULL_UP)
+            machine.mem32[0x60004554 + 4 * 38] = 173
+            machine.mem32[0x60004554 + 4 * 40] = 179
+            machine.mem32[0x60004554 + 4 * 39] = 213
+            machine.mem32[0x60004420] = 0x80 | 40
+            machine.mem32[0x600044A8] = 0x80 | 39
+            _sd = machine.SDCard(slot=1, width=1)
+            # Re-apply remap
+            machine.mem32[0x60004554 + 4 * 38] = 173
+            machine.mem32[0x60004554 + 4 * 40] = 179
+            machine.mem32[0x60004554 + 4 * 39] = 213
+            machine.mem32[0x60004420] = 0x80 | 40
+            machine.mem32[0x600044A8] = 0x80 | 39
+            os.mount(_sd, "/sd")
+            _sd_card_obj = _sd
+            _sd_mounted = True
+            return True
+        except Exception:
+            if _sd is not None and hasattr(_sd, "deinit"):
+                try:
+                    _sd.deinit()
+                except Exception:
+                    pass
+
+        # Strategy 2: SPI Slot 2
+        _sd = None
+        try:
+            _sd = machine.SDCard(slot=2, sck=machine.Pin(38), mosi=machine.Pin(40), miso=machine.Pin(39), cs=machine.Pin(47))
+            os.mount(_sd, "/sd")
+            _sd_card_obj = _sd
+            _sd_mounted = True
+            return True
+        except Exception:
+            if _sd is not None and hasattr(_sd, "deinit"):
+                try:
+                    _sd.deinit()
+                except Exception:
+                    pass
+    except Exception:
+        pass
+    _sd_mounted = False
+    return False
+
+def get_sdcard_stats():
+    global _sd_mounted, _sd_probed
+    if not _sd_probed:
+        init_sdcard()
+
+    if not _sd_mounted:
+        return {"mounted": False, "total_gb": 0, "free_gb": 0, "pct": 0}
+
+    try:
+        st_sd = os.statvfs("/sd")
+        st_root = os.statvfs("/")
+        if st_sd == st_root:
+            _sd_mounted = False
+            return {"mounted": False, "total_gb": 0, "free_gb": 0, "pct": 0}
+
+        bsize = st_sd[0]
+        total_mb = (bsize * st_sd[2]) // (1024 * 1024)
+        free_mb = (bsize * st_sd[3]) // (1024 * 1024)
+        used_mb = max(0, total_mb - free_mb)
+        pct = round((used_mb / total_mb) * 100, 1) if total_mb else 0
+        return {
+            "mounted": True,
+            "total_gb": round(total_mb / 1024, 2),
+            "free_gb": round(free_mb / 1024, 2),
+            "pct": pct
+        }
+    except Exception:
+        _sd_mounted = False
+        return {"mounted": False, "total_gb": 0, "free_gb": 0, "pct": 0}
+
 def get_storage_stats():
     try:
         st = os.statvfs('/')
@@ -413,12 +502,42 @@ async def handle_snapshot_http(reader, writer, path, headers):
     await writer.drain()
 
 # ------------------------------------------------------------------------------
-# TAB 6: 🗄️ Flash Storage & VFS Metrics
+# TAB 6: 🗄️ Storage: Flash (LittleFS) & MicroSD Card (FAT32)
 # ------------------------------------------------------------------------------
 tab_storage = app.tab("Storage", icon="storage")
 flash_free_metric = tab_storage.metric("Available Flash Storage", value="--", unit="KB", badge="LittleFS")
 flash_used_metric = tab_storage.metric("Used Flash Storage", value="--", unit="KB")
 flash_prog = tab_storage.progress("Flash Storage Utilization", max=100, unit="%", value=0)
+
+# MicroSD Card Subsystem (Auto-detects when inserted)
+sd_status_metric = tab_storage.metric("MicroSD Card Status", value="Not Inserted", unit="", badge="Standby")
+sd_free_metric = tab_storage.metric("Available SD Storage", value="--", unit="GB")
+sd_prog = tab_storage.progress("SD Card Utilization", max=100, unit="%", value=0)
+sd_files = tab_storage.file_manager("SD Card File Explorer (/sd)", root_path="/sd")
+
+async def on_mount_sd_click(w):
+    global _sd_mounted, _sd_probed
+    _sd_mounted = False
+    _sd_probed = False
+    terminal.log("[SD Card] Probing for MicroSD Card...")
+    if init_sdcard():
+        info = get_sdcard_stats()
+        sd_status_metric.value = "Mounted (FAT32)"
+        sd_status_metric.badge = f"{info['total_gb']} GB"
+        sd_free_metric.value = str(info['free_gb'])
+        sd_prog.value = info['pct']
+        sd_files.refresh()
+        terminal.log(f"[SD Card] Detected & mounted! Capacity: {info['total_gb']} GB")
+        await app._broadcast_toast(f"SD Card Mounted ({info['total_gb']} GB)", level="info")
+    else:
+        sd_status_metric.value = "Not Inserted"
+        sd_status_metric.badge = "Standby"
+        sd_free_metric.value = "--"
+        sd_prog.value = 0
+        terminal.log("[SD Card] No card detected or mount failed.")
+        await app._broadcast_toast("No SD card detected. Ensure FAT32 format.", level="error")
+
+tab_storage.button("", text="🔍 Scan & Mount SD Card", accent="primary", on_click=on_mount_sd_click)
 
 # ------------------------------------------------------------------------------
 # TAB 7: 💻 Diagnostics, Event Log & System Power
@@ -478,12 +597,24 @@ async def sensor_loop():
             wifi_ip_metric.value = ip
             wifi_mac_metric.value = mac
 
-        # Update Tab 6: Storage (every 5 cycles)
+        # Update Tab 6: Storage & SD Card (every 5 cycles)
         if cycle % 5 == 1:
             tot, used, free_s, pct = get_storage_stats()
             flash_free_metric.value = free_s
             flash_used_metric.value = used
             flash_prog.value = pct
+
+            sd_info = get_sdcard_stats()
+            if sd_info["mounted"]:
+                sd_status_metric.value = "Mounted (FAT32)"
+                sd_status_metric.badge = f"{sd_info['total_gb']} GB"
+                sd_free_metric.value = str(sd_info["free_gb"])
+                sd_prog.value = sd_info["pct"]
+            else:
+                sd_status_metric.value = "Not Inserted"
+                sd_status_metric.badge = "Standby"
+                sd_free_metric.value = "--"
+                sd_prog.value = 0
 
         terminal.log(f"[{uptime}] Core: {temp}°C | Heap: {free_kb}KB free | Uptime: {uptime}")
         await asyncio.sleep(2)
