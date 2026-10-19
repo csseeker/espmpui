@@ -126,4 +126,18 @@ make test
 * [Architecture & System Design](docs/architecture.md)
 * [WebSocket Wire Protocol Specification](docs/protocol_spec.md)
 * [Concurrency, Non-blocking & Resilience Specification](docs/concurrency_and_resilience.md)
+* [Product & Technical Roadmap](docs/ROADMAP.md)
+
+---
+
+## 🗺️ Product Roadmap & Upcoming Milestones
+
+We are actively expanding `espmui` with high-impact, turnkey IoT modules:
+* 📡 **Wi-Fi Manager & Captive Portal**: SoftAP mode fallback with `/generate_204` captive detection to scan networks and input credentials without hardcoding secrets.
+* 💾 **Persistent Parameter Store**: Atomic flash persistence for settings forms that survive device reboots.
+* 📊 **Live Hardware Diagnostics**: Real-time free heap & GC meters, Wi-Fi RSSI monitor, uptime counters, and system controls.
+* 🚀 **Web-Based OTA Updater**: Drag-and-drop firmware `.bin` and filesystem flashing directly from the browser.
+
+See the full [Pragmatic Product Roadmap](docs/ROADMAP.md) for architectural rationale and milestone deliverables.
+
 
