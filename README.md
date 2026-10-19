@@ -123,10 +123,11 @@ make test
 
 ## 📚 Documentation & Specifications
 
+* [Value Proposition & User Personas](docs/VALUE_PROPOSITION.md)
+* [Product & Technical Roadmap](docs/ROADMAP.md)
 * [Architecture & System Design](docs/architecture.md)
 * [WebSocket Wire Protocol Specification](docs/protocol_spec.md)
 * [Concurrency, Non-blocking & Resilience Specification](docs/concurrency_and_resilience.md)
-* [Product & Technical Roadmap](docs/ROADMAP.md)
 
 ---
 
