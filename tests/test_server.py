@@ -1,9 +1,6 @@
 import asyncio
-import hashlib
-import binascii
 import sys
 import unittest
-import socket
 
 # Ensure src/ is in sys.path
 import os
@@ -15,9 +12,6 @@ from espmui.server import (
     decode_ws_frame,
     AsyncServer,
     WS_OP_TEXT,
-    WS_OP_CLOSE,
-    WS_OP_PING,
-    WS_OP_PONG,
 )
 
 
@@ -116,7 +110,7 @@ class TestAsyncServer(unittest.IsolatedAsyncioTestCase):
             f"Connection: Upgrade\r\n"
             f"Sec-WebSocket-Key: {ws_key}\r\n"
             f"Sec-WebSocket-Version: 13\r\n\r\n"
-        ).encode("utf-8")
+        ).encode()
         writer.write(handshake_req)
         await writer.drain()
 

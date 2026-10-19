@@ -3,13 +3,6 @@ Declarative UI Widget components for espmui.
 Designed for zero-memory bloat, automatic reactive diff propagation, and ISR safety.
 """
 
-import sys
-
-try:
-    import uasyncio as asyncio
-except ImportError:
-    import asyncio
-
 _WIDGET_COUNTER = 0
 
 def is_awaitable(obj):

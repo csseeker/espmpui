@@ -210,7 +210,8 @@ def capture_jpeg_frame():
 # 7. Wi-Fi & Network Status
 def get_network_info():
     try:
-        import network, ubinascii
+        import network
+        import ubinascii
         wlan = network.WLAN(network.STA_IF)
         if wlan.isconnected():
             rssi = wlan.status('rssi')
@@ -502,7 +503,7 @@ def connect_wifi():
             pwd = ""
             for p in (".env", "/.env", "../.env"):
                 try:
-                    with open(p, "r") as f:
+                    with open(p) as f:
                         for line in f:
                             clean_line = line.split("#", 1)[0].strip()
                             if clean_line.startswith("WIFI_SSID") and "=" in clean_line:

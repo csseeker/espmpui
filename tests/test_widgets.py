@@ -5,7 +5,6 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.widgets import Widget, Button, Switch, Slider, Metric, Progress
 from espmui.app import App
 
 

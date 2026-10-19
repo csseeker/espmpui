@@ -48,3 +48,7 @@ target-version = "py38"
 [tool.ruff.lint]
 select = ["E", "F", "W", "UP"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# MicroPython runtime viper builtins (ptr8, ptr16, micropython)
+"examples/02_sensor_telemetry.py" = ["F821"]

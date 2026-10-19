@@ -7,7 +7,6 @@ Specialized IoT Widgets for espmui:
 """
 
 import os
-import sys
 
 from espmui.widgets import Widget
 

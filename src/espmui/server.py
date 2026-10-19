@@ -286,7 +286,7 @@ class AsyncServer:
                 writer.close()
                 return
 
-            method, path = req_line[0], req_line[1]
+            _method, path = req_line[0], req_line[1]
 
             # Parse headers into dict
             headers = {}

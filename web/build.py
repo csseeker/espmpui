@@ -27,7 +27,7 @@ def minify_html(raw: str) -> str:
 def build():
     os.makedirs(DIST_DIR, exist_ok=True)
 
-    with open(HTML_PATH, "r", encoding="utf-8") as f:
+    with open(HTML_PATH, encoding="utf-8") as f:
         raw_html = f.read()
 
     minified = minify_html(raw_html)

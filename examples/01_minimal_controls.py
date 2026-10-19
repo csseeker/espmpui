@@ -6,7 +6,8 @@ Demonstrates a clean, 15-line declarative web dashboard for ESP32.
 try:
     import espmui
 except ImportError:
-    import sys, os
+    import sys
+    import os
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
     import espmui
@@ -30,20 +31,20 @@ tab = app.tab("Controls", icon="sliders")
 
 # 3. Add Interactive Widgets
 tab.button(
-    "Test Pulse", 
-    text="Trigger Pulse", 
+    "Test Pulse",
+    text="Trigger Pulse",
     accent="danger",
     on_click=lambda w: print("[App] Button clicked!")
 )
 
 tab.switch(
-    "Main LED (Pin 4)", 
-    value=False, 
+    "Main LED (Pin 4)",
+    value=False,
     on_change=lambda w, val: led.value(1 if val else 0)
 )
 
 tab.slider(
-    "Motor Speed", 
+    "Motor Speed",
     min=0, max=100, step=5, value=25,
     on_change=lambda w, val: print(f"[App] Motor speed adjusted to: {val}%")
 )
