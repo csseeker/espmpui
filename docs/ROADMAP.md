@@ -152,18 +152,19 @@ flowchart LR
 
 ### 📌 Milestone 2: Persistent Parameter & Config Store (Priority: P0)
 *Target: Enable settings that persist across power cycles without custom file parsing code.*
+*Deep-dive documentation: [Feature Reference: Persistent Parameter & Config Store](FEATURES.md#2-persistent-parameter--config-store-subsystem)*
 
-- [ ] **Task 2.1: Schema-Driven Form Generation**
+- [x] **Task 2.1: Schema-Driven Form Generation**
   * **Why do we need it:** Firmware developers typically spend days writing custom HTML forms, parsing POST bodies, and validating string inputs for application settings (e.g. MQTT broker IP, sensor sample interval, alarm thresholds, motor PID gains). A schema-driven generator creates styled, validated inputs (numeric ranges, dropdowns, toggles) automatically from a simple Python dictionary.
   * **When & Where is it useful:** In every commercial IoT product requiring runtime customization (calibrations, URLs, tokens), and during lab/field testing to tune parameters without re-flashing firmware.
   * **How often is it needed:** Initial commissioning and periodically as operating conditions change or calibration is needed (weekly to monthly).
 
-- [ ] **Task 2.2: Atomic Flash Persistence Layer (`/config.json`)**
+- [x] **Task 2.2: Atomic Flash Persistence Layer (`/config.json`)**
   * **Why do we need it:** Microcontrollers frequently experience unexpected power cuts, brownouts, or watchdog reboots. Naive file writes (`open('config.json', 'w')`) truncate files upon opening; if power cuts during the write, the file is corrupted to 0 bytes, permanently losing all settings. An atomic write-to-temp and rename pattern (`config.tmp` $\to$ `config.json`) guarantees data integrity under all power failure conditions.
   * **When & Where is it useful:** Whenever any configuration variable is updated via the web interface or programmatically from Python.
   * **How often is it needed:** Invoked on every settings save. While write frequency is moderate to protect flash endurance, bulletproof reliability is **mandatory**.
 
-- [ ] **Task 2.3: Python Variable Binding & Change Hooks**
+- [x] **Task 2.3: Python Variable Binding & Change Hooks**
   * **Why do we need it:** Embedded code needs direct, idiomatic access to configuration values (e.g., `app.config.sample_rate`) without manual JSON parsing. Change hooks allow firmware to immediately reconfigure hardware (e.g. updating PWM frequency or reconnecting MQTT) without requiring a full device reboot.
   * **When & Where is it useful:** Throughout main application code and background sensor loops.
   * **How often is it needed:** Read continuously during startup and main loops; hooks trigger whenever the user modifies a setting.

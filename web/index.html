@@ -885,6 +885,146 @@
         if (w.files) {
           renderFileList(w.id, w.files);
         }
+      } else if (w.type === 'config_form') {
+        const headRow = document.createElement('div');
+        headRow.className = 'row';
+        const label = document.createElement('span');
+        label.className = 'card-title';
+        label.textContent = w.label || 'Configuration';
+        headRow.appendChild(label);
+        card.appendChild(headRow);
+
+        const formFields = document.createElement('div');
+        formFields.className = 'config-form-fields';
+        formFields.style.display = 'flex';
+        formFields.style.flexDirection = 'column';
+        formFields.style.gap = '12px';
+
+        const schema = w.schema || {};
+        const values = w.values || {};
+        const inputMap = {};
+
+        Object.keys(schema).forEach(key => {
+          const spec = schema[key];
+          const fieldGroup = document.createElement('div');
+          fieldGroup.className = 'input-group';
+
+          const fLabel = document.createElement('label');
+          fLabel.textContent = spec.label || key;
+          fieldGroup.appendChild(fLabel);
+
+          const curVal = values[key] !== undefined ? values[key] : spec.default;
+          const type = spec.type || 'text';
+
+          if (type === 'bool') {
+            const swRow = document.createElement('div');
+            swRow.className = 'row';
+            swRow.style.justifyContent = 'space-between';
+            const sw = document.createElement('label');
+            sw.className = 'switch-wrap';
+            const inp = document.createElement('input');
+            inp.type = 'checkbox';
+            inp.checked = !!curVal;
+            const track = document.createElement('span');
+            track.className = 'slider-track';
+            sw.appendChild(inp);
+            sw.appendChild(track);
+            fieldGroup.innerHTML = '';
+            swRow.appendChild(fLabel);
+            swRow.appendChild(sw);
+            fieldGroup.appendChild(swRow);
+            inputMap[key] = () => inp.checked;
+          } else if (type === 'select') {
+            const sel = document.createElement('select');
+            sel.className = 'select-control';
+            sel.style.width = '100%';
+            sel.style.background = 'rgba(0,0,0,0.35)';
+            sel.style.border = '1px solid var(--card-border)';
+            sel.style.borderRadius = '8px';
+            sel.style.padding = '8px 10px';
+            sel.style.color = '#fff';
+            sel.style.outline = 'none';
+            (spec.options || []).forEach(opt => {
+              const optEl = document.createElement('option');
+              optEl.value = opt;
+              optEl.textContent = opt;
+              if (opt === curVal) optEl.selected = true;
+              sel.appendChild(optEl);
+            });
+            fieldGroup.appendChild(sel);
+            inputMap[key] = () => sel.value;
+          } else if (type === 'slider') {
+            const rowVal = document.createElement('div');
+            rowVal.className = 'row';
+            const valSpan = document.createElement('span');
+            valSpan.style.color = '#38bdf8';
+            valSpan.style.fontWeight = '600';
+            valSpan.textContent = curVal;
+            rowVal.appendChild(fLabel);
+            rowVal.appendChild(valSpan);
+            fieldGroup.innerHTML = '';
+            fieldGroup.appendChild(rowVal);
+
+            const sl = document.createElement('input');
+            sl.type = 'range';
+            sl.className = 'slider-control';
+            sl.min = spec.min !== undefined ? spec.min : 0;
+            sl.max = spec.max !== undefined ? spec.max : 100;
+            sl.step = spec.step || 1;
+            sl.value = curVal;
+            sl.oninput = (e) => { valSpan.textContent = e.target.value; };
+            fieldGroup.appendChild(sl);
+            inputMap[key] = () => Number(sl.value);
+          } else {
+            const inp = document.createElement('input');
+            inp.type = type === 'number' ? 'number' : (type === 'password' ? 'password' : 'text');
+            if (spec.min !== undefined) inp.min = spec.min;
+            if (spec.max !== undefined) inp.max = spec.max;
+            if (spec.step !== undefined) inp.step = spec.step;
+            inp.value = curVal !== undefined ? curVal : '';
+            fieldGroup.appendChild(inp);
+            inputMap[key] = () => (type === 'number' ? Number(inp.value) : inp.value);
+          }
+
+          if (spec.hint) {
+            const hint = document.createElement('small');
+            hint.style.color = 'var(--text-dim)';
+            hint.style.fontSize = '11px';
+            hint.textContent = spec.hint;
+            fieldGroup.appendChild(hint);
+          }
+
+          formFields.appendChild(fieldGroup);
+        });
+
+        card.appendChild(formFields);
+
+        const btnRow = document.createElement('div');
+        btnRow.className = 'row';
+        btnRow.style.marginTop = '6px';
+        btnRow.style.gap = '8px';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn';
+        saveBtn.textContent = '💾 Save Parameters';
+        saveBtn.onclick = () => {
+          const payload = {};
+          Object.keys(inputMap).forEach(k => { payload[k] = inputMap[k](); });
+          ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'save', val: payload }));
+        };
+
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'btn secondary';
+        resetBtn.textContent = '↺ Reset Defaults';
+        resetBtn.onclick = () => {
+          if (confirm('Reset all parameters to default values?')) {
+            ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'reset' }));
+          }
+        };
+
+        btnRow.appendChild(saveBtn);
+        btnRow.appendChild(resetBtn);
+        card.appendChild(btnRow);
       }
       return card;
     }

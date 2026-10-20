@@ -6,6 +6,7 @@ from espmui.app import App, Tab
 from espmui.widgets import Widget, Button, Switch, Slider, Metric, Progress
 from espmui.iot_widgets import Terminal, LineChart, CameraStream, FileManager
 from espmui.wifi import WiFiManager, DNSServer, CaptivePortal
+from espmui.config import ConfigStore, ConfigForm, ConfigValidationError
 
 __version__ = "0.1.0"
 __all__ = [
@@ -24,4 +25,7 @@ __all__ = [
     "WiFiManager",
     "DNSServer",
     "CaptivePortal",
+    "ConfigStore",
+    "ConfigForm",
+    "ConfigValidationError",
 ]

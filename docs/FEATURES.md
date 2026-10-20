@@ -13,6 +13,12 @@ This document provides in-depth technical references, architecture diagrams, and
   - [1.5. Asynchronous Scanner & Resilient Credential Verification](#15-asynchronous-scanner--resilient-credential-verification)
   - [1.6. Mobile-First Frontend View](#16-mobile-first-frontend-view)
   - [1.7. Developer API & Quickstart](#17-developer-api--quickstart)
+- [2. Persistent Parameter & Config Store Subsystem (Milestone 2)](#2-persistent-parameter--config-store-subsystem)
+  - [2.1. The Real-World Problem: Flash Corruption & Settings Boilerplate](#21-the-real-world-problem-flash-corruption--settings-boilerplate)
+  - [2.2. Atomic Flash Persistence Engine (Write-Temp & Rename)](#22-atomic-flash-persistence-engine-write-temp--rename)
+  - [2.3. Schema-Driven Form Generation & Type Validation](#23-schema-driven-form-generation--type-validation)
+  - [2.4. Python Variable Binding & Reactive Change Hooks](#24-python-variable-binding--reactive-change-hooks)
+  - [2.5. Developer API & Quickstart](#25-developer-api--quickstart)
 
 ---
 
@@ -183,3 +189,134 @@ if __name__ == "__main__":
 
 #### Complete Working Example:
 See [`examples/04_wifi_provisioner_portal.py`](../examples/04_wifi_provisioner_portal.py).
+
+---
+
+## 2. Persistent Parameter & Config Store Subsystem
+
+* **Milestone / Tasks**: Milestone 2 (Tasks 2.1, 2.2, 2.3)
+* **Modules**: [`src/espmui/config.py`](../src/espmui/config.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Test Suite**: [`tests/test_config.py`](../tests/test_config.py)
+
+---
+
+### 2.1. The Real-World Problem: Flash Corruption & Settings Boilerplate
+
+Microcontroller projects running in the field (sensors, smart plugs, industrial controllers) frequently experience sudden power disconnects, battery depletion, or watchdog timer resets.
+
+#### The 0-Byte Truncation Hazard:
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as Firmware Application
+    participant Flash as Microcontroller Flash (LittleFS/FAT)
+
+    Note over App,Flash: Naive Write: open("config.json", "w")
+    App->>Flash: open("config.json", "w") -> TRUNCATES file to 0 bytes!
+    Note over Flash: ⚡ UNEXPECTED POWER CUT / BROWNOUT!
+    Note over Flash: config.json remains 0 bytes permanently.
+    Note over App,Flash: Next Reboot...
+    App->>Flash: open("config.json", "r") -> json.loads()
+    Flash-->>App: ❌ ValueError: Expecting value: line 1 column 1 (char 0)
+    Note over App: Firmware crashes or loses all calibration & Wi-Fi settings!
+```
+
+Additionally, embedded developers spend days writing custom HTML `<form>` tags, parsing URL-encoded POST strings, manually type-casting values, and handling errors for basic settings (e.g. MQTT broker IP, sensor sample rates, calibration offsets).
+
+---
+
+### 2.2. Atomic Flash Persistence Engine (Write-Temp & Rename)
+
+To guarantee that configurations survive sudden power cuts without corruption, `ConfigStore` implements a strict **Write-to-Temp and Atomic Inode Rename** pattern:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Store as ConfigStore
+    participant Disk as Flash Storage
+
+    Store->>Disk: 1. Write full serialized JSON to "config.json.tmp"
+    Store->>Disk: 2. Flush file buffers (f.flush() + os.sync())
+    Note over Store,Disk: If power cuts here, config.json is still 100% intact!
+    Store->>Disk: 3. Atomic rename: os.rename("config.json.tmp", "config.json")
+    Note over Disk: Atomic inode swap commits new config instantly.
+    
+    Note over Store,Disk: Automatic Power-Cut Recovery
+    Store->>Disk: On boot: If config.json is 0 bytes, recover from config.json.tmp!
+```
+
+---
+
+### 2.3. Schema-Driven Form Generation & Type Validation
+
+Rather than writing custom HTML forms and parsing POST bodies, developers define settings using a declarative Python dictionary schema:
+
+| Field Type | Python Types Accepted | UI Control Generated | Built-in Validations |
+| :--- | :--- | :--- | :--- |
+| `text` | `str` | Text input box | Required strings, hint caption |
+| `number` | `int`, `float` | Number spinner input | Type coercion, `min`, `max`, `step`, `unit` |
+| `bool` | `bool` | Animated toggle switch | Boolean type enforcement |
+| `select` | `str` | Dropdown selector | Whitelist membership against `options` |
+| `slider` | `int`, `float` | Touch range slider | `min`, `max`, `step`, live numeric readout |
+| `password` | `str` | Masked text with toggle | Obfuscated input with `👁️` reveal button |
+
+#### Validation Barrier:
+- Validation runs whenever a value is updated via Python, REST API, or Web UI.
+- If an invalid value is submitted (e.g., `interval = 9999` when `max = 300`), a `ConfigValidationError` is raised, flash write is aborted, and a non-intrusive error toast is broadcast to the browser without crashing the MCU.
+
+---
+
+### 2.4. Python Variable Binding & Reactive Change Hooks
+
+Firmware code accesses settings through direct, idiomatic Python attribute access (`config.sample_rate`), with change hooks that trigger re-configuration on-the-fly:
+
+```python
+# Direct variable access
+interval = config.sample_rate
+
+# Sync and Async Change Hooks
+@config.on_change("target_temp")
+def on_temp_change(new_val, old_val):
+    print(f"Target temperature changed: {old_val} -> {new_val}")
+    thermostat.set_point(new_val)
+
+# Async hook for non-blocking network re-connections
+@config.on_change("mqtt_broker")
+async def on_broker_change(new_val, old_val):
+    await mqtt_client.reconnect(new_val)
+```
+
+---
+
+### 2.5. Developer API & Quickstart
+
+Attaching persistent parameters and an automatic web settings form takes **3 lines of code**:
+
+```python
+import espmui
+
+app = espmui.App(title="IoT Node", theme="dark")
+
+# 1. Define schema & attach atomic storage
+config = app.attach_config({
+    "device_name": {"type": "text", "default": "Node 1", "label": "Device Name"},
+    "sample_rate": {"type": "number", "default": 10, "min": 1, "max": 300, "unit": "s", "label": "Polling Interval"},
+    "alarm_enabled": {"type": "bool", "default": True, "label": "Alarm Buzzer"},
+    "operating_mode": {"type": "select", "options": ["NORMAL", "ECO", "BOOST"], "default": "NORMAL", "label": "Mode"}
+}, filepath="config.json")
+
+# 2. Add automatic schema-driven form to a tab
+tab = app.tab("Settings", icon="sliders")
+tab.config_form(config, label="System Settings")
+
+# 3. Access variables directly in hardware loops
+@config.on_change("sample_rate")
+def on_interval_changed(new_val, old_val):
+    print(f"Sampling interval updated to {new_val}s")
+
+if __name__ == "__main__":
+    app.run(port=80)
+```
+
+#### Complete Working Example:
+See [`examples/05_persistent_config_store.py`](../examples/05_persistent_config_store.py).

@@ -60,6 +60,10 @@ if __name__ == "__main__":
   * Zero-friction mobile onboarding with SoftAP and RFC 1035 UDP DNS interception (port 53).
   * Traps captive probe URLs (`/generate_204`, `/hotspot-detect.html`, `/ncsi.txt`) with instant 302 redirects.
   * Mobile-first frontend onboarding card with background scanning, RSSI signal bars, password reveal, and safe connection testing without AP teardown.
+* **Persistent Parameter & Config Store**:
+  * Atomic write-to-temp and inode rename pattern protecting `/config.json` against 0-byte truncation on brownouts.
+  * Schema-driven dynamic form generator with type enforcement, min/max bounds, and dropdown validation.
+  * Python variable binding (`config.param`) and reactive sync/async change hooks (`@config.on_change`).
 * **Included Widgets**:
   * 📑 **Multi-Tab Layout**: Organize dashboards across multiple tabs (e.g., Controls, Sensors, Diagnostics).
   * 📸 **Camera Viewfinder**: Basic snapshot capture and MJPEG streaming for supported camera modules (such as OV2640).

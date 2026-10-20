@@ -77,6 +77,19 @@ When developing microcontroller projects in MicroPython, creating an on-device w
   * `POST /api/wifi/connect`: Receives credentials, verifies link, and returns assigned station IP.
   * `GET /api/wifi/status`: Returns current Wi-Fi status and mode.
 
+### 3.5. Persistent Parameter & Config Store Subsystem
+* **Atomic Flash Persistence Engine (`ConfigStore`)**:
+  * Implements an atomic write-to-temp (`config.json.tmp`) and inode rename (`os.rename`) pattern to eliminate the zero-byte truncation risk inherent to sudden MCU power brownouts.
+  * Automatic power-cut recovery: if `config.json` is truncated or corrupted on boot, automatically recovers from `.tmp` or falls back gracefully to schema defaults.
+* **Schema-Driven Form Generation (`ConfigForm`)**:
+  * Dynamically generates styled HTML form components directly from a Python dictionary definition (`text`, `number`, `bool`, `select`, `slider`, `password`).
+  * Enforces strict type checking, numeric bounds (`min`/`max`), and dropdown option validation before committing changes.
+* **Variable Binding & Change Hooks**:
+  * Direct attribute access (`config.sample_rate`) with support for synchronous and asynchronous (`async def`) change callbacks (`@config.on_change("param")`).
+* **REST Endpoints**:
+  * `GET /api/config`: Returns active values and schema metadata.
+  * `POST /api/config`: Validates incoming payload, commits to flash atomically, triggers change hooks, and returns status.
+
 ---
 
 ## 4. Developer Experience & API Design
@@ -167,6 +180,7 @@ espmui/
 │       ├── widgets.py                # Standard widget classes
 │       ├── iot_widgets.py            # Additional widgets (Camera, Terminal, File Manager)
 │       ├── wifi.py                   # Wi-Fi Provisioner, DNS Interceptor, Captive Portal
+│       ├── config.py                 # Persistent Parameter Store & Schema Form
 │       └── assets.py                 # Pre-compressed web assets
 ├── web/                              # Frontend source
 │   ├── index.html                    # Single-page application shell

@@ -76,6 +76,10 @@ class Tab:
         from espmui.iot_widgets import FileManager
         return self.add_widget(FileManager(label, **kwargs))
 
+    def config_form(self, config_store, label: str = "Configuration", **kwargs):
+        from espmui.config import ConfigForm
+        return self.add_widget(ConfigForm(config_store, label=label, **kwargs))
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -109,6 +113,53 @@ class App:
         if self.server:
             self.portal.attach()
         return self.portal
+
+    def attach_config(self, schema: dict, filepath: str = "config.json", autosave: bool = True):
+        """Attaches a persistent configuration store and registers REST endpoints."""
+        from espmui.config import ConfigStore, ConfigValidationError
+        store = ConfigStore(schema, filepath=filepath, app=self, autosave=autosave)
+        self.config_store = store
+
+        async def _handle_config_endpoint(reader, writer, path, headers):
+            method = headers.get("method", "GET").upper()
+            if method == "POST":
+                content_len = int(headers.get("content-length", 0))
+                body = b""
+                if content_len > 0:
+                    body = await reader.read(content_len)
+
+                try:
+                    data = json.loads(body.decode("utf-8"))
+                    new_vals = data.get("values", {})
+                    store.update(new_vals)
+                    resp_dict = {"status": "ok", "values": store.to_dict()}
+                    status_line = "HTTP/1.1 200 OK"
+                except ConfigValidationError as err:
+                    resp_dict = {"status": "error", "message": str(err)}
+                    status_line = "HTTP/1.1 400 Bad Request"
+                except Exception as ex:
+                    resp_dict = {"status": "error", "message": str(ex)}
+                    status_line = "HTTP/1.1 400 Bad Request"
+            else:
+                resp_dict = {
+                    "status": "ok",
+                    "values": store.to_dict(),
+                    "schema": store.schema,
+                }
+                status_line = "HTTP/1.1 200 OK"
+
+            payload = json.dumps(resp_dict).encode("utf-8")
+            resp = (
+                f"{status_line}\r\n"
+                f"Content-Type: application/json\r\n"
+                f"Content-Length: {len(payload)}\r\n"
+                f"Connection: close\r\n\r\n"
+            ).encode("ascii") + payload
+            writer.write(resp)
+            await writer.drain()
+
+        self.add_route("/api/config", _handle_config_endpoint)
+        return store
 
     def add_route(self, path: str, handler):
         """Registers a custom HTTP route handler."""

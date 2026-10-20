@@ -299,7 +299,7 @@ class AsyncServer:
             _method, path = req_line[0], req_line[1]
 
             # Parse headers into dict
-            headers = {}
+            headers = {"method": _method}
             for h in header_lines[1:]:
                 if ":" in h:
                     k, v = h.split(":", 1)
