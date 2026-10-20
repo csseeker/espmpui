@@ -1,4 +1,8 @@
-.PHONY: test lint build-web clean install-dev build-dist release-check
+.PHONY: test lint build-web clean install-dev build-dist release-check deploy
+
+deploy:
+	mpremote cp -r src/espmpui :lib/
+
 
 test:
 	python3 -m unittest discover -s tests -p "test_*.py"

@@ -89,12 +89,29 @@ Open **`http://localhost:80/`** in your browser.
 
 ### Option B: Deploy to a Physical ESP32 or Pico W
 
-#### 1. Copy `espmpui` to your board
-Using [`mpremote`](https://docs.micropython.org/en/latest/reference/mpremote.html):
+#### 1. Install `espmpui` on your board
+
+**Method 1: Local Copy (Recommended — Offline & Instant)**
 ```bash
-mpremote fs cp -r src/espmpui :
+make deploy
+# Or via mpremote directly:
+mpremote cp -r src/espmpui :lib/
 ```
-*(Or install directly over Wi-Fi on the board via `mip.install("github:csseeker/espmpui")`)*.
+
+**Method 2: Install via `mip`**
+```bash
+mpremote mip install github:csseeker/espmpui
+```
+*(Or directly from your board's REPL over Wi-Fi: `import mip; mip.install("github:csseeker/espmpui")`)*
+
+> [!TIP]
+> **macOS Note (`SSL: CERTIFICATE_VERIFY_FAILED`):**
+> If `mpremote mip` fails with certificate verification errors on macOS (common with python.org installs), run:
+> ```bash
+> "/Applications/Python 3.13/Install Certificates.command"
+> # Or inside your virtualenv:
+> export SSL_CERT_FILE=$(python3 -m certifi)
+> ```
 
 #### 2. Run your first dashboard
 Save this as `main.py` on your ESP32:
