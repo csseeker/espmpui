@@ -1,14 +1,17 @@
-# `espmpui`: Modern Reactive Web Dashboard for MicroPython
+# `espmpui`: Reactive Web Dashboard & Device Manager for MicroPython
 
+[![PyPI](https://img.shields.io/pypi/v/espmpui.svg)](https://pypi.org/project/espmpui/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MicroPython](https://img.shields.io/badge/MicroPython-v1.20%2B-green.svg)](https://micropython.org/)
 [![Zero External Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen.svg)]()
-[![Bundle Size](https://img.shields.io/badge/Bundle%20Size-~13.4%20KB-blueviolet.svg)]()
+[![Bundle Size](https://img.shields.io/badge/Bundle%20Size-~13.2%20KB-blueviolet.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-62%20Passing-success.svg)]()
+
+> **Ship an app-like web dashboard, mobile Wi-Fi captive portal, persistent settings, and OTA updater for your ESP32 or Pico W in under 15 lines of pure Python.**
 
 `espmpui` is a lightweight, zero-dependency web dashboard and device manager for **MicroPython** (ESP32, ESP32-S2/S3, ESP32-C3/C6, and Raspberry Pi Pico W).
 
-It pairs a declarative Python API with a pre-gzipped, CDN-free embedded frontend (~13.4 KB) synchronized in real-time over WebSockets.
+It pairs a declarative Python API with a pre-gzipped, CDN-free embedded frontend (~13.2 KB) synchronized in real-time over WebSockets.
 
 <p align="center">
   <img src="docs/images/dashboard_sensors.png" alt="espmpui Sensors Dashboard" width="100%">
@@ -27,10 +30,49 @@ It pairs a declarative Python API with a pre-gzipped, CDN-free embedded frontend
 
 ---
 
+## ⚡ Why `espmpui`?
+
+Building web interfaces for microcontrollers usually means wrestling with raw socket strings, 1995-style HTML forms, or heavy Node/npm pipelines that exhaust microcontroller memory.
+
+`espmpui` provides a complete, modern embedded device interface out-of-the-box:
+
+* **No Frontend Toolchain Needed**: Zero `npm` builds, Webpack configs, or CDN dependencies. The single-page app (~13.2 KB) is served straight from device flash.
+* **Two-Way Reactive Sync**: State changes update connected web clients in real-time via compact (~35 byte) WebSocket diffs.
+* **Low Memory Footprint**: Operates within `< 8 KB RAM` overhead and `< 4 KB RAM` during OTA updates. Built specifically for constrained microcontrollers.
+* **Fault-Isolated Execution**: User callback crashes are caught gracefully without breaking the `uasyncio` server loop.
+* **Complete Hardware Lifecycle**: Out-of-the-box Wi-Fi captive portal, persistent flash config store, real-time diagnostics, and drag-and-drop OTA firmware updating.
+
+---
+
+## 📊 How Does It Compare?
+
+| Feature | `espmpui` | Microdot / Picoweb | ESPHome / Tasmota | Blynk / Cloud IoT |
+| :--- | :---: | :---: | :---: | :---: |
+| **Language** | **MicroPython** | MicroPython | C++ / YAML | C++ / Python |
+| **Turnkey Modern UI** | ✅ Built-in (MUI style) | ❌ Manual HTML/CSS | ✅ Built-in | ✅ App-based |
+| **Zero Frontend Tooling** | ✅ Pre-compiled (~13.2 KB) | ❌ Build your own | ✅ Pre-compiled | ❌ Cloud setup |
+| **Local / Air-Gapped** | ✅ 100% Local | ✅ Local | ✅ Local | ❌ Requires Cloud |
+| **Embeddable in Custom Code** | ✅ Yes (`import espmpui`) | ✅ Yes | ❌ Owns entire firmware | ⚠️ Partial |
+| **Captive Portal + OTA Included** | ✅ Turnkey | ❌ Manual implementation | ✅ Built-in | ⚠️ Paid / Complex |
+| **RAM Overhead** | **< 8 KB** | < 10 KB | ~30–60 KB | ~20–40 KB |
+
+---
+
+## 🖥️ Hardware & Platform Support
+
+| Target Platform | Status | Connection | Features Supported |
+| :--- | :---: | :---: | :--- |
+| **ESP32 / ESP32-S2 / ESP32-S3** | ✅ Tested | Wi-Fi / AP | Full suite (Captive Portal, Diagnostics, OTA Partition Switch) |
+| **ESP32-C3 / ESP32-C6 (RISC-V)** | ✅ Tested | Wi-Fi / AP | Full suite |
+| **Raspberry Pi Pico W** | ✅ Tested | Wi-Fi / AP | Full suite (OTA operates in filesystem write mode) |
+| **Desktop Simulation (macOS/Linux/Win)** | ✅ Tested | `localhost:80` | Full UI & Controls simulation (no hardware required) |
+
+---
+
 ## 🚀 Quick Start in 60 Seconds
 
 ### Option A: Test on your Desktop (No Hardware Required)
-You can test `espmpui` directly in Python before plugging in your microcontroller:
+You can test `espmpui` directly on your computer before plugging in a microcontroller:
 
 ```bash
 git clone https://github.com/csseeker/espmpui.git
@@ -45,7 +87,7 @@ Open **`http://localhost:80/`** in your browser.
 
 ---
 
-### Option B: Deploy to a Physical ESP32
+### Option B: Deploy to a Physical ESP32 or Pico W
 
 #### 1. Copy `espmpui` to your board
 Using [`mpremote`](https://docs.micropython.org/en/latest/reference/mpremote.html):
@@ -93,15 +135,6 @@ Check the serial console for your device IP and navigate to **`http://<ESP32_IP>
 
 ---
 
-## ✨ Why `espmpui`?
-
-* **No Frontend Toolchain Needed**: Zero npm builds or CDN dependencies. The single-page app (~13.4 KB) is served straight from device flash.
-* **Two-Way Reactive Sync**: State changes update connected web clients in real-time (~35 byte WebSocket diffs).
-* **Fault-Isolated Execution**: User callback crashes are caught gracefully without breaking the `uasyncio` server loop.
-* **Low Footprint (<4 KB RAM during OTA)**: Built with memory-constrained microcontrollers in mind.
-
----
-
 ## 🧰 Turnkey Features
 
 | Feature | Description | Example |
@@ -120,7 +153,7 @@ Check the serial console for your device IP and navigate to **`http://<ESP32_IP>
 Unit tests use Python's standard `unittest` module and run standalone without hardware:
 
 ```bash
-# Run all 62 tests
+# Run all tests
 make test
 # or: python3 -m unittest discover -s tests -p "test_*.py"
 
@@ -135,6 +168,7 @@ make lint
 
 * [Feature Reference & Deep-Dive Guide](docs/FEATURES.md) — Architectural justifications and component guides.
 * [Product & Technical Roadmap](docs/ROADMAP.md) — Phased milestones, priorities, and detailed task breakdowns.
+* [System Value Proposition & Personas](docs/VALUE_PROPOSITION.md) — Target user personas, before/after journeys, and feature gating rules.
 * [Architecture & System Design](docs/architecture.md) — System architecture, component trees, and dataflow.
 * [WebSocket Wire Protocol Specification](docs/protocol_spec.md) — JSON opcode schemas, event flows, and diff formats.
 * [Concurrency & Resilience Specification](docs/concurrency_and_resilience.md) — Cooperative slicing, backpressure queues, and fault isolation.

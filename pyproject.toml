@@ -5,14 +5,14 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "espmpui"
 version = "0.1.0"
-description = "Modern, lightweight reactive web dashboard for MicroPython (ESP32, Pico W)"
+description = "Reactive Web UI, Captive Portal, Diagnostics & OTA Updater for MicroPython (ESP32 & Pico W)"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
     { name = "csseeker", email = "shripad.learn@gmail.com" }
 ]
 requires-python = ">=3.8"
-keywords = ["micropython", "esp32", "dashboard", "iot", "websocket", "webui", "reactive"]
+keywords = ["micropython", "esp32", "pico-w", "dashboard", "iot", "websocket", "webui", "reactive", "captive-portal", "ota"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
