@@ -70,5 +70,38 @@ def get_asset_payload():
     print("=" * 55)
 
 
+def check_assets() -> bool:
+    """Verifies that src/espmpui/assets.py decompresses to the current web/index.html."""
+    import sys
+
+    src_dir = os.path.abspath(os.path.join(HERE, "../src"))
+    if src_dir not in sys.path:
+        sys.path.insert(0, src_dir)
+
+    try:
+        from espmpui.assets import ASSET_BYTES
+    except ImportError:
+        print("ERROR: src/espmpui/assets.py does not exist!")
+        return False
+
+    with open(HTML_PATH, encoding="utf-8") as f:
+        minified = minify_html(f.read()).encode("utf-8")
+
+    decompressed = gzip.decompress(ASSET_BYTES)
+    if decompressed != minified:
+        print("ERROR: src/espmpui/assets.py is out of sync with web/index.html!")
+        print("Run 'python web/build.py' and commit the changes.")
+        return False
+
+    print("✓ Web assets are verified and synchronized.")
+    return True
+
+
 if __name__ == "__main__":
-    build()
+    import sys
+
+    if "--check" in sys.argv:
+        if not check_assets():
+            sys.exit(1)
+    else:
+        build()
