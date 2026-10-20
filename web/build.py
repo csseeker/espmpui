@@ -34,8 +34,8 @@ def build():
     raw_size = len(raw_html.encode("utf-8"))
     min_size = len(minified.encode("utf-8"))
 
-    # Gzip compress with level 9
-    gz_bytes = gzip.compress(minified.encode("utf-8"), compresslevel=9)
+    # Gzip compress with level 9 and deterministic mtime=0
+    gz_bytes = gzip.compress(minified.encode("utf-8"), compresslevel=9, mtime=0)
     gz_size = len(gz_bytes)
 
     # Save .gz file to dist
