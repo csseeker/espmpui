@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>espmui Dashboard</title>
+  <title>espmpui Dashboard</title>
   <style>
     :root {
       --bg: #070a12;
@@ -18,18 +19,93 @@
       --danger: #ef4444;
       --term-bg: #030712;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px 14px; display: flex; flex-direction: column; align-items: center; }
-    .container { width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: 14px; }
-    
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 880px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     /* Header */
-    header { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px; }
-    .header-left { display: flex; align-items: center; gap: 8px; }
-    .header-right { display: flex; align-items: center; gap: 8px; }
-    .title { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; background: rgba(16,185,129,0.12); color: var(--success); border-radius: 999px; font-size: 11px; font-weight: 600; border: 1px solid rgba(16,185,129,0.25); }
-    .pulse-dot { width: 7px; height: 7px; background: currentColor; border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 2px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: currentColor;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+      }
+    }
 
     /* Layout Toggle Button */
     .layout-toggle-btn {
@@ -46,6 +122,7 @@
       font-weight: 600;
       transition: all 0.15s ease;
     }
+
     .layout-toggle-btn:hover {
       color: var(--text);
       background: rgba(255, 255, 255, 0.1);
@@ -64,6 +141,7 @@
     .dashboard-layout.vertical {
       flex-direction: row;
     }
+
     .dashboard-layout.vertical .tabs-nav {
       display: flex;
       flex-direction: column;
@@ -76,8 +154,9 @@
       width: 190px;
       position: sticky;
       top: 14px;
-      box-shadow: 0 8px 24px -6px rgba(0,0,0,0.45);
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.45);
     }
+
     .dashboard-layout.vertical .tab-btn {
       width: 100%;
       background: transparent;
@@ -95,16 +174,19 @@
       gap: 10px;
       text-align: left;
     }
+
     .dashboard-layout.vertical .tab-btn:hover {
       color: var(--text);
       background: rgba(255, 255, 255, 0.06);
     }
+
     .dashboard-layout.vertical .tab-btn.active {
       background: #2563eb;
       color: #fff;
       border-color: rgba(56, 189, 248, 0.4);
       box-shadow: 0 3px 12px rgba(37, 99, 235, 0.45);
     }
+
     .dashboard-layout.vertical .tab-icon {
       font-size: 16px;
       width: 20px;
@@ -112,6 +194,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .dashboard-layout.vertical .tab-label {
       flex: 1;
       white-space: nowrap;
@@ -124,6 +207,7 @@
       flex-direction: column;
       gap: 14px;
     }
+
     .dashboard-layout.horizontal .tabs-nav {
       display: flex;
       flex-direction: row;
@@ -137,7 +221,11 @@
       -webkit-overflow-scrolling: touch;
       width: 100%;
     }
-    .dashboard-layout.horizontal .tabs-nav::-webkit-scrollbar { display: none; }
+
+    .dashboard-layout.horizontal .tabs-nav::-webkit-scrollbar {
+      display: none;
+    }
+
     .dashboard-layout.horizontal .tab-btn {
       flex: 0 0 auto;
       white-space: nowrap;
@@ -155,9 +243,22 @@
       justify-content: center;
       gap: 6px;
     }
-    .dashboard-layout.horizontal .tab-btn:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
-    .dashboard-layout.horizontal .tab-btn.active { background: #2563eb; color: #fff; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45); }
-    .dashboard-layout.horizontal .tab-icon { font-size: 14px; line-height: 1; }
+
+    .dashboard-layout.horizontal .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .dashboard-layout.horizontal .tab-btn.active {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45);
+    }
+
+    .dashboard-layout.horizontal .tab-icon {
+      font-size: 14px;
+      line-height: 1;
+    }
 
     /* Content Area */
     .tabs-content {
@@ -170,10 +271,35 @@
     }
 
     /* Cards & Components */
-    .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 16px 18px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.45); display: flex; flex-direction: column; gap: 12px; transition: border-color 0.2s; }
-    .card:hover { border-color: rgba(56,189,248,0.3); }
-    .card-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); font-weight: 600; }
-    .row { display: flex; align-items: center; justify-content: space-between; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .card-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
     /* Metric Badge */
     .metric-badge {
@@ -189,65 +315,280 @@
     }
 
     /* Buttons & Switches */
-    .btn { background: #2563eb; color: #fff; border: none; padding: 10px 18px; border-radius: 9px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn:active { transform: scale(0.96); }
-    .btn.danger { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
-    .btn.danger:hover { background: #ef4444; color: #fff; }
-    .btn.success { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
-    .btn.success:hover { background: #10b981; color: #fff; }
-    .btn.warning { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-    .btn.warning:hover { background: #f59e0b; color: #fff; }
-    .btn.accent { background: rgba(129,140,248,0.2); color: #a5b4fc; border: 1px solid rgba(129,140,248,0.3); }
-    .btn.accent:hover { background: #818cf8; color: #fff; }
-    .btn.secondary { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid var(--card-border); }
-    .btn.secondary:hover { background: rgba(255,255,255,0.14); }
+    .btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
-    .switch-wrap { position: relative; width: 48px; height: 26px; }
-    .switch-wrap input { opacity: 0; width: 0; height: 0; }
-    .slider-track { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .25s ease; border-radius: 26px; }
-    .slider-track:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .25s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-    input:checked + .slider-track { background-color: #2563eb; }
-    input:checked + .slider-track:before { transform: translateX(22px); }
+    .btn:active {
+      transform: scale(0.96);
+    }
 
-    .slider-control { width: 100%; accent-color: #38bdf8; height: 6px; border-radius: 999px; cursor: pointer; }
-    .metric-val { font-size: 28px; font-weight: 700; color: #fff; font-feature-settings: "tnum"; }
-    .metric-unit { font-size: 15px; color: var(--text-dim); margin-left: 4px; font-weight: 500; }
-    
-    .progress-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden; margin-top: 4px; }
-    .progress-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #38bdf8, #2563eb); transition: width 0.35s ease; }
+    .btn.danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn.danger:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn.success {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .btn.success:hover {
+      background: #10b981;
+      color: #fff;
+    }
+
+    .btn.warning {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .btn.warning:hover {
+      background: #f59e0b;
+      color: #fff;
+    }
+
+    .btn.accent {
+      background: rgba(129, 140, 248, 0.2);
+      color: #a5b4fc;
+      border: 1px solid rgba(129, 140, 248, 0.3);
+    }
+
+    .btn.accent:hover {
+      background: #818cf8;
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .switch-wrap {
+      position: relative;
+      width: 48px;
+      height: 26px;
+    }
+
+    .switch-wrap input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-track {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #334155;
+      transition: .25s ease;
+      border-radius: 26px;
+    }
+
+    .slider-track:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    input:checked+.slider-track {
+      background-color: #2563eb;
+    }
+
+    input:checked+.slider-track:before {
+      transform: translateX(22px);
+    }
+
+    .slider-control {
+      width: 100%;
+      accent-color: #38bdf8;
+      height: 6px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .metric-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      font-feature-settings: "tnum";
+    }
+
+    .metric-unit {
+      font-size: 15px;
+      color: var(--text-dim);
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #38bdf8, #2563eb);
+      transition: width 0.35s ease;
+    }
 
     /* Terminal Widget */
-    .term-window { background: var(--term-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; line-height: 1.5; height: 160px; overflow-y: auto; color: #38bdf8; white-space: pre-wrap; word-break: break-all; }
-    .term-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-    .btn-sm { padding: 4px 10px; font-size: 11px; border-radius: 6px; background: rgba(255,255,255,0.07); color: var(--text-dim); border: 1px solid var(--card-border); cursor: pointer; }
-    .btn-sm:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .term-window {
+      background: var(--term-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      height: 160px;
+      overflow-y: auto;
+      color: #38bdf8;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .term-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--text-dim);
+      border: 1px solid var(--card-border);
+      cursor: pointer;
+    }
+
+    .btn-sm:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
 
     /* Canvas Chart */
-    .chart-canvas { width: 100%; height: 120px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
+    .chart-canvas {
+      width: 100%;
+      height: 120px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
 
     /* Camera Viewfinder */
-    .cam-viewport { width: 100%; border-radius: 10px; overflow: hidden; background: #000; position: relative; aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; }
-    .cam-img { width: 100%; height: 100%; object-fit: contain; }
+    .cam-viewport {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cam-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
     /* File Table */
-    .file-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .file-table th { text-align: left; color: var(--text-dim); padding: 8px 4px; border-bottom: 1px solid var(--card-border); font-size: 11px; text-transform: uppercase; }
-    .file-table td { padding: 9px 4px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .file-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .file-table th {
+      text-align: left;
+      color: var(--text-dim);
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .file-table td {
+      padding: 9px 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
 
     /* Toast Notification */
-    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #ef4444; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.6); z-index: 999; }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ef4444;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      z-index: 999;
+    }
 
     /* Mobile Responsive Adaptation */
     @media (max-width: 620px) {
       .dashboard-layout.vertical {
         gap: 10px;
       }
+
       .dashboard-layout.vertical .tabs-nav {
         flex: 0 0 60px;
         width: 60px;
         padding: 6px 3px;
         gap: 4px;
       }
+
       .dashboard-layout.vertical .tab-btn {
         flex-direction: column;
         align-items: center;
@@ -256,16 +597,19 @@
         gap: 3px;
         border-radius: 8px;
       }
+
       .dashboard-layout.vertical .tab-icon {
         font-size: 18px;
         width: auto;
       }
+
       .dashboard-layout.vertical .tab-label {
         font-size: 9px;
         max-width: 54px;
         text-align: center;
         letter-spacing: -0.02em;
       }
+
       .layout-toggle-btn #layout-label {
         display: none;
       }
@@ -280,17 +624,26 @@
       flex-direction: column;
       gap: 16px;
     }
+
     .setup-card {
       background: var(--card);
       border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 24px 20px;
-      box-shadow: 0 16px 36px -6px rgba(0,0,0,0.55);
+      box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.55);
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
-    .setup-hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+    .setup-hero {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
     .setup-badge {
       display: inline-flex;
       align-items: center;
@@ -305,13 +658,38 @@
       color: var(--primary);
       border: 1px solid rgba(56, 189, 248, 0.28);
     }
-    .setup-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-    .setup-subtitle { font-size: 13px; color: var(--text-dim); line-height: 1.4; max-width: 360px; }
-    
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+
+    .setup-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .setup-subtitle {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.4;
+      max-width: 360px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+    }
+
     .btn-icon {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--card-border);
       color: var(--primary);
       padding: 5px 12px;
@@ -324,9 +702,26 @@
       gap: 5px;
       transition: all 0.15s ease;
     }
-    .btn-icon:hover { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.3); }
-    .btn-icon.spinning #scan-icon { animation: spin 0.8s linear infinite; display: inline-block; }
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .btn-icon:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-icon.spinning #scan-icon {
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     .network-list {
       display: flex;
@@ -336,42 +731,98 @@
       overflow-y: auto;
       padding-right: 2px;
     }
+
     .network-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 14px;
-      background: rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     .network-item:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(56,189,248,0.3);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(56, 189, 248, 0.3);
       transform: translateY(-1px);
     }
-    .network-item.selected {
-      background: rgba(37,99,235,0.22);
-      border-color: #38bdf8;
-      box-shadow: 0 0 12px rgba(56,189,248,0.2);
-    }
-    .network-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #fff; }
-    .network-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); }
-    .wifi-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
-    .bar { width: 3px; background: rgba(255,255,255,0.2); border-radius: 1px; }
-    .bar.active { background: var(--primary); }
-    .bar-1 { height: 4px; }
-    .bar-2 { height: 7px; }
-    .bar-3 { height: 10px; }
-    .bar-4 { height: 14px; }
 
-    .input-group { display: flex; flex-direction: column; gap: 6px; }
-    .input-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+    .network-item.selected {
+      background: rgba(37, 99, 235, 0.22);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .network-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .network-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .wifi-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 14px;
+    }
+
+    .bar {
+      width: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 1px;
+    }
+
+    .bar.active {
+      background: var(--primary);
+    }
+
+    .bar-1 {
+      height: 4px;
+    }
+
+    .bar-2 {
+      height: 7px;
+    }
+
+    .bar-3 {
+      height: 10px;
+    }
+
+    .bar-4 {
+      height: 14px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
     .input-group input {
       width: 100%;
-      background: rgba(0,0,0,0.35);
+      background: rgba(0, 0, 0, 0.35);
       border: 1px solid var(--card-border);
       border-radius: 8px;
       padding: 10px 12px;
@@ -380,9 +831,21 @@
       outline: none;
       transition: border-color 0.15s ease;
     }
-    .input-group input:focus { border-color: var(--primary); }
-    .input-with-action { position: relative; display: flex; align-items: center; }
-    .input-with-action input { padding-right: 40px; }
+
+    .input-group input:focus {
+      border-color: var(--primary);
+    }
+
+    .input-with-action {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-action input {
+      padding-right: 40px;
+    }
+
     .btn-reveal {
       position: absolute;
       right: 10px;
@@ -393,7 +856,10 @@
       color: var(--text-dim);
       padding: 4px;
     }
-    .btn-reveal:hover { color: #fff; }
+
+    .btn-reveal:hover {
+      color: #fff;
+    }
 
     .setup-status-box {
       border-radius: 10px;
@@ -401,27 +867,41 @@
       font-size: 13px;
       line-height: 1.5;
     }
+
     .setup-status-box.connecting {
-      background: rgba(56,189,248,0.1);
-      border: 1px solid rgba(56,189,248,0.25);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       color: #38bdf8;
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .setup-status-box.success {
-      background: rgba(16,185,129,0.12);
-      border: 1px solid rgba(16,185,129,0.3);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
       color: #34d399;
     }
+
     .setup-status-box.error {
-      background: rgba(239,68,68,0.12);
-      border: 1px solid rgba(239,68,68,0.3);
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
       color: #f87171;
     }
 
-    .setup-actions { display: flex; flex-direction: column; gap: 8px; }
-    .btn-block { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; }
+    .setup-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-block {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
     .link-btn {
       background: transparent;
       border: none;
@@ -433,7 +913,10 @@
       padding: 4px 0;
       margin-top: 4px;
     }
-    .link-btn:hover { text-decoration: underline; }
+
+    .link-btn:hover {
+      text-decoration: underline;
+    }
 
     /* OTA Modal & Dropzone Styles */
     .modal-backdrop {
@@ -449,7 +932,17 @@
       padding: 16px;
       animation: fadeIn 0.15s ease-out;
     }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
     .modal-card {
       background: var(--card);
       border: 1px solid var(--card-border);
@@ -462,6 +955,7 @@
       gap: 14px;
       box-shadow: 0 24px 56px -12px rgba(0, 0, 0, 0.75);
     }
+
     .modal-header {
       display: flex;
       align-items: center;
@@ -469,10 +963,28 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       padding-bottom: 12px;
     }
-    .modal-title-wrap { display: flex; align-items: center; gap: 10px; }
-    .modal-icon { font-size: 20px; }
-    .modal-title { font-size: 17px; font-weight: 700; color: #fff; }
-    .modal-subtitle { font-size: 12px; color: var(--text-dim); }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-icon {
+      font-size: 20px;
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
     .btn-close {
       background: transparent;
       border: none;
@@ -484,7 +996,10 @@
       border-radius: 6px;
       transition: color 0.15s;
     }
-    .btn-close:hover { color: #fff; }
+
+    .btn-close:hover {
+      color: #fff;
+    }
 
     .ota-partition-info {
       display: flex;
@@ -494,10 +1009,32 @@
       border-radius: 10px;
       padding: 8px 12px;
     }
-    .ota-part-item { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-    .ota-part-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
-    .ota-part-val { font-size: 12px; font-weight: 600; color: #fff; font-family: ui-monospace, monospace; }
-    .ota-part-val.target { color: var(--primary); }
+
+    .ota-part-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ota-part-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
+    .ota-part-val {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      font-family: ui-monospace, monospace;
+    }
+
+    .ota-part-val.target {
+      color: var(--primary);
+    }
 
     .ota-dropzone {
       border: 2px dashed rgba(56, 189, 248, 0.35);
@@ -512,14 +1049,28 @@
       align-items: center;
       gap: 6px;
     }
-    .ota-dropzone:hover, .ota-dropzone.dragover {
+
+    .ota-dropzone:hover,
+    .ota-dropzone.dragover {
       border-color: #38bdf8;
       background: rgba(56, 189, 248, 0.08);
       transform: scale(1.01);
     }
-    .drop-icon { font-size: 32px; margin-bottom: 2px; }
-    .drop-text { font-size: 13px; color: #fff; }
-    .drop-hint { font-size: 11px; color: var(--text-dim); }
+
+    .drop-icon {
+      font-size: 32px;
+      margin-bottom: 2px;
+    }
+
+    .drop-text {
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .drop-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
 
     .selected-file-info {
       display: flex;
@@ -535,7 +1086,12 @@
       font-weight: 600;
       margin-top: 4px;
     }
-    .file-size { color: var(--text-dim); font-size: 11px; font-weight: 500; }
+
+    .file-size {
+      color: var(--text-dim);
+      font-size: 11px;
+      font-weight: 500;
+    }
 
     .ota-warning-banner {
       background: rgba(245, 158, 11, 0.12);
@@ -556,16 +1112,19 @@
       font-size: 13px;
       line-height: 1.5;
     }
+
     .ota-status-box.success {
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: #34d399;
     }
+
     .ota-status-box.error {
       background: rgba(239, 68, 68, 0.12);
       border: 1px solid rgba(239, 68, 68, 0.35);
       color: #f87171;
     }
+
     .sha-chip {
       font-family: ui-monospace, SFMono-Regular, monospace;
       font-size: 10.5px;
@@ -585,11 +1144,12 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
       <div class="header-left">
-        <div class="title" id="app-title">espmui Dashboard</div>
+        <div class="title" id="app-title">espmpui Dashboard</div>
       </div>
       <div class="header-right">
         <button class="layout-toggle-btn" id="ota-toggle" title="Firmware OTA Update">
@@ -604,7 +1164,8 @@
           <span id="layout-icon">◫</span>
           <span id="layout-label">Vertical</span>
         </button>
-        <div class="status-badge" id="conn-badge"><span class="pulse-dot"></span><span id="conn-text">Connecting...</span></div>
+        <div class="status-badge" id="conn-badge"><span class="pulse-dot"></span><span
+            id="conn-text">Connecting...</span></div>
       </div>
     </header>
     <div class="dashboard-layout vertical" id="dashboard-layout">
@@ -629,7 +1190,8 @@
             </button>
           </div>
           <div class="network-list" id="network-list">
-            <div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">Scanning for networks...</div>
+            <div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">Scanning for networks...
+            </div>
           </div>
           <div style="margin-top:6px;">
             <button class="link-btn" id="btn-toggle-manual">+ Enter hidden or custom SSID</button>
@@ -657,784 +1219,787 @@
           <button class="btn secondary btn-block" id="btn-goto-dashboard">Continue to Dashboard →</button>
         </div>
       </div>
-  </div>
+    </div>
 
-  <!-- Firmware Drag-and-Drop OTA Update Modal -->
-  <div class="modal-backdrop" id="ota-modal" style="display:none;">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-icon">⬆</span>
-          <div>
-            <h3 class="modal-title">Firmware OTA Update</h3>
-            <div class="modal-subtitle">Web-based drag-and-drop firmware flasher</div>
+    <!-- Firmware Drag-and-Drop OTA Update Modal -->
+    <div class="modal-backdrop" id="ota-modal" style="display:none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">⬆</span>
+            <div>
+              <h3 class="modal-title">Firmware OTA Update</h3>
+              <div class="modal-subtitle">Web-based drag-and-drop firmware flasher</div>
+            </div>
+          </div>
+          <button class="btn-close" id="btn-close-ota" title="Close">&times;</button>
+        </div>
+
+        <!-- Partition Status Banner -->
+        <div class="ota-partition-info" id="ota-partition-info">
+          <div class="ota-part-item">
+            <span class="ota-part-label">Active Boot:</span>
+            <span class="ota-part-val" id="ota-running-part">Detecting...</span>
+          </div>
+          <div class="ota-part-item">
+            <span class="ota-part-label">Target Flash:</span>
+            <span class="ota-part-val target" id="ota-target-part">Detecting...</span>
           </div>
         </div>
-        <button class="btn-close" id="btn-close-ota" title="Close">&times;</button>
-      </div>
 
-      <!-- Partition Status Banner -->
-      <div class="ota-partition-info" id="ota-partition-info">
-        <div class="ota-part-item">
-          <span class="ota-part-label">Active Boot:</span>
-          <span class="ota-part-val" id="ota-running-part">Detecting...</span>
+        <!-- Drag & Drop Dropzone -->
+        <div class="ota-dropzone" id="ota-dropzone">
+          <input type="file" id="ota-file-input" accept=".bin" style="display:none;" />
+          <div class="drop-icon">📦</div>
+          <div class="drop-text">Drag & drop your <b>.bin</b> firmware here</div>
+          <div class="drop-hint">or <button type="button" class="link-btn" id="btn-browse-firmware"
+              style="color:#38bdf8;font-weight:600;display:inline-block;padding:0;">browse files</button> from your
+            computer</div>
+          <div class="selected-file-info" id="ota-file-details" style="display:none;">
+            <span id="ota-selected-filename"
+              style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;">firmware.bin</span>
+            <span class="file-size" id="ota-selected-filesize">0 KB</span>
+          </div>
         </div>
-        <div class="ota-part-item">
-          <span class="ota-part-label">Target Flash:</span>
-          <span class="ota-part-val target" id="ota-target-part">Detecting...</span>
-        </div>
-      </div>
 
-      <!-- Drag & Drop Dropzone -->
-      <div class="ota-dropzone" id="ota-dropzone">
-        <input type="file" id="ota-file-input" accept=".bin" style="display:none;" />
-        <div class="drop-icon">📦</div>
-        <div class="drop-text">Drag & drop your <b>.bin</b> firmware here</div>
-        <div class="drop-hint">or <button type="button" class="link-btn" id="btn-browse-firmware" style="color:#38bdf8;font-weight:600;display:inline-block;padding:0;">browse files</button> from your computer</div>
-        <div class="selected-file-info" id="ota-file-details" style="display:none;">
-          <span id="ota-selected-filename" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;">firmware.bin</span>
-          <span class="file-size" id="ota-selected-filesize">0 KB</span>
+        <!-- Amber Risk Warning Banner during Flashing -->
+        <div class="ota-warning-banner" id="ota-warning-banner" style="display:none;">
+          <span style="font-size:18px;">⚠️</span>
+          <div>
+            <b>Flashing in Progress:</b> DO NOT disconnect power or close this browser window.
+          </div>
         </div>
-      </div>
 
-      <!-- Amber Risk Warning Banner during Flashing -->
-      <div class="ota-warning-banner" id="ota-warning-banner" style="display:none;">
-        <span style="font-size:18px;">⚠️</span>
-        <div>
-          <b>Flashing in Progress:</b> DO NOT disconnect power or close this browser window.
+        <!-- Progress Bar -->
+        <div class="ota-progress-container" id="ota-progress-container" style="display:none;">
+          <div class="row" style="justify-content:space-between;font-size:12px;margin-bottom:6px;">
+            <span id="ota-progress-status" style="font-weight:600;color:#38bdf8;">Uploading firmware...</span>
+            <span id="ota-progress-pct" style="font-weight:700;color:#fff;">0%</span>
+          </div>
+          <div class="progress-bar-bg" style="height:10px;">
+            <div class="progress-bar-fill" id="ota-progress-bar" style="width:0%;"></div>
+          </div>
+          <div class="row" style="justify-content:space-between;font-size:11px;color:var(--text-dim);margin-top:6px;">
+            <span id="ota-bytes-uploaded">0 KB</span>
+            <span id="ota-bytes-total">0 KB</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Progress Bar -->
-      <div class="ota-progress-container" id="ota-progress-container" style="display:none;">
-        <div class="row" style="justify-content:space-between;font-size:12px;margin-bottom:6px;">
-          <span id="ota-progress-status" style="font-weight:600;color:#38bdf8;">Uploading firmware...</span>
-          <span id="ota-progress-pct" style="font-weight:700;color:#fff;">0%</span>
-        </div>
-        <div class="progress-bar-bg" style="height:10px;">
-          <div class="progress-bar-fill" id="ota-progress-bar" style="width:0%;"></div>
-        </div>
-        <div class="row" style="justify-content:space-between;font-size:11px;color:var(--text-dim);margin-top:6px;">
-          <span id="ota-bytes-uploaded">0 KB</span>
-          <span id="ota-bytes-total">0 KB</span>
-        </div>
-      </div>
+        <!-- Result / SHA-256 / Countdown Status Box -->
+        <div class="ota-status-box" id="ota-status-box" style="display:none;"></div>
 
-      <!-- Result / SHA-256 / Countdown Status Box -->
-      <div class="ota-status-box" id="ota-status-box" style="display:none;"></div>
-
-      <!-- Modal Action Buttons -->
-      <div class="modal-actions">
-        <button class="btn secondary" id="btn-cancel-ota">Cancel</button>
-        <button class="btn" id="btn-start-ota" style="background:#2563eb;color:#fff;" disabled>Flash Firmware</button>
+        <!-- Modal Action Buttons -->
+        <div class="modal-actions">
+          <button class="btn secondary" id="btn-cancel-ota">Cancel</button>
+          <button class="btn" id="btn-start-ota" style="background:#2563eb;color:#fff;" disabled>Flash Firmware</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="toast" class="toast"></div>
+    <div id="toast" class="toast"></div>
 
-  <script>
-    let ws, charts = {};
-    const ICONS = {
-      activity: '⚡',
-      terminal: '💻',
-      camera: '📷',
-      sliders: '🎛️',
-      cpu: '🧠',
-      wifi: '📶',
-      storage: '🗄️',
-      light: '💡',
-      sensor: '🌡️'
-    };
-
-    const connBadge = document.getElementById('conn-badge');
-    const connText = document.getElementById('conn-text');
-    const appTitle = document.getElementById('app-title');
-    const tabsNav = document.getElementById('tabs-nav');
-    const tabsContent = document.getElementById('tabs-content');
-    const toast = document.getElementById('toast');
-
-    let currentLayout = localStorage.getItem('espmui_tab_layout') || 'vertical';
-
-    function setLayout(layout) {
-      currentLayout = layout;
-      localStorage.setItem('espmui_tab_layout', layout);
-      const layoutEl = document.getElementById('dashboard-layout');
-      if (layoutEl) {
-        layoutEl.className = `dashboard-layout ${layout}`;
-      }
-      const iconEl = document.getElementById('layout-icon');
-      const labelEl = document.getElementById('layout-label');
-      if (iconEl) iconEl.textContent = layout === 'vertical' ? '◫' : '▤';
-      if (labelEl) labelEl.textContent = layout === 'vertical' ? 'Vertical' : 'Horizontal';
-
-      setTimeout(() => {
-        Object.keys(charts).forEach(id => {
-          if (charts[id].points && charts[id].points.length > 0) drawChart(id);
-        });
-      }, 50);
-    }
-
-    document.getElementById('layout-toggle').onclick = () => {
-      setLayout(currentLayout === 'vertical' ? 'horizontal' : 'vertical');
-    };
-
-    function showToast(msg, color='#ef4444') {
-      toast.textContent = msg;
-      toast.style.background = color;
-      toast.style.display = 'block';
-      setTimeout(() => { toast.style.display = 'none'; }, 3500);
-    }
-
-    function connect() {
-      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-      ws = new WebSocket(`${proto}//${location.host}/ws`);
-      ws.onopen = () => {
-        connBadge.style.color = '#10b981';
-        connBadge.style.background = 'rgba(16,185,129,0.12)';
-        connText.textContent = 'Live';
+    <script>
+      let ws, charts = {};
+      const ICONS = {
+        activity: '⚡',
+        terminal: '💻',
+        camera: '📷',
+        sliders: '🎛️',
+        cpu: '🧠',
+        wifi: '📶',
+        storage: '🗄️',
+        light: '💡',
+        sensor: '🌡️'
       };
-      ws.onclose = () => {
-        connBadge.style.color = '#ef4444';
-        connBadge.style.background = 'rgba(239,68,68,0.12)';
-        connText.textContent = 'Offline';
-        setTimeout(connect, 2000);
-      };
-      ws.onmessage = (e) => {
-        try {
-          const msg = JSON.parse(e.data);
-          handleMessage(msg);
-        } catch (err) { console.error('Parse error:', err); }
-      };
-    }
 
-    function handleMessage(msg) {
-      if (msg.op === 'init') {
-        appTitle.textContent = msg.title || 'espmui Dashboard';
-        const serverLayout = msg.tab_layout || 'vertical';
-        const initialLayout = localStorage.getItem('espmui_tab_layout') || serverLayout;
-        setLayout(initialLayout);
-        renderTabs(msg.tabs || []);
-      } else if (msg.op === 'set') {
-        applyDiff(msg);
-      } else if (msg.op === 'batch') {
-        (msg.diffs || []).forEach(applyDiff);
-      } else if (msg.op === 'stream') {
-        appendTerminal(msg.id, msg.text);
-      } else if (msg.op === 'chart_point') {
-        appendChartPoint(msg.id, msg.val);
-      } else if (msg.op === 'files') {
-        renderFileList(msg.id, msg.files);
-      } else if (msg.op === 'toast') {
-        showToast(msg.msg, msg.type === 'error' ? '#ef4444' : '#10b981');
-      }
-    }
+      const connBadge = document.getElementById('conn-badge');
+      const connText = document.getElementById('conn-text');
+      const appTitle = document.getElementById('app-title');
+      const tabsNav = document.getElementById('tabs-nav');
+      const tabsContent = document.getElementById('tabs-content');
+      const toast = document.getElementById('toast');
 
-    function renderTabs(tabs) {
-      tabsNav.innerHTML = '';
-      tabsContent.innerHTML = '';
-      if (!tabs.length) return;
+      let currentLayout = localStorage.getItem('espmui_tab_layout') || 'vertical';
 
-      tabs.forEach((tab, idx) => {
-        const btn = document.createElement('button');
-        btn.className = `tab-btn ${idx === 0 ? 'active' : ''}`;
-        const iconSymbol = ICONS[tab.icon] || tab.icon || '';
-        const iconHtml = iconSymbol ? `<span class="tab-icon">${iconSymbol}</span>` : '';
-        btn.innerHTML = `${iconHtml}<span class="tab-label">${tab.title}</span>`;
-        btn.title = tab.title;
-        btn.onclick = () => selectTab(idx);
-        tabsNav.appendChild(btn);
-
-        const pane = document.createElement('div');
-        pane.id = `tab-pane-${idx}`;
-        pane.style.display = idx === 0 ? 'flex' : 'none';
-        pane.style.flexDirection = 'column';
-        pane.style.gap = '12px';
-
-        (tab.widgets || []).forEach(w => pane.appendChild(renderWidget(w)));
-        tabsContent.appendChild(pane);
-      });
-    }
-
-    function selectTab(selectedIdx) {
-      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === selectedIdx));
-      document.querySelectorAll('[id^="tab-pane-"]').forEach((p, i) => p.style.display = i === selectedIdx ? 'flex' : 'none');
-      Object.keys(charts).forEach(id => {
-        if (charts[id].points && charts[id].points.length > 0) {
-          drawChart(id);
+      function setLayout(layout) {
+        currentLayout = layout;
+        localStorage.setItem('espmui_tab_layout', layout);
+        const layoutEl = document.getElementById('dashboard-layout');
+        if (layoutEl) {
+          layoutEl.className = `dashboard-layout ${layout}`;
         }
-      });
-    }
+        const iconEl = document.getElementById('layout-icon');
+        const labelEl = document.getElementById('layout-label');
+        if (iconEl) iconEl.textContent = layout === 'vertical' ? '◫' : '▤';
+        if (labelEl) labelEl.textContent = layout === 'vertical' ? 'Vertical' : 'Horizontal';
 
-    function renderWidget(w) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.id = `card-${w.id}`;
+        setTimeout(() => {
+          Object.keys(charts).forEach(id => {
+            if (charts[id].points && charts[id].points.length > 0) drawChart(id);
+          });
+        }, 50);
+      }
 
-      if (w.type === 'button') {
-        const cardChild = document.createElement('div');
-        const btn = document.createElement('button');
-        btn.className = `btn ${w.accent || ''}`;
-        btn.textContent = w.text || 'Press';
-        btn.onclick = () => ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'click' }));
-        if (w.label) {
-          cardChild.className = 'row';
+      document.getElementById('layout-toggle').onclick = () => {
+        setLayout(currentLayout === 'vertical' ? 'horizontal' : 'vertical');
+      };
+
+      function showToast(msg, color = '#ef4444') {
+        toast.textContent = msg;
+        toast.style.background = color;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+      }
+
+      function connect() {
+        const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${proto}//${location.host}/ws`);
+        ws.onopen = () => {
+          connBadge.style.color = '#10b981';
+          connBadge.style.background = 'rgba(16,185,129,0.12)';
+          connText.textContent = 'Live';
+        };
+        ws.onclose = () => {
+          connBadge.style.color = '#ef4444';
+          connBadge.style.background = 'rgba(239,68,68,0.12)';
+          connText.textContent = 'Offline';
+          setTimeout(connect, 2000);
+        };
+        ws.onmessage = (e) => {
+          try {
+            const msg = JSON.parse(e.data);
+            handleMessage(msg);
+          } catch (err) { console.error('Parse error:', err); }
+        };
+      }
+
+      function handleMessage(msg) {
+        if (msg.op === 'init') {
+          appTitle.textContent = msg.title || 'espmpui Dashboard';
+          const serverLayout = msg.tab_layout || 'vertical';
+          const initialLayout = localStorage.getItem('espmui_tab_layout') || serverLayout;
+          setLayout(initialLayout);
+          renderTabs(msg.tabs || []);
+        } else if (msg.op === 'set') {
+          applyDiff(msg);
+        } else if (msg.op === 'batch') {
+          (msg.diffs || []).forEach(applyDiff);
+        } else if (msg.op === 'stream') {
+          appendTerminal(msg.id, msg.text);
+        } else if (msg.op === 'chart_point') {
+          appendChartPoint(msg.id, msg.val);
+        } else if (msg.op === 'files') {
+          renderFileList(msg.id, msg.files);
+        } else if (msg.op === 'toast') {
+          showToast(msg.msg, msg.type === 'error' ? '#ef4444' : '#10b981');
+        }
+      }
+
+      function renderTabs(tabs) {
+        tabsNav.innerHTML = '';
+        tabsContent.innerHTML = '';
+        if (!tabs.length) return;
+
+        tabs.forEach((tab, idx) => {
+          const btn = document.createElement('button');
+          btn.className = `tab-btn ${idx === 0 ? 'active' : ''}`;
+          const iconSymbol = ICONS[tab.icon] || tab.icon || '';
+          const iconHtml = iconSymbol ? `<span class="tab-icon">${iconSymbol}</span>` : '';
+          btn.innerHTML = `${iconHtml}<span class="tab-label">${tab.title}</span>`;
+          btn.title = tab.title;
+          btn.onclick = () => selectTab(idx);
+          tabsNav.appendChild(btn);
+
+          const pane = document.createElement('div');
+          pane.id = `tab-pane-${idx}`;
+          pane.style.display = idx === 0 ? 'flex' : 'none';
+          pane.style.flexDirection = 'column';
+          pane.style.gap = '12px';
+
+          (tab.widgets || []).forEach(w => pane.appendChild(renderWidget(w)));
+          tabsContent.appendChild(pane);
+        });
+      }
+
+      function selectTab(selectedIdx) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === selectedIdx));
+        document.querySelectorAll('[id^="tab-pane-"]').forEach((p, i) => p.style.display = i === selectedIdx ? 'flex' : 'none');
+        Object.keys(charts).forEach(id => {
+          if (charts[id].points && charts[id].points.length > 0) {
+            drawChart(id);
+          }
+        });
+      }
+
+      function renderWidget(w) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card-${w.id}`;
+
+        if (w.type === 'button') {
+          const cardChild = document.createElement('div');
+          const btn = document.createElement('button');
+          btn.className = `btn ${w.accent || ''}`;
+          btn.textContent = w.text || 'Press';
+          btn.onclick = () => ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'click' }));
+          if (w.label) {
+            cardChild.className = 'row';
+            const label = document.createElement('span');
+            label.textContent = w.label;
+            label.style.fontWeight = '500';
+            cardChild.appendChild(label);
+            cardChild.appendChild(btn);
+          } else {
+            btn.style.width = '100%';
+            cardChild.appendChild(btn);
+          }
+          card.appendChild(cardChild);
+        } else if (w.type === 'switch') {
+          const row = document.createElement('div');
+          row.className = 'row';
           const label = document.createElement('span');
           label.textContent = w.label;
           label.style.fontWeight = '500';
-          cardChild.appendChild(label);
-          cardChild.appendChild(btn);
-        } else {
-          btn.style.width = '100%';
-          cardChild.appendChild(btn);
-        }
-        card.appendChild(cardChild);
-      } else if (w.type === 'switch') {
-        const row = document.createElement('div');
-        row.className = 'row';
-        const label = document.createElement('span');
-        label.textContent = w.label;
-        label.style.fontWeight = '500';
-        const sw = document.createElement('label');
-        sw.className = 'switch-wrap';
-        const inp = document.createElement('input');
-        inp.type = 'checkbox';
-        inp.id = `input-${w.id}`;
-        inp.checked = !!w.val;
-        inp.onchange = (e) => ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'change', val: e.target.checked }));
-        const track = document.createElement('span');
-        track.className = 'slider-track';
-        sw.appendChild(inp);
-        sw.appendChild(track);
-        row.appendChild(label);
-        row.appendChild(sw);
-        card.appendChild(row);
-      } else if (w.type === 'slider') {
-        const title = document.createElement('div');
-        title.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        const valSpan = document.createElement('span');
-        valSpan.id = `val-${w.id}`;
-        valSpan.style.fontWeight = '600';
-        valSpan.style.color = '#38bdf8';
-        valSpan.textContent = w.val;
-        title.appendChild(label);
-        title.appendChild(valSpan);
-        card.appendChild(title);
+          const sw = document.createElement('label');
+          sw.className = 'switch-wrap';
+          const inp = document.createElement('input');
+          inp.type = 'checkbox';
+          inp.id = `input-${w.id}`;
+          inp.checked = !!w.val;
+          inp.onchange = (e) => ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'change', val: e.target.checked }));
+          const track = document.createElement('span');
+          track.className = 'slider-track';
+          sw.appendChild(inp);
+          sw.appendChild(track);
+          row.appendChild(label);
+          row.appendChild(sw);
+          card.appendChild(row);
+        } else if (w.type === 'slider') {
+          const title = document.createElement('div');
+          title.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          const valSpan = document.createElement('span');
+          valSpan.id = `val-${w.id}`;
+          valSpan.style.fontWeight = '600';
+          valSpan.style.color = '#38bdf8';
+          valSpan.textContent = w.val;
+          title.appendChild(label);
+          title.appendChild(valSpan);
+          card.appendChild(title);
 
-        const sl = document.createElement('input');
-        sl.type = 'range';
-        sl.className = 'slider-control';
-        sl.id = `input-${w.id}`;
-        sl.min = w.min !== undefined ? w.min : 0;
-        sl.max = w.max !== undefined ? w.max : 100;
-        sl.step = w.step || 1;
-        sl.value = w.val;
-        sl.oninput = (e) => { valSpan.textContent = e.target.value; };
-        sl.onchange = (e) => ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'change', val: Number(e.target.value) }));
-        card.appendChild(sl);
-      } else if (w.type === 'metric') {
-        const headRow = document.createElement('div');
-        headRow.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        headRow.appendChild(label);
+          const sl = document.createElement('input');
+          sl.type = 'range';
+          sl.className = 'slider-control';
+          sl.id = `input-${w.id}`;
+          sl.min = w.min !== undefined ? w.min : 0;
+          sl.max = w.max !== undefined ? w.max : 100;
+          sl.step = w.step || 1;
+          sl.value = w.val;
+          sl.oninput = (e) => { valSpan.textContent = e.target.value; };
+          sl.onchange = (e) => ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'change', val: Number(e.target.value) }));
+          card.appendChild(sl);
+        } else if (w.type === 'metric') {
+          const headRow = document.createElement('div');
+          headRow.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          headRow.appendChild(label);
 
-        if (w.badge) {
-          const badge = document.createElement('span');
-          badge.className = 'metric-badge';
-          badge.id = `badge-${w.id}`;
-          badge.textContent = w.badge;
-          headRow.appendChild(badge);
-        }
-        card.appendChild(headRow);
-
-        const valWrap = document.createElement('div');
-        const v = document.createElement('span');
-        v.className = 'metric-val';
-        v.id = `val-${w.id}`;
-        v.dataset.unit = w.unit || '';
-        v.textContent = w.val !== undefined ? (w.unit ? `${w.val} ${w.unit}` : w.val) : '--';
-        const u = document.createElement('span');
-        u.className = 'metric-unit';
-        u.textContent = w.unit || '';
-        valWrap.appendChild(v);
-        valWrap.appendChild(u);
-        card.appendChild(valWrap);
-      } else if (w.type === 'progress') {
-        const title = document.createElement('div');
-        title.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        const valSpan = document.createElement('span');
-        valSpan.id = `val-${w.id}`;
-        valSpan.dataset.unit = w.unit || '';
-        valSpan.style.fontWeight = '600';
-        valSpan.style.color = 'var(--text-dim)';
-        valSpan.textContent = `${w.val || 0} ${w.unit || ''}`;
-        title.appendChild(label);
-        title.appendChild(valSpan);
-        card.appendChild(title);
-
-        const barBg = document.createElement('div');
-        barBg.className = 'progress-bar-bg';
-        const barFill = document.createElement('div');
-        barFill.className = 'progress-bar-fill';
-        barFill.id = `fill-${w.id}`;
-        barFill.dataset.max = w.max || 100;
-        const pct = Math.min(100, Math.max(0, ((w.val || 0) / (w.max || 100)) * 100));
-        barFill.style.width = `${pct}%`;
-        barBg.appendChild(barFill);
-        card.appendChild(barBg);
-      } else if (w.type === 'terminal') {
-        const header = document.createElement('div');
-        header.className = 'term-header';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        const clearBtn = document.createElement('button');
-        clearBtn.className = 'btn-sm';
-        clearBtn.textContent = 'Clear';
-        clearBtn.onclick = () => {
-          document.getElementById(`term-${w.id}`).textContent = '';
-          ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'clear' }));
-        };
-        header.appendChild(label);
-        header.appendChild(clearBtn);
-        card.appendChild(header);
-
-        const term = document.createElement('div');
-        term.className = 'term-window';
-        term.id = `term-${w.id}`;
-        card.appendChild(term);
-      } else if (w.type === 'chart') {
-        const header = document.createElement('div');
-        header.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        const curVal = document.createElement('span');
-        curVal.id = `chart-val-${w.id}`;
-        curVal.style.fontWeight = '600';
-        curVal.style.color = w.color || '#38bdf8';
-        curVal.textContent = '--';
-        header.appendChild(label);
-        header.appendChild(curVal);
-        card.appendChild(header);
-
-        const canvas = document.createElement('canvas');
-        canvas.className = 'chart-canvas';
-        canvas.id = `canvas-${w.id}`;
-        canvas.width = 500;
-        canvas.height = 120;
-        card.appendChild(canvas);
-
-        charts[w.id] = { points: [], maxPoints: w.max_points || 30, color: w.color || '#38bdf8', unit: w.unit || '' };
-      } else if (w.type === 'camera') {
-        const headRow = document.createElement('div');
-        headRow.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        headRow.appendChild(label);
-        card.appendChild(headRow);
-
-        const vp = document.createElement('div');
-        vp.className = 'cam-viewport';
-        const img = document.createElement('img');
-        img.className = 'cam-img';
-        img.id = `cam-img-${w.id}`;
-        img.src = w.snapshot_url || '/snapshot';
-        vp.appendChild(img);
-        card.appendChild(vp);
-
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.style.gap = '8px';
-
-        const snapBtn = document.createElement('button');
-        snapBtn.className = 'btn';
-        snapBtn.textContent = '📸 Refresh Snapshot';
-        snapBtn.onclick = () => {
-          img.src = `${w.snapshot_url || '/snapshot'}?t=${Date.now()}`;
-        };
-        row.appendChild(snapBtn);
-
-        let streamTimer = null;
-        const autoBtn = document.createElement('button');
-        autoBtn.className = 'btn secondary';
-        autoBtn.textContent = '▶ Auto (1s)';
-        autoBtn.onclick = () => {
-          if (streamTimer) {
-            clearInterval(streamTimer);
-            streamTimer = null;
-            autoBtn.textContent = '▶ Auto (1s)';
-            autoBtn.className = 'btn secondary';
-          } else {
-            streamTimer = setInterval(() => {
-              img.src = `${w.snapshot_url || '/snapshot'}?t=${Date.now()}`;
-            }, 1000);
-            autoBtn.textContent = '⏸ Pause';
-            autoBtn.className = 'btn accent';
+          if (w.badge) {
+            const badge = document.createElement('span');
+            badge.className = 'metric-badge';
+            badge.id = `badge-${w.id}`;
+            badge.textContent = w.badge;
+            headRow.appendChild(badge);
           }
-        };
-        row.appendChild(autoBtn);
-        card.appendChild(row);
-      } else if (w.type === 'file_manager') {
-        const headRow = document.createElement('div');
-        headRow.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label;
-        headRow.appendChild(label);
+          card.appendChild(headRow);
 
-        const refBtn = document.createElement('button');
-        refBtn.className = 'btn-sm';
-        refBtn.textContent = '🔄 Refresh';
-        refBtn.onclick = () => {
-          ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'refresh' }));
-        };
-        headRow.appendChild(refBtn);
-        card.appendChild(headRow);
+          const valWrap = document.createElement('div');
+          const v = document.createElement('span');
+          v.className = 'metric-val';
+          v.id = `val-${w.id}`;
+          v.dataset.unit = w.unit || '';
+          v.textContent = w.val !== undefined ? (w.unit ? `${w.val} ${w.unit}` : w.val) : '--';
+          const u = document.createElement('span');
+          u.className = 'metric-unit';
+          u.textContent = w.unit || '';
+          valWrap.appendChild(v);
+          valWrap.appendChild(u);
+          card.appendChild(valWrap);
+        } else if (w.type === 'progress') {
+          const title = document.createElement('div');
+          title.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          const valSpan = document.createElement('span');
+          valSpan.id = `val-${w.id}`;
+          valSpan.dataset.unit = w.unit || '';
+          valSpan.style.fontWeight = '600';
+          valSpan.style.color = 'var(--text-dim)';
+          valSpan.textContent = `${w.val || 0} ${w.unit || ''}`;
+          title.appendChild(label);
+          title.appendChild(valSpan);
+          card.appendChild(title);
 
-        const table = document.createElement('table');
-        table.className = 'file-table';
-        table.id = `fm-table-${w.id}`;
-        table.innerHTML = '<thead><tr><th>Name</th><th style="text-align:right">Size</th></tr></thead><tbody id="fm-body-' + w.id + '"></tbody>';
-        card.appendChild(table);
+          const barBg = document.createElement('div');
+          barBg.className = 'progress-bar-bg';
+          const barFill = document.createElement('div');
+          barFill.className = 'progress-bar-fill';
+          barFill.id = `fill-${w.id}`;
+          barFill.dataset.max = w.max || 100;
+          const pct = Math.min(100, Math.max(0, ((w.val || 0) / (w.max || 100)) * 100));
+          barFill.style.width = `${pct}%`;
+          barBg.appendChild(barFill);
+          card.appendChild(barBg);
+        } else if (w.type === 'terminal') {
+          const header = document.createElement('div');
+          header.className = 'term-header';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          const clearBtn = document.createElement('button');
+          clearBtn.className = 'btn-sm';
+          clearBtn.textContent = 'Clear';
+          clearBtn.onclick = () => {
+            document.getElementById(`term-${w.id}`).textContent = '';
+            ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'clear' }));
+          };
+          header.appendChild(label);
+          header.appendChild(clearBtn);
+          card.appendChild(header);
 
-        if (w.files) {
-          renderFileList(w.id, w.files);
+          const term = document.createElement('div');
+          term.className = 'term-window';
+          term.id = `term-${w.id}`;
+          card.appendChild(term);
+        } else if (w.type === 'chart') {
+          const header = document.createElement('div');
+          header.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          const curVal = document.createElement('span');
+          curVal.id = `chart-val-${w.id}`;
+          curVal.style.fontWeight = '600';
+          curVal.style.color = w.color || '#38bdf8';
+          curVal.textContent = '--';
+          header.appendChild(label);
+          header.appendChild(curVal);
+          card.appendChild(header);
+
+          const canvas = document.createElement('canvas');
+          canvas.className = 'chart-canvas';
+          canvas.id = `canvas-${w.id}`;
+          canvas.width = 500;
+          canvas.height = 120;
+          card.appendChild(canvas);
+
+          charts[w.id] = { points: [], maxPoints: w.max_points || 30, color: w.color || '#38bdf8', unit: w.unit || '' };
+        } else if (w.type === 'camera') {
+          const headRow = document.createElement('div');
+          headRow.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          headRow.appendChild(label);
+          card.appendChild(headRow);
+
+          const vp = document.createElement('div');
+          vp.className = 'cam-viewport';
+          const img = document.createElement('img');
+          img.className = 'cam-img';
+          img.id = `cam-img-${w.id}`;
+          img.src = w.snapshot_url || '/snapshot';
+          vp.appendChild(img);
+          card.appendChild(vp);
+
+          const row = document.createElement('div');
+          row.className = 'row';
+          row.style.gap = '8px';
+
+          const snapBtn = document.createElement('button');
+          snapBtn.className = 'btn';
+          snapBtn.textContent = '📸 Refresh Snapshot';
+          snapBtn.onclick = () => {
+            img.src = `${w.snapshot_url || '/snapshot'}?t=${Date.now()}`;
+          };
+          row.appendChild(snapBtn);
+
+          let streamTimer = null;
+          const autoBtn = document.createElement('button');
+          autoBtn.className = 'btn secondary';
+          autoBtn.textContent = '▶ Auto (1s)';
+          autoBtn.onclick = () => {
+            if (streamTimer) {
+              clearInterval(streamTimer);
+              streamTimer = null;
+              autoBtn.textContent = '▶ Auto (1s)';
+              autoBtn.className = 'btn secondary';
+            } else {
+              streamTimer = setInterval(() => {
+                img.src = `${w.snapshot_url || '/snapshot'}?t=${Date.now()}`;
+              }, 1000);
+              autoBtn.textContent = '⏸ Pause';
+              autoBtn.className = 'btn accent';
+            }
+          };
+          row.appendChild(autoBtn);
+          card.appendChild(row);
+        } else if (w.type === 'file_manager') {
+          const headRow = document.createElement('div');
+          headRow.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label;
+          headRow.appendChild(label);
+
+          const refBtn = document.createElement('button');
+          refBtn.className = 'btn-sm';
+          refBtn.textContent = '🔄 Refresh';
+          refBtn.onclick = () => {
+            ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'refresh' }));
+          };
+          headRow.appendChild(refBtn);
+          card.appendChild(headRow);
+
+          const table = document.createElement('table');
+          table.className = 'file-table';
+          table.id = `fm-table-${w.id}`;
+          table.innerHTML = '<thead><tr><th>Name</th><th style="text-align:right">Size</th></tr></thead><tbody id="fm-body-' + w.id + '"></tbody>';
+          card.appendChild(table);
+
+          if (w.files) {
+            renderFileList(w.id, w.files);
+          }
+        } else if (w.type === 'config_form') {
+          const headRow = document.createElement('div');
+          headRow.className = 'row';
+          const label = document.createElement('span');
+          label.className = 'card-title';
+          label.textContent = w.label || 'Configuration';
+          headRow.appendChild(label);
+          card.appendChild(headRow);
+
+          const formFields = document.createElement('div');
+          formFields.className = 'config-form-fields';
+          formFields.style.display = 'flex';
+          formFields.style.flexDirection = 'column';
+          formFields.style.gap = '12px';
+
+          const schema = w.schema || {};
+          const values = w.values || {};
+          const inputMap = {};
+
+          Object.keys(schema).forEach(key => {
+            const spec = schema[key];
+            const fieldGroup = document.createElement('div');
+            fieldGroup.className = 'input-group';
+
+            const fLabel = document.createElement('label');
+            fLabel.textContent = spec.label || key;
+            fieldGroup.appendChild(fLabel);
+
+            const curVal = values[key] !== undefined ? values[key] : spec.default;
+            const type = spec.type || 'text';
+
+            if (type === 'bool') {
+              const swRow = document.createElement('div');
+              swRow.className = 'row';
+              swRow.style.justifyContent = 'space-between';
+              const sw = document.createElement('label');
+              sw.className = 'switch-wrap';
+              const inp = document.createElement('input');
+              inp.type = 'checkbox';
+              inp.checked = !!curVal;
+              const track = document.createElement('span');
+              track.className = 'slider-track';
+              sw.appendChild(inp);
+              sw.appendChild(track);
+              fieldGroup.innerHTML = '';
+              swRow.appendChild(fLabel);
+              swRow.appendChild(sw);
+              fieldGroup.appendChild(swRow);
+              inputMap[key] = () => inp.checked;
+            } else if (type === 'select') {
+              const sel = document.createElement('select');
+              sel.className = 'select-control';
+              sel.style.width = '100%';
+              sel.style.background = 'rgba(0,0,0,0.35)';
+              sel.style.border = '1px solid var(--card-border)';
+              sel.style.borderRadius = '8px';
+              sel.style.padding = '8px 10px';
+              sel.style.color = '#fff';
+              sel.style.outline = 'none';
+              (spec.options || []).forEach(opt => {
+                const optEl = document.createElement('option');
+                optEl.value = opt;
+                optEl.textContent = opt;
+                if (opt === curVal) optEl.selected = true;
+                sel.appendChild(optEl);
+              });
+              fieldGroup.appendChild(sel);
+              inputMap[key] = () => sel.value;
+            } else if (type === 'slider') {
+              const rowVal = document.createElement('div');
+              rowVal.className = 'row';
+              const valSpan = document.createElement('span');
+              valSpan.style.color = '#38bdf8';
+              valSpan.style.fontWeight = '600';
+              valSpan.textContent = curVal;
+              rowVal.appendChild(fLabel);
+              rowVal.appendChild(valSpan);
+              fieldGroup.innerHTML = '';
+              fieldGroup.appendChild(rowVal);
+
+              const sl = document.createElement('input');
+              sl.type = 'range';
+              sl.className = 'slider-control';
+              sl.min = spec.min !== undefined ? spec.min : 0;
+              sl.max = spec.max !== undefined ? spec.max : 100;
+              sl.step = spec.step || 1;
+              sl.value = curVal;
+              sl.oninput = (e) => { valSpan.textContent = e.target.value; };
+              fieldGroup.appendChild(sl);
+              inputMap[key] = () => Number(sl.value);
+            } else {
+              const inp = document.createElement('input');
+              inp.type = type === 'number' ? 'number' : (type === 'password' ? 'password' : 'text');
+              if (spec.min !== undefined) inp.min = spec.min;
+              if (spec.max !== undefined) inp.max = spec.max;
+              if (spec.step !== undefined) inp.step = spec.step;
+              inp.value = curVal !== undefined ? curVal : '';
+              fieldGroup.appendChild(inp);
+              inputMap[key] = () => (type === 'number' ? Number(inp.value) : inp.value);
+            }
+
+            if (spec.hint) {
+              const hint = document.createElement('small');
+              hint.style.color = 'var(--text-dim)';
+              hint.style.fontSize = '11px';
+              hint.textContent = spec.hint;
+              fieldGroup.appendChild(hint);
+            }
+
+            formFields.appendChild(fieldGroup);
+          });
+
+          card.appendChild(formFields);
+
+          const btnRow = document.createElement('div');
+          btnRow.className = 'row';
+          btnRow.style.marginTop = '6px';
+          btnRow.style.gap = '8px';
+
+          const saveBtn = document.createElement('button');
+          saveBtn.className = 'btn';
+          saveBtn.textContent = '💾 Save Parameters';
+          saveBtn.onclick = () => {
+            const payload = {};
+            Object.keys(inputMap).forEach(k => { payload[k] = inputMap[k](); });
+            ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'save', val: payload }));
+          };
+
+          const resetBtn = document.createElement('button');
+          resetBtn.className = 'btn secondary';
+          resetBtn.textContent = '↺ Reset Defaults';
+          resetBtn.onclick = () => {
+            if (confirm('Reset all parameters to default values?')) {
+              ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'reset' }));
+            }
+          };
+
+          btnRow.appendChild(saveBtn);
+          btnRow.appendChild(resetBtn);
+          card.appendChild(btnRow);
         }
-      } else if (w.type === 'config_form') {
-        const headRow = document.createElement('div');
-        headRow.className = 'row';
-        const label = document.createElement('span');
-        label.className = 'card-title';
-        label.textContent = w.label || 'Configuration';
-        headRow.appendChild(label);
-        card.appendChild(headRow);
+        return card;
+      }
 
-        const formFields = document.createElement('div');
-        formFields.className = 'config-form-fields';
-        formFields.style.display = 'flex';
-        formFields.style.flexDirection = 'column';
-        formFields.style.gap = '12px';
-
-        const schema = w.schema || {};
-        const values = w.values || {};
-        const inputMap = {};
-
-        Object.keys(schema).forEach(key => {
-          const spec = schema[key];
-          const fieldGroup = document.createElement('div');
-          fieldGroup.className = 'input-group';
-
-          const fLabel = document.createElement('label');
-          fLabel.textContent = spec.label || key;
-          fieldGroup.appendChild(fLabel);
-
-          const curVal = values[key] !== undefined ? values[key] : spec.default;
-          const type = spec.type || 'text';
-
-          if (type === 'bool') {
-            const swRow = document.createElement('div');
-            swRow.className = 'row';
-            swRow.style.justifyContent = 'space-between';
-            const sw = document.createElement('label');
-            sw.className = 'switch-wrap';
-            const inp = document.createElement('input');
-            inp.type = 'checkbox';
-            inp.checked = !!curVal;
-            const track = document.createElement('span');
-            track.className = 'slider-track';
-            sw.appendChild(inp);
-            sw.appendChild(track);
-            fieldGroup.innerHTML = '';
-            swRow.appendChild(fLabel);
-            swRow.appendChild(sw);
-            fieldGroup.appendChild(swRow);
-            inputMap[key] = () => inp.checked;
-          } else if (type === 'select') {
-            const sel = document.createElement('select');
-            sel.className = 'select-control';
-            sel.style.width = '100%';
-            sel.style.background = 'rgba(0,0,0,0.35)';
-            sel.style.border = '1px solid var(--card-border)';
-            sel.style.borderRadius = '8px';
-            sel.style.padding = '8px 10px';
-            sel.style.color = '#fff';
-            sel.style.outline = 'none';
-            (spec.options || []).forEach(opt => {
-              const optEl = document.createElement('option');
-              optEl.value = opt;
-              optEl.textContent = opt;
-              if (opt === curVal) optEl.selected = true;
-              sel.appendChild(optEl);
-            });
-            fieldGroup.appendChild(sel);
-            inputMap[key] = () => sel.value;
-          } else if (type === 'slider') {
-            const rowVal = document.createElement('div');
-            rowVal.className = 'row';
-            const valSpan = document.createElement('span');
-            valSpan.style.color = '#38bdf8';
-            valSpan.style.fontWeight = '600';
-            valSpan.textContent = curVal;
-            rowVal.appendChild(fLabel);
-            rowVal.appendChild(valSpan);
-            fieldGroup.innerHTML = '';
-            fieldGroup.appendChild(rowVal);
-
-            const sl = document.createElement('input');
-            sl.type = 'range';
-            sl.className = 'slider-control';
-            sl.min = spec.min !== undefined ? spec.min : 0;
-            sl.max = spec.max !== undefined ? spec.max : 100;
-            sl.step = spec.step || 1;
-            sl.value = curVal;
-            sl.oninput = (e) => { valSpan.textContent = e.target.value; };
-            fieldGroup.appendChild(sl);
-            inputMap[key] = () => Number(sl.value);
-          } else {
-            const inp = document.createElement('input');
-            inp.type = type === 'number' ? 'number' : (type === 'password' ? 'password' : 'text');
-            if (spec.min !== undefined) inp.min = spec.min;
-            if (spec.max !== undefined) inp.max = spec.max;
-            if (spec.step !== undefined) inp.step = spec.step;
-            inp.value = curVal !== undefined ? curVal : '';
-            fieldGroup.appendChild(inp);
-            inputMap[key] = () => (type === 'number' ? Number(inp.value) : inp.value);
-          }
-
-          if (spec.hint) {
-            const hint = document.createElement('small');
-            hint.style.color = 'var(--text-dim)';
-            hint.style.fontSize = '11px';
-            hint.textContent = spec.hint;
-            fieldGroup.appendChild(hint);
-          }
-
-          formFields.appendChild(fieldGroup);
+      function renderFileList(id, files) {
+        const tbody = document.getElementById(`fm-body-${id}`);
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        (files || []).forEach(f => {
+          const tr = document.createElement('tr');
+          const tdName = document.createElement('td');
+          tdName.textContent = f.name;
+          const tdSize = document.createElement('td');
+          tdSize.style.textAlign = 'right';
+          tdSize.style.color = 'var(--text-dim)';
+          tdSize.textContent = `${(f.size / 1024).toFixed(1)} KB`;
+          tr.appendChild(tdName);
+          tr.appendChild(tdSize);
+          tbody.appendChild(tr);
         });
-
-        card.appendChild(formFields);
-
-        const btnRow = document.createElement('div');
-        btnRow.className = 'row';
-        btnRow.style.marginTop = '6px';
-        btnRow.style.gap = '8px';
-
-        const saveBtn = document.createElement('button');
-        saveBtn.className = 'btn';
-        saveBtn.textContent = '💾 Save Parameters';
-        saveBtn.onclick = () => {
-          const payload = {};
-          Object.keys(inputMap).forEach(k => { payload[k] = inputMap[k](); });
-          ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'save', val: payload }));
-        };
-
-        const resetBtn = document.createElement('button');
-        resetBtn.className = 'btn secondary';
-        resetBtn.textContent = '↺ Reset Defaults';
-        resetBtn.onclick = () => {
-          if (confirm('Reset all parameters to default values?')) {
-            ws.send(JSON.stringify({ op: 'evt', id: w.id, e: 'reset' }));
-          }
-        };
-
-        btnRow.appendChild(saveBtn);
-        btnRow.appendChild(resetBtn);
-        card.appendChild(btnRow);
       }
-      return card;
-    }
 
-    function renderFileList(id, files) {
-      const tbody = document.getElementById(`fm-body-${id}`);
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      (files || []).forEach(f => {
-        const tr = document.createElement('tr');
-        const tdName = document.createElement('td');
-        tdName.textContent = f.name;
-        const tdSize = document.createElement('td');
-        tdSize.style.textAlign = 'right';
-        tdSize.style.color = 'var(--text-dim)';
-        tdSize.textContent = `${(f.size / 1024).toFixed(1)} KB`;
-        tr.appendChild(tdName);
-        tr.appendChild(tdSize);
-        tbody.appendChild(tr);
+      function applyDiff(diff) {
+        const valEl = document.getElementById(`val-${diff.id}`);
+        const inpEl = document.getElementById(`input-${diff.id}`);
+        const fillEl = document.getElementById(`fill-${diff.id}`);
+        const badgeEl = document.getElementById(`badge-${diff.id}`);
+
+        if (badgeEl && diff.badge !== undefined) {
+          badgeEl.textContent = diff.badge;
+        }
+        if (valEl && diff.val !== undefined) {
+          const unit = diff.unit !== undefined ? diff.unit : (valEl.dataset.unit || '');
+          valEl.textContent = unit ? `${diff.val} ${unit}` : diff.val;
+        }
+        if (inpEl) {
+          if (inpEl.type === 'checkbox') inpEl.checked = !!diff.val;
+          else if (inpEl.type === 'range') inpEl.value = diff.val;
+        }
+        if (fillEl && diff.val !== undefined) {
+          const max = diff.max !== undefined ? diff.max : Number(fillEl.dataset.max || 100);
+          const pct = Math.min(100, Math.max(0, ((diff.val || 0) / max) * 100));
+          fillEl.style.width = `${pct}%`;
+        }
+      }
+
+      function appendTerminal(id, text) {
+        const el = document.getElementById(`term-${id}`);
+        if (el) {
+          el.textContent += text;
+          el.scrollTop = el.scrollHeight;
+        }
+      }
+
+      function drawChart(id) {
+        const chart = charts[id];
+        if (!chart) return;
+        const canvas = document.getElementById(`canvas-${id}`);
+        if (!canvas) return;
+
+        if (canvas.clientWidth > 0 && canvas.width !== canvas.clientWidth) {
+          canvas.width = canvas.clientWidth;
+        }
+
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        if (chart.points.length < 2) return;
+        const min = Math.min(...chart.points) - 1;
+        const max = Math.max(...chart.points) + 1;
+        const range = max - min || 1;
+
+        // Draw subtle dashed mid line
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, h / 2);
+        ctx.lineTo(w, h / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw line graph
+        ctx.beginPath();
+        ctx.strokeStyle = chart.color;
+        ctx.lineWidth = 2.5;
+
+        const pts = [];
+        chart.points.forEach((pt, i) => {
+          const x = (i / (chart.maxPoints - 1)) * w;
+          const y = h - ((pt - min) / range) * (h - 24) - 12;
+          pts.push({ x, y });
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Area gradient
+        if (pts.length > 1) {
+          ctx.lineTo(pts[pts.length - 1].x, h);
+          ctx.lineTo(pts[0].x, h);
+          ctx.closePath();
+          const grad = ctx.createLinearGradient(0, 0, 0, h);
+          grad.addColorStop(0, chart.color + '38');
+          grad.addColorStop(1, chart.color + '00');
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+      }
+
+      function appendChartPoint(id, val) {
+        const chart = charts[id];
+        if (!chart) return;
+        chart.points.push(val);
+        if (chart.points.length > chart.maxPoints) chart.points.shift();
+
+        const curValEl = document.getElementById(`chart-val-${id}`);
+        if (curValEl) curValEl.textContent = `${val} ${chart.unit}`;
+        drawChart(id);
+      }
+
+      window.addEventListener('resize', () => {
+        Object.keys(charts).forEach(id => {
+          if (charts[id].points && charts[id].points.length > 0) drawChart(id);
+        });
       });
-    }
 
-    function applyDiff(diff) {
-      const valEl = document.getElementById(`val-${diff.id}`);
-      const inpEl = document.getElementById(`input-${diff.id}`);
-      const fillEl = document.getElementById(`fill-${diff.id}`);
-      const badgeEl = document.getElementById(`badge-${diff.id}`);
+      /* Wi-Fi Setup Controller */
+      const setupView = document.getElementById('setup-view');
+      const dashboardLayout = document.getElementById('dashboard-layout');
+      const wifiToggleBtn = document.getElementById('wifi-setup-toggle');
+      const wifiBtnLabel = document.getElementById('wifi-btn-label');
+      const btnScan = document.getElementById('btn-scan');
+      const networkList = document.getElementById('network-list');
+      const wifiSsid = document.getElementById('wifi-ssid');
+      const wifiPass = document.getElementById('wifi-pass');
+      const btnRevealPass = document.getElementById('btn-reveal-pass');
+      const btnConnect = document.getElementById('btn-connect');
+      const setupStatus = document.getElementById('setup-status');
+      const btnGotoDashboard = document.getElementById('btn-goto-dashboard');
+      const btnToggleManual = document.getElementById('btn-toggle-manual');
 
-      if (badgeEl && diff.badge !== undefined) {
-        badgeEl.textContent = diff.badge;
-      }
-      if (valEl && diff.val !== undefined) {
-        const unit = diff.unit !== undefined ? diff.unit : (valEl.dataset.unit || '');
-        valEl.textContent = unit ? `${diff.val} ${unit}` : diff.val;
-      }
-      if (inpEl) {
-        if (inpEl.type === 'checkbox') inpEl.checked = !!diff.val;
-        else if (inpEl.type === 'range') inpEl.value = diff.val;
-      }
-      if (fillEl && diff.val !== undefined) {
-        const max = diff.max !== undefined ? diff.max : Number(fillEl.dataset.max || 100);
-        const pct = Math.min(100, Math.max(0, ((diff.val || 0) / max) * 100));
-        fillEl.style.width = `${pct}%`;
-      }
-    }
+      let isSetupViewActive = false;
 
-    function appendTerminal(id, text) {
-      const el = document.getElementById(`term-${id}`);
-      if (el) {
-        el.textContent += text;
-        el.scrollTop = el.scrollHeight;
-      }
-    }
-
-    function drawChart(id) {
-      const chart = charts[id];
-      if (!chart) return;
-      const canvas = document.getElementById(`canvas-${id}`);
-      if (!canvas) return;
-
-      if (canvas.clientWidth > 0 && canvas.width !== canvas.clientWidth) {
-        canvas.width = canvas.clientWidth;
+      function showSetupView() {
+        isSetupViewActive = true;
+        setupView.style.display = 'flex';
+        dashboardLayout.style.display = 'none';
+        wifiBtnLabel.textContent = 'Dashboard';
+        scanWifiNetworks();
       }
 
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-
-      if (chart.points.length < 2) return;
-      const min = Math.min(...chart.points) - 1;
-      const max = Math.max(...chart.points) + 1;
-      const range = max - min || 1;
-
-      // Draw subtle dashed mid line
-      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(0, h / 2);
-      ctx.lineTo(w, h / 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Draw line graph
-      ctx.beginPath();
-      ctx.strokeStyle = chart.color;
-      ctx.lineWidth = 2.5;
-
-      const pts = [];
-      chart.points.forEach((pt, i) => {
-        const x = (i / (chart.maxPoints - 1)) * w;
-        const y = h - ((pt - min) / range) * (h - 24) - 12;
-        pts.push({ x, y });
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-
-      // Area gradient
-      if (pts.length > 1) {
-        ctx.lineTo(pts[pts.length - 1].x, h);
-        ctx.lineTo(pts[0].x, h);
-        ctx.closePath();
-        const grad = ctx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, chart.color + '38');
-        grad.addColorStop(1, chart.color + '00');
-        ctx.fillStyle = grad;
-        ctx.fill();
+      function showDashboardView() {
+        isSetupViewActive = false;
+        setupView.style.display = 'none';
+        dashboardLayout.style.display = currentLayout === 'vertical' ? 'flex' : 'flex';
+        wifiBtnLabel.textContent = 'Setup';
+        if (!ws || ws.readyState > 1) {
+          connect();
+        }
       }
-    }
 
-    function appendChartPoint(id, val) {
-      const chart = charts[id];
-      if (!chart) return;
-      chart.points.push(val);
-      if (chart.points.length > chart.maxPoints) chart.points.shift();
+      wifiToggleBtn.onclick = () => {
+        if (isSetupViewActive) showDashboardView();
+        else showSetupView();
+      };
 
-      const curValEl = document.getElementById(`chart-val-${id}`);
-      if (curValEl) curValEl.textContent = `${val} ${chart.unit}`;
-      drawChart(id);
-    }
+      btnGotoDashboard.onclick = showDashboardView;
 
-    window.addEventListener('resize', () => {
-      Object.keys(charts).forEach(id => {
-        if (charts[id].points && charts[id].points.length > 0) drawChart(id);
-      });
-    });
+      btnRevealPass.onclick = () => {
+        wifiPass.type = wifiPass.type === 'password' ? 'text' : 'password';
+        btnRevealPass.textContent = wifiPass.type === 'password' ? '👁️' : '🔒';
+      };
 
-    /* Wi-Fi Setup Controller */
-    const setupView = document.getElementById('setup-view');
-    const dashboardLayout = document.getElementById('dashboard-layout');
-    const wifiToggleBtn = document.getElementById('wifi-setup-toggle');
-    const wifiBtnLabel = document.getElementById('wifi-btn-label');
-    const btnScan = document.getElementById('btn-scan');
-    const networkList = document.getElementById('network-list');
-    const wifiSsid = document.getElementById('wifi-ssid');
-    const wifiPass = document.getElementById('wifi-pass');
-    const btnRevealPass = document.getElementById('btn-reveal-pass');
-    const btnConnect = document.getElementById('btn-connect');
-    const setupStatus = document.getElementById('setup-status');
-    const btnGotoDashboard = document.getElementById('btn-goto-dashboard');
-    const btnToggleManual = document.getElementById('btn-toggle-manual');
+      btnToggleManual.onclick = () => {
+        document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
+        wifiSsid.value = '';
+        wifiSsid.focus();
+      };
 
-    let isSetupViewActive = false;
+      btnScan.onclick = scanWifiNetworks;
 
-    function showSetupView() {
-      isSetupViewActive = true;
-      setupView.style.display = 'flex';
-      dashboardLayout.style.display = 'none';
-      wifiBtnLabel.textContent = 'Dashboard';
-      scanWifiNetworks();
-    }
-
-    function showDashboardView() {
-      isSetupViewActive = false;
-      setupView.style.display = 'none';
-      dashboardLayout.style.display = currentLayout === 'vertical' ? 'flex' : 'flex';
-      wifiBtnLabel.textContent = 'Setup';
-      if (!ws || ws.readyState > 1) {
-        connect();
-      }
-    }
-
-    wifiToggleBtn.onclick = () => {
-      if (isSetupViewActive) showDashboardView();
-      else showSetupView();
-    };
-
-    btnGotoDashboard.onclick = showDashboardView;
-
-    btnRevealPass.onclick = () => {
-      wifiPass.type = wifiPass.type === 'password' ? 'text' : 'password';
-      btnRevealPass.textContent = wifiPass.type === 'password' ? '👁️' : '🔒';
-    };
-
-    btnToggleManual.onclick = () => {
-      document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
-      wifiSsid.value = '';
-      wifiSsid.focus();
-    };
-
-    btnScan.onclick = scanWifiNetworks;
-
-    function renderBarsHtml(bars) {
-      return `
+      function renderBarsHtml(bars) {
+        return `
         <div class="wifi-bars">
           <div class="bar bar-1 active"></div>
           <div class="bar bar-2 ${bars >= 2 ? 'active' : ''}"></div>
@@ -1442,26 +2007,26 @@
           <div class="bar bar-4 ${bars >= 4 ? 'active' : ''}"></div>
         </div>
       `;
-    }
+      }
 
-    function scanWifiNetworks() {
-      btnScan.classList.add('spinning');
-      networkList.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">Scanning for nearby networks...</div>';
+      function scanWifiNetworks() {
+        btnScan.classList.add('spinning');
+        networkList.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">Scanning for nearby networks...</div>';
 
-      fetch('/api/wifi/scan')
-        .then(r => r.json())
-        .then(data => {
-          btnScan.classList.remove('spinning');
-          const nets = data.networks || [];
-          if (!nets.length) {
-            networkList.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">No networks discovered. Tap Scan to retry.</div>';
-            return;
-          }
-          networkList.innerHTML = '';
-          nets.forEach(net => {
-            const item = document.createElement('div');
-            item.className = 'network-item';
-            item.innerHTML = `
+        fetch('/api/wifi/scan')
+          .then(r => r.json())
+          .then(data => {
+            btnScan.classList.remove('spinning');
+            const nets = data.networks || [];
+            if (!nets.length) {
+              networkList.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">No networks discovered. Tap Scan to retry.</div>';
+              return;
+            }
+            networkList.innerHTML = '';
+            nets.forEach(net => {
+              const item = document.createElement('div');
+              item.className = 'network-item';
+              item.innerHTML = `
               <div class="network-info">
                 <span>${net.secure ? '🔒' : '🌐'}</span>
                 <span>${net.ssid}</span>
@@ -1471,50 +2036,50 @@
                 ${renderBarsHtml(net.bars)}
               </div>
             `;
-            item.onclick = () => {
-              document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
-              item.classList.add('selected');
-              wifiSsid.value = net.ssid;
-              if (net.secure) {
-                wifiPass.focus();
-              } else {
-                wifiPass.value = '';
-              }
-            };
-            networkList.appendChild(item);
+              item.onclick = () => {
+                document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+                wifiSsid.value = net.ssid;
+                if (net.secure) {
+                  wifiPass.focus();
+                } else {
+                  wifiPass.value = '';
+                }
+              };
+              networkList.appendChild(item);
+            });
+          })
+          .catch(err => {
+            btnScan.classList.remove('spinning');
+            networkList.innerHTML = '<div style="padding:14px;text-align:center;color:#f87171;font-size:13px;">Failed to scan networks.</div>';
           });
-        })
-        .catch(err => {
-          btnScan.classList.remove('spinning');
-          networkList.innerHTML = '<div style="padding:14px;text-align:center;color:#f87171;font-size:13px;">Failed to scan networks.</div>';
-        });
-    }
-
-    btnConnect.onclick = () => {
-      const ssid = wifiSsid.value.trim();
-      const password = wifiPass.value;
-
-      if (!ssid) {
-        showToast('Please select or enter an SSID');
-        return;
       }
 
-      setupStatus.style.display = 'flex';
-      setupStatus.className = 'setup-status-box connecting';
-      setupStatus.innerHTML = `<span class="pulse-dot"></span><span>Connecting to <b>${ssid}</b>... Verifying credentials</span>`;
-      btnConnect.disabled = true;
+      btnConnect.onclick = () => {
+        const ssid = wifiSsid.value.trim();
+        const password = wifiPass.value;
 
-      fetch('/api/wifi/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ssid, password })
-      })
-      .then(r => r.json())
-      .then(res => {
-        btnConnect.disabled = false;
-        if (res.status === 'connected') {
-          setupStatus.className = 'setup-status-box success';
-          setupStatus.innerHTML = `
+        if (!ssid) {
+          showToast('Please select or enter an SSID');
+          return;
+        }
+
+        setupStatus.style.display = 'flex';
+        setupStatus.className = 'setup-status-box connecting';
+        setupStatus.innerHTML = `<span class="pulse-dot"></span><span>Connecting to <b>${ssid}</b>... Verifying credentials</span>`;
+        btnConnect.disabled = true;
+
+        fetch('/api/wifi/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ssid, password })
+        })
+          .then(r => r.json())
+          .then(res => {
+            btnConnect.disabled = false;
+            if (res.status === 'connected') {
+              setupStatus.className = 'setup-status-box success';
+              setupStatus.innerHTML = `
             🎉 <b>Connected successfully!</b><br>
             Device IP: <b>${res.ip}</b><br>
             <div style="margin-top:6px;font-size:12px;color:var(--text-dim);">
@@ -1522,256 +2087,257 @@
               <a href="http://${res.ip}/" target="_blank" style="color:#38bdf8;font-weight:600;text-decoration:underline;">http://${res.ip}/</a>
             </div>
           `;
-          showToast('Wi-Fi Connected!', '#10b981');
-        } else {
-          setupStatus.className = 'setup-status-box error';
-          setupStatus.innerHTML = `⚠️ <b>Connection Failed</b>: ${res.error || 'Check password and try again'}`;
-          showToast('Failed to connect', '#ef4444');
-        }
-      })
-      .catch(err => {
-        btnConnect.disabled = false;
-        setupStatus.className = 'setup-status-box error';
-        setupStatus.innerHTML = `⚠️ <b>Request Error</b>: Could not reach provisioner API.`;
-      });
-    };
-
-    // --- OTA Firmware Updater Logic ---
-    const otaModal = document.getElementById('ota-modal');
-    const otaToggleBtn = document.getElementById('ota-toggle');
-    const btnCloseOta = document.getElementById('btn-close-ota');
-    const btnCancelOta = document.getElementById('btn-cancel-ota');
-    const otaDropzone = document.getElementById('ota-dropzone');
-    const otaFileInput = document.getElementById('ota-file-input');
-    const btnBrowseFirmware = document.getElementById('btn-browse-firmware');
-    const otaFileDetails = document.getElementById('ota-file-details');
-    const otaSelectedFilename = document.getElementById('ota-selected-filename');
-    const otaSelectedFilesize = document.getElementById('ota-selected-filesize');
-    const otaWarningBanner = document.getElementById('ota-warning-banner');
-    const otaProgressContainer = document.getElementById('ota-progress-container');
-    const otaProgressStatus = document.getElementById('ota-progress-status');
-    const otaProgressPct = document.getElementById('ota-progress-pct');
-    const otaProgressBar = document.getElementById('ota-progress-bar');
-    const otaBytesUploaded = document.getElementById('ota-bytes-uploaded');
-    const otaBytesTotal = document.getElementById('ota-bytes-total');
-    const otaStatusBox = document.getElementById('ota-status-box');
-    const btnStartOta = document.getElementById('btn-start-ota');
-    const otaRunningPart = document.getElementById('ota-running-part');
-    const otaTargetPart = document.getElementById('ota-target-part');
-
-    let selectedFirmwareFile = null;
-    let isFlashingInProgress = false;
-
-    function openOtaModal() {
-      otaModal.style.display = 'flex';
-      otaStatusBox.style.display = 'none';
-      otaWarningBanner.style.display = 'none';
-      otaProgressContainer.style.display = 'none';
-
-      // Fetch status & partition information
-      fetch('/api/ota/status')
-        .then(r => r.json())
-        .then(data => {
-          otaRunningPart.textContent = data.running_partition || 'ota_0';
-          otaTargetPart.textContent = data.next_update_partition || 'ota_1';
-        })
-        .catch(() => {
-          otaRunningPart.textContent = 'ota_0';
-          otaTargetPart.textContent = 'ota_1';
-        });
-    }
-
-    function closeOtaModal() {
-      if (isFlashingInProgress) return;
-      otaModal.style.display = 'none';
-      resetOtaState();
-    }
-
-    function resetOtaState() {
-      selectedFirmwareFile = null;
-      otaFileInput.value = '';
-      otaFileDetails.style.display = 'none';
-      btnStartOta.disabled = true;
-      otaProgressContainer.style.display = 'none';
-      otaWarningBanner.style.display = 'none';
-      otaStatusBox.style.display = 'none';
-      otaProgressBar.style.width = '0%';
-      otaProgressPct.textContent = '0%';
-    }
-
-    function setSelectedFile(file) {
-      if (!file) return;
-      selectedFirmwareFile = file;
-      otaSelectedFilename.textContent = file.name;
-      const sizeKb = (file.size / 1024).toFixed(1);
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-      otaSelectedFilesize.textContent = file.size > 1024 * 1024 ? `${sizeMb} MB` : `${sizeKb} KB`;
-      otaFileDetails.style.display = 'flex';
-      btnStartOta.disabled = false;
-      otaStatusBox.style.display = 'none';
-    }
-
-    if (otaToggleBtn) otaToggleBtn.onclick = openOtaModal;
-    if (btnCloseOta) btnCloseOta.onclick = closeOtaModal;
-    if (btnCancelOta) btnCancelOta.onclick = closeOtaModal;
-    if (btnBrowseFirmware) btnBrowseFirmware.onclick = (e) => { e.stopPropagation(); otaFileInput.click(); };
-    if (otaDropzone) otaDropzone.onclick = () => otaFileInput.click();
-
-    // Drag-and-drop events
-    if (otaDropzone) {
-      ['dragenter', 'dragover'].forEach(name => {
-        otaDropzone.addEventListener(name, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          otaDropzone.classList.add('dragover');
-        });
-      });
-
-      ['dragleave', 'drop'].forEach(name => {
-        otaDropzone.addEventListener(name, (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          otaDropzone.classList.remove('dragover');
-        });
-      });
-
-      otaDropzone.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        if (dt && dt.files && dt.files.length > 0) {
-          setSelectedFile(dt.files[0]);
-        }
-      });
-    }
-
-    if (otaFileInput) {
-      otaFileInput.onchange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-          setSelectedFile(e.target.files[0]);
-        }
+              showToast('Wi-Fi Connected!', '#10b981');
+            } else {
+              setupStatus.className = 'setup-status-box error';
+              setupStatus.innerHTML = `⚠️ <b>Connection Failed</b>: ${res.error || 'Check password and try again'}`;
+              showToast('Failed to connect', '#ef4444');
+            }
+          })
+          .catch(err => {
+            btnConnect.disabled = false;
+            setupStatus.className = 'setup-status-box error';
+            setupStatus.innerHTML = `⚠️ <b>Request Error</b>: Could not reach provisioner API.`;
+          });
       };
-    }
 
-    if (btnStartOta) {
-      btnStartOta.onclick = () => {
-        if (!selectedFirmwareFile || isFlashingInProgress) return;
+      // --- OTA Firmware Updater Logic ---
+      const otaModal = document.getElementById('ota-modal');
+      const otaToggleBtn = document.getElementById('ota-toggle');
+      const btnCloseOta = document.getElementById('btn-close-ota');
+      const btnCancelOta = document.getElementById('btn-cancel-ota');
+      const otaDropzone = document.getElementById('ota-dropzone');
+      const otaFileInput = document.getElementById('ota-file-input');
+      const btnBrowseFirmware = document.getElementById('btn-browse-firmware');
+      const otaFileDetails = document.getElementById('ota-file-details');
+      const otaSelectedFilename = document.getElementById('ota-selected-filename');
+      const otaSelectedFilesize = document.getElementById('ota-selected-filesize');
+      const otaWarningBanner = document.getElementById('ota-warning-banner');
+      const otaProgressContainer = document.getElementById('ota-progress-container');
+      const otaProgressStatus = document.getElementById('ota-progress-status');
+      const otaProgressPct = document.getElementById('ota-progress-pct');
+      const otaProgressBar = document.getElementById('ota-progress-bar');
+      const otaBytesUploaded = document.getElementById('ota-bytes-uploaded');
+      const otaBytesTotal = document.getElementById('ota-bytes-total');
+      const otaStatusBox = document.getElementById('ota-status-box');
+      const btnStartOta = document.getElementById('btn-start-ota');
+      const otaRunningPart = document.getElementById('ota-running-part');
+      const otaTargetPart = document.getElementById('ota-target-part');
 
-        isFlashingInProgress = true;
-        btnStartOta.disabled = true;
-        btnCancelOta.disabled = true;
-        btnCloseOta.disabled = true;
-        otaWarningBanner.style.display = 'flex';
-        otaProgressContainer.style.display = 'block';
+      let selectedFirmwareFile = null;
+      let isFlashingInProgress = false;
+
+      function openOtaModal() {
+        otaModal.style.display = 'flex';
         otaStatusBox.style.display = 'none';
-        otaProgressStatus.textContent = 'Streaming firmware directly to partition...';
+        otaWarningBanner.style.display = 'none';
+        otaProgressContainer.style.display = 'none';
+
+        // Fetch status & partition information
+        fetch('/api/ota/status')
+          .then(r => r.json())
+          .then(data => {
+            otaRunningPart.textContent = data.running_partition || 'ota_0';
+            otaTargetPart.textContent = data.next_update_partition || 'ota_1';
+          })
+          .catch(() => {
+            otaRunningPart.textContent = 'ota_0';
+            otaTargetPart.textContent = 'ota_1';
+          });
+      }
+
+      function closeOtaModal() {
+        if (isFlashingInProgress) return;
+        otaModal.style.display = 'none';
+        resetOtaState();
+      }
+
+      function resetOtaState() {
+        selectedFirmwareFile = null;
+        otaFileInput.value = '';
+        otaFileDetails.style.display = 'none';
+        btnStartOta.disabled = true;
+        otaProgressContainer.style.display = 'none';
+        otaWarningBanner.style.display = 'none';
+        otaStatusBox.style.display = 'none';
         otaProgressBar.style.width = '0%';
         otaProgressPct.textContent = '0%';
+      }
 
-        const formData = new FormData();
-        formData.append('firmware', selectedFirmwareFile, selectedFirmwareFile.name);
+      function setSelectedFile(file) {
+        if (!file) return;
+        selectedFirmwareFile = file;
+        otaSelectedFilename.textContent = file.name;
+        const sizeKb = (file.size / 1024).toFixed(1);
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        otaSelectedFilesize.textContent = file.size > 1024 * 1024 ? `${sizeMb} MB` : `${sizeKb} KB`;
+        otaFileDetails.style.display = 'flex';
+        btnStartOta.disabled = false;
+        otaStatusBox.style.display = 'none';
+      }
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/ota/upload', true);
+      if (otaToggleBtn) otaToggleBtn.onclick = openOtaModal;
+      if (btnCloseOta) btnCloseOta.onclick = closeOtaModal;
+      if (btnCancelOta) btnCancelOta.onclick = closeOtaModal;
+      if (btnBrowseFirmware) btnBrowseFirmware.onclick = (e) => { e.stopPropagation(); otaFileInput.click(); };
+      if (otaDropzone) otaDropzone.onclick = () => otaFileInput.click();
 
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const pct = Math.round((e.loaded / e.total) * 100);
-            otaProgressBar.style.width = pct + '%';
-            otaProgressPct.textContent = pct + '%';
-            otaBytesUploaded.textContent = `${(e.loaded / 1024).toFixed(0)} KB`;
-            otaBytesTotal.textContent = `${(e.total / 1024).toFixed(0)} KB`;
-            if (pct >= 100) {
-              otaProgressStatus.textContent = 'Finalizing partition write & verifying SHA-256...';
-            }
+      // Drag-and-drop events
+      if (otaDropzone) {
+        ['dragenter', 'dragover'].forEach(name => {
+          otaDropzone.addEventListener(name, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            otaDropzone.classList.add('dragover');
+          });
+        });
+
+        ['dragleave', 'drop'].forEach(name => {
+          otaDropzone.addEventListener(name, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            otaDropzone.classList.remove('dragover');
+          });
+        });
+
+        otaDropzone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          if (dt && dt.files && dt.files.length > 0) {
+            setSelectedFile(dt.files[0]);
+          }
+        });
+      }
+
+      if (otaFileInput) {
+        otaFileInput.onchange = (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            setSelectedFile(e.target.files[0]);
           }
         };
+      }
 
-        xhr.onload = () => {
-          isFlashingInProgress = false;
-          otaWarningBanner.style.display = 'none';
+      if (btnStartOta) {
+        btnStartOta.onclick = () => {
+          if (!selectedFirmwareFile || isFlashingInProgress) return;
 
-          if (xhr.status === 200) {
-            let res = {};
-            try { res = JSON.parse(xhr.responseText); } catch (err) {}
-            const sha = res.sha256 || 'Verified';
-            otaStatusBox.style.display = 'block';
-            otaStatusBox.className = 'ota-status-box success';
+          isFlashingInProgress = true;
+          btnStartOta.disabled = true;
+          btnCancelOta.disabled = true;
+          btnCloseOta.disabled = true;
+          otaWarningBanner.style.display = 'flex';
+          otaProgressContainer.style.display = 'block';
+          otaStatusBox.style.display = 'none';
+          otaProgressStatus.textContent = 'Streaming firmware directly to partition...';
+          otaProgressBar.style.width = '0%';
+          otaProgressPct.textContent = '0%';
 
-            let countdown = 10;
-            const renderSuccessCountdown = () => {
-              otaStatusBox.innerHTML = `
+          const formData = new FormData();
+          formData.append('firmware', selectedFirmwareFile, selectedFirmwareFile.name);
+
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/ota/upload', true);
+
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const pct = Math.round((e.loaded / e.total) * 100);
+              otaProgressBar.style.width = pct + '%';
+              otaProgressPct.textContent = pct + '%';
+              otaBytesUploaded.textContent = `${(e.loaded / 1024).toFixed(0)} KB`;
+              otaBytesTotal.textContent = `${(e.total / 1024).toFixed(0)} KB`;
+              if (pct >= 100) {
+                otaProgressStatus.textContent = 'Finalizing partition write & verifying SHA-256...';
+              }
+            }
+          };
+
+          xhr.onload = () => {
+            isFlashingInProgress = false;
+            otaWarningBanner.style.display = 'none';
+
+            if (xhr.status === 200) {
+              let res = {};
+              try { res = JSON.parse(xhr.responseText); } catch (err) { }
+              const sha = res.sha256 || 'Verified';
+              otaStatusBox.style.display = 'block';
+              otaStatusBox.className = 'ota-status-box success';
+
+              let countdown = 10;
+              const renderSuccessCountdown = () => {
+                otaStatusBox.innerHTML = `
                 <div style="font-weight:700;margin-bottom:6px;font-size:14px;">🎉 Firmware Flashed Successfully!</div>
                 <div style="font-size:11.5px;margin-bottom:6px;">SHA-256: <code class="sha-chip">${sha}</code></div>
                 <div style="margin-top:8px;font-size:12.5px;color:#38bdf8;font-weight:600;">
                   Device rebooting into new partition. Reconnecting in ${countdown}s...
                 </div>
               `;
-            };
-            renderSuccessCountdown();
+              };
+              renderSuccessCountdown();
 
-            const timer = setInterval(() => {
-              countdown--;
-              if (countdown <= 0) {
-                clearInterval(timer);
-                window.location.reload();
-              } else {
-                renderSuccessCountdown();
-              }
-            }, 1000);
-          } else {
-            let errMsg = 'Upload failed';
-            try {
-              const res = JSON.parse(xhr.responseText);
-              if (res.message) errMsg = res.message;
-            } catch (err) {}
+              const timer = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                  clearInterval(timer);
+                  window.location.reload();
+                } else {
+                  renderSuccessCountdown();
+                }
+              }, 1000);
+            } else {
+              let errMsg = 'Upload failed';
+              try {
+                const res = JSON.parse(xhr.responseText);
+                if (res.message) errMsg = res.message;
+              } catch (err) { }
+              otaStatusBox.style.display = 'block';
+              otaStatusBox.className = 'ota-status-box error';
+              otaStatusBox.innerHTML = `⚠️ <b>Flash Error:</b> ${errMsg}`;
+              btnStartOta.disabled = false;
+              btnCancelOta.disabled = false;
+              btnCloseOta.disabled = false;
+            }
+          };
+
+          xhr.onerror = () => {
+            isFlashingInProgress = false;
+            otaWarningBanner.style.display = 'none';
             otaStatusBox.style.display = 'block';
             otaStatusBox.className = 'ota-status-box error';
-            otaStatusBox.innerHTML = `⚠️ <b>Flash Error:</b> ${errMsg}`;
+            otaStatusBox.innerHTML = '⚠️ <b>Network Error:</b> Connection interrupted during upload.';
             btnStartOta.disabled = false;
             btnCancelOta.disabled = false;
             btnCloseOta.disabled = false;
-          }
-        };
+          };
 
-        xhr.onerror = () => {
-          isFlashingInProgress = false;
-          otaWarningBanner.style.display = 'none';
-          otaStatusBox.style.display = 'block';
-          otaStatusBox.className = 'ota-status-box error';
-          otaStatusBox.innerHTML = '⚠️ <b>Network Error:</b> Connection interrupted during upload.';
-          btnStartOta.disabled = false;
-          btnCancelOta.disabled = false;
-          btnCloseOta.disabled = false;
+          xhr.send(formData);
         };
+      }
 
-        xhr.send(formData);
+      window.onload = () => {
+        // Check if URL specifies setup mode
+        const isSetupUrl = location.pathname === '/setup' || location.hash === '#setup';
+
+        // Check Wi-Fi status
+        fetch('/api/wifi/status')
+          .then(r => r.json())
+          .then(data => {
+            const w = data.wifi || {};
+            if (isSetupUrl || (w.ap_active && !w.connected)) {
+              showSetupView();
+            } else {
+              showDashboardView();
+              connect();
+            }
+          })
+          .catch(() => {
+            if (isSetupUrl) {
+              showSetupView();
+            } else {
+              showDashboardView();
+              connect();
+            }
+          });
       };
-    }
-
-    window.onload = () => {
-      // Check if URL specifies setup mode
-      const isSetupUrl = location.pathname === '/setup' || location.hash === '#setup';
-
-      // Check Wi-Fi status
-      fetch('/api/wifi/status')
-        .then(r => r.json())
-        .then(data => {
-          const w = data.wifi || {};
-          if (isSetupUrl || (w.ap_active && !w.connected)) {
-            showSetupView();
-          } else {
-            showDashboardView();
-            connect();
-          }
-        })
-        .catch(() => {
-          if (isSetupUrl) {
-            showSetupView();
-          } else {
-            showDashboardView();
-            connect();
-          }
-        });
-    };
-  </script>
+    </script>
 </body>
+
 </html>

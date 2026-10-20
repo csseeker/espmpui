@@ -6,7 +6,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.wifi import (
+from espmpui.wifi import (
     DNSServer,
     parse_dns_query,
     build_dns_response,
@@ -14,7 +14,7 @@ from espmui.wifi import (
     MockWLAN,
     CaptivePortal,
 )
-from espmui.server import AsyncServer
+from espmpui.server import AsyncServer
 
 
 class TestDNSCaptiveProtocol(unittest.TestCase):
@@ -262,7 +262,7 @@ class TestCaptivePortalIntegration(unittest.IsolatedAsyncioTestCase):
 class TestAppCaptiveIntegration(unittest.IsolatedAsyncioTestCase):
     async def test_app_enable_captive_portal(self):
         """Verify App.enable_captive_portal activates portal and routes."""
-        from espmui.app import App
+        from espmpui.app import App
         app = App(title="Provisioning Node")
         portal = app.enable_captive_portal(ap_ssid="Test-AP", ap_ip="192.168.4.1", dns_port=15354)
         self.assertIsNotNone(app.portal)

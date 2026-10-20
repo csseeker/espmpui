@@ -1,6 +1,6 @@
-# `espmui` Feature Reference & Deep-Dive Guide
+# `espmpui` Feature Reference & Deep-Dive Guide
 
-This document provides in-depth technical references, architecture diagrams, and real-world justifications for each major feature in `espmui`. Each section documents what the feature does, why it is critical for microcontroller products, the underlying protocols, and how to use it in code.
+This document provides in-depth technical references, architecture diagrams, and real-world justifications for each major feature in `espmpui`. Each section documents what the feature does, why it is critical for microcontroller products, the underlying protocols, and how to use it in code.
 
 ---
 
@@ -36,7 +36,7 @@ This document provides in-depth technical references, architecture diagrams, and
 ## 1. Wi-Fi Provisioner & Captive Portal Subsystem
 
 * **Milestone / Tasks**: Milestone 1 (Tasks 1.1, 1.2, 1.3)
-* **Modules**: [`src/espmui/wifi.py`](../src/espmui/wifi.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Modules**: [`src/espmpui/wifi.py`](../src/espmpui/wifi.py), [`src/espmpui/app.py`](../src/espmpui/app.py), [`web/index.html`](../web/index.html)
 * **Test Suite**: [`tests/test_wifi.py`](../tests/test_wifi.py)
 
 ---
@@ -53,7 +53,7 @@ sequenceDiagram
     participant Phone as Smartphone (iOS / Android)
     participant ESP as ESP32 (Without Captive Interception)
 
-    User->>Phone: Selects "espmui-Setup" in Wi-Fi settings
+    User->>Phone: Selects "espmpui-Setup" in Wi-Fi settings
     Phone->>ESP: Connects to SoftAP (IP: 192.168.4.2)
     Note over Phone: OS detects AP has no internet!
     Phone->>Phone: Background probe to connectivitycheck.gstatic.com
@@ -72,7 +72,7 @@ sequenceDiagram
 
 ### 1.2. The Solution: Dual-Layer Interception
 
-Modern operating systems (iOS, Android, macOS, Windows) include built-in captive network detection (the same mechanism used in hotels and airports). `espmui` coordinates an **RFC 1035 UDP DNS Server** and an **HTTP Probe Redirection Engine**:
+Modern operating systems (iOS, Android, macOS, Windows) include built-in captive network detection (the same mechanism used in hotels and airports). `espmpui` coordinates an **RFC 1035 UDP DNS Server** and an **HTTP Probe Redirection Engine**:
 
 ```mermaid
 sequenceDiagram
@@ -82,7 +82,7 @@ sequenceDiagram
     participant DNS as Captive DNS (UDP Port 53)
     participant HTTP as HTTP Server (Port 80)
 
-    User->>Phone: Selects "espmui-Setup"
+    User->>Phone: Selects "espmpui-Setup"
     Phone->>Phone: Connects to SoftAP (receives IP & DNS=192.168.4.1)
     
     rect rgb(20, 35, 60)
@@ -99,7 +99,7 @@ sequenceDiagram
 
     Note over Phone: OS recognizes: "This is an onboarding network!"
     Phone->>HTTP: GET /
-    HTTP->>Phone: 200 OK (Serves espmui Mobile Setup View)
+    HTTP->>Phone: 200 OK (Serves espmpui Mobile Setup View)
     Phone-->>User: 📱 Auto-pops native setup sheet on screen instantly!
 ```
 
@@ -136,7 +136,7 @@ sequenceDiagram
 
 ### 1.5. Asynchronous Scanner & Resilient Credential Verification
 
-Hardware control is managed by `WiFiManager` in [`src/espmui/wifi.py`](../src/espmui/wifi.py):
+Hardware control is managed by `WiFiManager` in [`src/espmpui/wifi.py`](../src/espmpui/wifi.py):
 
 1. **Non-Blocking Network Scanning (`scan_networks()`)**:
    - Calls `sta.scan()` in a cooperative background task.
@@ -162,7 +162,7 @@ Hardware control is managed by `WiFiManager` in [`src/espmui/wifi.py`](../src/es
 
 ### 1.6. Mobile-First Frontend View
 
-The onboarding interface is embedded directly in [`web/index.html`](../web/index.html) and compressed into [`assets.py`](../src/espmui/assets.py):
+The onboarding interface is embedded directly in [`web/index.html`](../web/index.html) and compressed into [`assets.py`](../src/espmpui/assets.py):
 
 * **Smartphone-Optimized**: Designed to fit constrained captive webviews (iOS CNA and Android CaptivePortalLogin).
 * **Live Network Selector**: Tap any nearby network to automatically populate the SSID and focus the password field.
@@ -177,19 +177,19 @@ The onboarding interface is embedded directly in [`web/index.html`](../web/index
 
 ### 1.7. Developer API & Quickstart
 
-Enabling the captive portal requires **1 line of code** in `espmui`:
+Enabling the captive portal requires **1 line of code** in `espmpui`:
 
 ```python
-import espmui
+import espmpui
 
-app = espmui.App(title="IoT Sensor Node", theme="dark")
+app = espmpui.App(title="IoT Sensor Node", theme="dark")
 tab = app.tab("Controls", icon="sliders")
 tab.switch("Relay Output", value=False)
 
 # 1. Enable Captive Portal & Wi-Fi Provisioner
 # Automatically starts SoftAP, intercepts DNS on port 53, and registers probe redirects.
 app.enable_captive_portal(
-    ap_ssid="espmui-Setup",
+    ap_ssid="espmpui-Setup",
     ap_password=None,       # Open SoftAP for initial onboarding
     ap_ip="192.168.4.1"     # Standard default gateway
 )
@@ -206,7 +206,7 @@ See [`examples/04_wifi_provisioner_portal.py`](../examples/04_wifi_provisioner_p
 ## 2. Persistent Parameter & Config Store Subsystem
 
 * **Milestone / Tasks**: Milestone 2 (Tasks 2.1, 2.2, 2.3)
-* **Modules**: [`src/espmui/config.py`](../src/espmui/config.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Modules**: [`src/espmpui/config.py`](../src/espmpui/config.py), [`src/espmpui/app.py`](../src/espmpui/app.py), [`web/index.html`](../web/index.html)
 * **Test Suite**: [`tests/test_config.py`](../tests/test_config.py)
 
 ---
@@ -304,9 +304,9 @@ async def on_broker_change(new_val, old_val):
 Attaching persistent parameters and an automatic web settings form takes **3 lines of code**:
 
 ```python
-import espmui
+import espmpui
 
-app = espmui.App(title="IoT Node", theme="dark")
+app = espmpui.App(title="IoT Node", theme="dark")
 
 # 1. Define schema & attach atomic storage
 config = app.attach_config({
@@ -337,7 +337,7 @@ See [`examples/05_persistent_config_store.py`](../examples/05_persistent_config_
 ## 3. Live Diagnostics & Telemetry Dashboard Subsystem
 
 * **Milestone / Tasks**: Milestone 3 (Tasks 3.1, 3.2)
-* **Modules**: [`src/espmui/diagnostics.py`](../src/espmui/diagnostics.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Modules**: [`src/espmpui/diagnostics.py`](../src/espmpui/diagnostics.py), [`src/espmpui/app.py`](../src/espmpui/app.py), [`web/index.html`](../web/index.html)
 * **Test Suite**: [`tests/test_diagnostics.py`](../tests/test_diagnostics.py)
 
 ---
@@ -381,7 +381,7 @@ graph TD
         Loop["Cooperative Background Telemetry Loop"]
     end
 
-    subgraph UI ["espmui Dashboard (Web)"]
+    subgraph UI ["espmpui Dashboard (Web)"]
         Tab["System Health Navigation Tab"]
         RAM["RAM / Heap Progress Meter"]
         FlashM["Flash Storage Meter"]
@@ -427,9 +427,9 @@ The System Health tab provides two administrative controls:
 Enabling live diagnostics requires **1 line of code**:
 
 ```python
-import espmui
+import espmpui
 
-app = espmui.App(title="Solar Monitor", theme="dark")
+app = espmpui.App(title="Solar Monitor", theme="dark")
 tab = app.tab("Controls", icon="sliders")
 tab.switch("Inverter Power", value=True)
 
@@ -449,7 +449,7 @@ See [`examples/06_live_diagnostics.py`](../examples/06_live_diagnostics.py).
 ## 4. Web-Based Drag-and-Drop OTA Updater Subsystem
 
 * **Milestone / Tasks**: Milestone 4 (Tasks 4.1, 4.2)
-* **Modules**: [`src/espmui/ota.py`](../src/espmui/ota.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Modules**: [`src/espmpui/ota.py`](../src/espmpui/ota.py), [`src/espmpui/app.py`](../src/espmpui/app.py), [`web/index.html`](../web/index.html)
 * **Test Suite**: [`tests/test_ota.py`](../tests/test_ota.py)
 
 ---
@@ -477,7 +477,7 @@ However, implementing web-based OTA on resource-constrained microcontrollers int
 
 ### 4.2. Streaming Multipart Architecture (OOM Avoidance)
 
-`espmui` solves the RAM ceiling through a **zero-buffering streaming sliding window engine**:
+`espmpui` solves the RAM ceiling through a **zero-buffering streaming sliding window engine**:
 
 ```mermaid
 sequenceDiagram
@@ -535,12 +535,12 @@ The embedded frontend provides a consumer-grade OTA dialog:
 
 ### 4.5. Developer API & Quickstart
 
-Enabling web-based OTA in `espmui` requires **1 line of code**:
+Enabling web-based OTA in `espmpui` requires **1 line of code**:
 
 ```python
-import espmui
+import espmpui
 
-app = espmui.App(title="S3 Sensor Gateway", theme="dark")
+app = espmpui.App(title="S3 Sensor Gateway", theme="dark")
 
 # 1. Enable Drag-and-Drop Web OTA Updater
 # Attaches /api/ota/status, /api/ota/upload, and the top-navigation OTA dialog

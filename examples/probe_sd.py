@@ -145,7 +145,7 @@ def probe_sdcard():
 
         # Write & Read verification test
         test_file = f"{mount_path}/.espmui_test.tmp"
-        test_payload = "espmui SD Card verification: PASSED\n"
+        test_payload = "espmpui SD Card verification: PASSED\n"
         with open(test_file, "w") as f:
             f.write(test_payload)
         with open(test_file) as f:

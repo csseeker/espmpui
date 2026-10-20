@@ -1,4 +1,4 @@
-# `espmui` Pragmatic Product Roadmap & Action Plan
+# `espmpui` Pragmatic Product Roadmap & Action Plan
 
 ## 1. Value Proposition & Strategic Focus
 
@@ -8,7 +8,7 @@ Every microcontroller product (sensors, home automation, industrial nodes) requi
 - **Heavyweight Frameworks (ESPHome/Tasmota):** Gorgeous UIs, but they monopolize the entire firmware and cannot be embedded as a lightweight component into custom code.
 - **React/Vue SPAs:** Hundreds of kilobytes, requiring Node/npm build pipelines that embedded developers avoid, frequently crashing MCU heaps.
 
-### `espmui`'s Unique Value Proposition (UVP)
+### `espmpui`'s Unique Value Proposition (UVP)
 > **"A modern, reactive, app-like Web UI for MicroPython in under 15 lines of code — using ~5 KB flash, under 8 KB RAM, and zero frontend build tools."**
 
 *For the complete persona breakdown, user journeys, and feature evaluation rules, see [Value Proposition & User Personas](VALUE_PROPOSITION.md).*
@@ -55,7 +55,7 @@ flowchart TD
 ```mermaid
 graph TD
     subgraph Browser ["Client-Side (Browser)"]
-        UI["espmui Web Bundle (~5 KB Compressed)"]
+        UI["espmpui Web Bundle (~5 KB Compressed)"]
         MUI["Responsive Modern Dark/Light Theme"]
         Widgets["Widgets: Gauges, Charts, Sliders, Forms"]
         ProtoEngine["Protocol Engine: JSON Diffs & Events"]
@@ -182,7 +182,7 @@ flowchart LR
 
 - [x] **Task 3.2: Diagnostics Tab in UI**
   * **Why do we need it:** Provides an out-of-the-box "System" tab requiring zero setup lines by the developer. Includes visual RAM meters, Wi-Fi signal gauge, uptime counter, and actionable maintenance controls (manual GC trigger, soft reboot button, flash storage usage).
-  * **When & Where is it useful:** Available on every `espmui` dashboard out of the box as an administrative view.
+  * **When & Where is it useful:** Available on every `espmpui` dashboard out of the box as an administrative view.
   * **How often is it needed:** Regularly during development and debugging sessions; on-demand during maintenance checks.
 
 ---

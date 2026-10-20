@@ -4,16 +4,16 @@ Demonstrates atomic flash persistence, input validation, change hooks, and autom
 """
 
 try:
-    import espmui
+    import espmpui
 except ImportError:
     import os
     import sys
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-    import espmui
+    import espmpui
 
-# 1. Initialize espmui Dashboard
-app = espmui.App(title="Smart Greenhouse Node", theme="dark")
+# 1. Initialize espmpui Dashboard
+app = espmpui.App(title="Smart Greenhouse Node", theme="dark")
 
 # 2. Define Parameter Schema
 config_schema = {

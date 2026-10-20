@@ -4,16 +4,16 @@ Demonstrates zero-setup heap monitoring, GC optimization, flash usage, and remot
 """
 
 try:
-    import espmui
+    import espmpui
 except ImportError:
     import os
     import sys
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-    import espmui
+    import espmpui
 
 # 1. Initialize Application
-app = espmui.App(title="S3 Industrial Node", theme="dark")
+app = espmpui.App(title="S3 Industrial Node", theme="dark")
 
 # 2. Add Standard Operational Tabs
 tab_ctrl = app.tab("Controls", icon="sliders")

@@ -1,5 +1,5 @@
 """
-Wi-Fi Provisioning, Captive Portal, and DNS Interception for espmui.
+Wi-Fi Provisioning, Captive Portal, and DNS Interception for espmpui.
 Supports asynchronous network scanning, zero-friction mobile onboarding,
 and RFC 1035 DNS interception for captive portals.
 """
@@ -226,7 +226,7 @@ class WiFiManager:
         self.current_ssid = ""
         self.current_ip = ""
 
-    def start_ap(self, ssid: str = "espmui-Setup", password: str = None, ip: str = "192.168.4.1"):
+    def start_ap(self, ssid: str = "espmpui-Setup", password: str = None, ip: str = "192.168.4.1"):
         """Activates SoftAP with standard captive gateway configuration."""
         self.ap.active(True)
         if hasattr(self.ap, "config"):
@@ -384,7 +384,7 @@ class CaptivePortal:
 
     async def _handle_setup_page(self, reader, writer, path, headers):
         """Serves the onboarding portal frontend bundle on /setup."""
-        from espmui.assets import get_asset_payload
+        from espmpui.assets import get_asset_payload
         payload, is_gzip = get_asset_payload()
         content_len = len(payload)
         encoding_header = "Content-Encoding: gzip\r\n" if is_gzip else ""

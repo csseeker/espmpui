@@ -1,14 +1,14 @@
 """
-espmui: Modern Reactive Web Dashboard for MicroPython
+espmpui: Modern Reactive Web Dashboard for MicroPython
 """
 
-from espmui.app import App, Tab
-from espmui.widgets import Widget, Button, Switch, Slider, Metric, Progress
-from espmui.iot_widgets import Terminal, LineChart, CameraStream, FileManager
-from espmui.wifi import WiFiManager, DNSServer, CaptivePortal
-from espmui.config import ConfigStore, ConfigForm, ConfigValidationError
-from espmui.diagnostics import SystemDiagnostics, format_uptime
-from espmui.ota import OTAHandler, MockOTAPartition, parse_multipart_boundary
+from espmpui.app import App, Tab
+from espmpui.widgets import Widget, Button, Switch, Slider, Metric, Progress
+from espmpui.iot_widgets import Terminal, LineChart, CameraStream, FileManager
+from espmpui.wifi import WiFiManager, DNSServer, CaptivePortal
+from espmpui.config import ConfigStore, ConfigForm, ConfigValidationError
+from espmpui.diagnostics import SystemDiagnostics, format_uptime
+from espmpui.ota import OTAHandler, MockOTAPartition, parse_multipart_boundary
 
 __version__ = "0.1.0"
 __all__ = [

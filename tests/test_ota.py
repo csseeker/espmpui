@@ -6,8 +6,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.ota import OTAHandler, MockOTAPartition, parse_multipart_boundary
-from espmui.app import App
+from espmpui.ota import OTAHandler, MockOTAPartition, parse_multipart_boundary
+from espmpui.app import App
 
 
 class TestMultipartParsing(unittest.TestCase):

@@ -1,2 +1,2 @@
-# Local development dependencies for espmui
+# Local development dependencies for espmpui
 -r requirements-dev.txt

@@ -1,4 +1,4 @@
-# `espmui` Concurrency, Non-Blocking Architecture & Fault Isolation Specification
+# `espmpui` Concurrency, Non-Blocking Architecture & Fault Isolation Specification
 
 ## 1. The MicroPython Concurrency Model
 
@@ -8,7 +8,7 @@ Tasks in MicroPython are not preempted by an OS kernel. This establishes a key c
 > **If any coroutine blocks for an extended duration, other coroutines cannot execute until it yields.**
 > Long blocking operations can impact sensor acquisition, motor control timing, or watchdog resets.
 
-To help `espmui` operate smoothly alongside primary hardware routines, the framework is designed around five core principles:
+To help `espmpui` operate smoothly alongside primary hardware routines, the framework is designed around five core principles:
 1. **Cooperative Yield Slicing**
 2. **Backpressure & Bounded Dropping Policies**
 3. **Fault Barrier Isolation**
@@ -23,7 +23,7 @@ To help `espmui` operate smoothly alongside primary hardware routines, the frame
 flowchart TD
     subgraph EventLoop["MicroPython Event Loop"]
         SENS["Primary Task: Sensor / Camera Loop"] -->|"await asyncio.sleep_ms(20)"| LOOP(("uasyncio Loop"))
-        UI_SRV["espmui HTTP/WS Server"] -->|"await asyncio.sleep_ms(0)"| LOOP
+        UI_SRV["espmpui HTTP/WS Server"] -->|"await asyncio.sleep_ms(0)"| LOOP
         LOOP -->|"Round-Robin Dispatch"| SENS
         LOOP -->|"Round-Robin Dispatch"| UI_SRV
     end
@@ -32,7 +32,7 @@ flowchart TD
 ### 2.1. Chunked Streaming with Explicit Cooperative Yields
 Serving a static web asset or camera frame over HTTP should avoid monopolizing the event loop:
 * Payloads are sliced into **512-byte or 1024-byte chunks**.
-* After each chunk write and `await writer.drain()`, `espmui` explicitly yields:
+* After each chunk write and `await writer.drain()`, `espmpui` explicitly yields:
   ```python
   await writer.drain()
   await asyncio.sleep_ms(0)  # Yield to give other coroutines execution time
@@ -42,7 +42,7 @@ Serving a static web asset or camera frame over HTTP should avoid monopolizing t
 ### 2.2. Minimizing Large Dynamic Allocations
 * MicroPython's Garbage Collector (`gc.collect()`) runs a mark-and-sweep cycle when heap memory is constrained.
 * Assembling large strings or buffers dynamically can trigger garbage collection cycles that pause execution.
-* `espmui` is designed to mitigate this by:
+* `espmpui` is designed to mitigate this by:
   1. Serving pre-compressed `.gz` bytes directly from flash or frozen byte arrays.
   2. Formatting diff packets with compact single-line JSON templates (average size < 40 bytes).
   3. Supporting an optional idle GC cleaner (`gc.collect()` scheduled during idle periods) to help reduce the likelihood of uncoordinated GC sweeps during active hardware operations.
@@ -79,7 +79,7 @@ If a callback raises an unexpected exception:
 def on_button_click(widget):
     res = 10 / 0  # ZeroDivisionError!
 ```
-An unhandled exception inside an async task could terminate the server coroutine. To prevent this, `espmui` wraps callback dispatches in an exception handler:
+An unhandled exception inside an async task could terminate the server coroutine. To prevent this, `espmpui` wraps callback dispatches in an exception handler:
 ```python
 async def _safe_dispatch(self, callback, widget, value):
     try:
@@ -97,7 +97,7 @@ async def _safe_dispatch(self, callback, widget, value):
 
 ### 4.2. Connection Disconnections & Reset Handling
 Microcontrollers frequently encounter client disconnections or network drops.
-* `espmui` wraps socket reads and writes in `OSError` handlers.
+* `espmpui` wraps socket reads and writes in `OSError` handlers.
 * Catching disconnection errors (`ECONNRESET`, `EPIPE`, `ETIMEDOUT`, `ENOTCONN`) triggers clean tear-down:
   1. Remove client reference from `app.clients` set.
   2. Cancel client's background write task.
@@ -127,7 +127,7 @@ flowchart LR
 ### 5.2. Action Debouncing & Busy Rejection
 If a user rapidly taps a button or drags a slider aggressively:
 * Without protection, multiple callback tasks can spawn simultaneously, potentially overwhelming hardware I/O (e.g., rapid relay switching or multiple I2C transactions).
-* `espmui` provides optional widget-level protection:
+* `espmpui` provides optional widget-level protection:
   - `debounce_ms`: Ignores rapid taps within $N$ milliseconds.
   - `busy_policy="drop"`: If an async callback is still executing, subsequent triggers are ignored until the first finishes.
   - `busy_policy="queue"`: Queues only the latest event.
@@ -151,7 +151,7 @@ MicroPython hardware interrupts (e.g., `pin.irq(...)`) execute in a hard interru
 * Heap memory cannot be allocated (`MemoryError`).
 * Coroutines cannot be awaited or scheduled directly.
 
-If a physical button press or sensor alert on GPIO needs to update an `espmui` widget, `espmui` provides `widget.schedule_value(val)`:
+If a physical button press or sensor alert on GPIO needs to update an `espmpui` widget, `espmpui` provides `widget.schedule_value(val)`:
 ```python
 def gpio_isr_handler(pin):
     # Safe to call from hard ISR!
@@ -168,7 +168,7 @@ pir_pin.irq(trigger=Pin.IRQ_RISING, handler=gpio_isr_handler)
 
 Microcontrollers frequently experience unexpected power brownouts or watchdog resets:
 * Naive file writes (`open('config.json', 'w')`) truncate the file to 0 bytes upon opening. A power cut during the write destroys all saved parameters.
-* `espmui.ConfigStore` prevents corruption by writing to a temporary file first (`config.json.tmp`), executing `f.flush()` and `os.sync()`, and then executing an atomic inode switch (`os.rename`).
+* `espmpui.ConfigStore` prevents corruption by writing to a temporary file first (`config.json.tmp`), executing `f.flush()` and `os.sync()`, and then executing an atomic inode switch (`os.rename`).
 * On boot, if `config.json` is missing or truncated, `ConfigStore` automatically checks for and recovers from `.tmp`, guaranteeing parameter integrity under all power failure scenarios.
 
 ---
@@ -177,7 +177,7 @@ Microcontrollers frequently experience unexpected power brownouts or watchdog re
 
 Firmware binaries are typically 1 MB to 3 MB, while an ESP32 in MicroPython often has only 100 KB–200 KB free heap:
 * Traditional web handlers that buffer request bodies in memory (`await reader.read()`) cause immediate Out-Of-Memory crashes.
-* `espmui.OTAHandler` implements a **sliding-window streaming parser** that reads chunks in 512-byte slices directly from the socket into flash partitions (`esp32.Partition`).
+* `espmpui.OTAHandler` implements a **sliding-window streaming parser** that reads chunks in 512-byte slices directly from the socket into flash partitions (`esp32.Partition`).
 * The RAM buffer peak remains strictly **under 4 KB** throughout a multi-megabyte firmware upload.
 * An incremental SHA-256 digest is computed on the fly, and `partition.set_boot()` is only invoked if the full binary stream was completed with a non-zero payload, preventing half-written corrupted boot states.
 
@@ -185,7 +185,7 @@ Firmware binaries are typically 1 MB to 3 MB, while an ESP32 in MicroPython ofte
 
 ## 9. Summary of Concurrency & Reliability Practices
 
-| Area | Challenge / Consideration | `espmui` Approach |
+| Area | Challenge / Consideration | `espmpui` Approach |
 | :--- | :--- | :--- |
 | **Asset Download** | Monopolizing CPU during file transfer | Streams in small (512B–1KB) chunks with explicit `sleep_ms(0)` yields |
 | **GC Pressure** | Dynamic allocations triggering uncoordinated GC pauses | Serves pre-compressed assets from flash; uses small JSON diffs |

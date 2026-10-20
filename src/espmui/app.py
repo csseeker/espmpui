@@ -1,5 +1,5 @@
 """
-Application controller, tab hierarchy, and reactive state coordinator for espmui.
+Application controller, tab hierarchy, and reactive state coordinator for espmpui.
 Integrates with AsyncServer and enforces strict fault-isolation barriers.
 """
 
@@ -11,8 +11,8 @@ try:
 except ImportError:
     import asyncio
 
-from espmui.server import AsyncServer
-from espmui.widgets import Widget, Button, Switch, Slider, Metric, Progress, is_awaitable, _generate_id
+from espmpui.server import AsyncServer
+from espmpui.widgets import Widget, Button, Switch, Slider, Metric, Progress, is_awaitable, _generate_id
 
 def print_exception(exc):
     """Prints exception traceback on both MicroPython and standard Python."""
@@ -61,23 +61,23 @@ class Tab:
         return self.add_widget(p)
 
     def terminal(self, label: str = "System Log", **kwargs):
-        from espmui.iot_widgets import Terminal
+        from espmpui.iot_widgets import Terminal
         return self.add_widget(Terminal(label, **kwargs))
 
     def chart(self, label: str, **kwargs):
-        from espmui.iot_widgets import LineChart
+        from espmpui.iot_widgets import LineChart
         return self.add_widget(LineChart(label, **kwargs))
 
     def camera(self, label: str = "Camera Live View", **kwargs):
-        from espmui.iot_widgets import CameraStream
+        from espmpui.iot_widgets import CameraStream
         return self.add_widget(CameraStream(label, **kwargs))
 
     def file_manager(self, label: str = "Flash Storage", **kwargs):
-        from espmui.iot_widgets import FileManager
+        from espmpui.iot_widgets import FileManager
         return self.add_widget(FileManager(label, **kwargs))
 
     def config_form(self, config_store, label: str = "Configuration", **kwargs):
-        from espmui.config import ConfigForm
+        from espmpui.config import ConfigForm
         return self.add_widget(ConfigForm(config_store, label=label, **kwargs))
 
     def to_dict(self) -> dict:
@@ -90,9 +90,9 @@ class Tab:
 
 
 class App:
-    """The central espmui dashboard application."""
+    """The central espmpui dashboard application."""
 
-    def __init__(self, title: str = "espmui Dashboard", theme: str = "dark", tab_layout: str = "vertical", **kwargs):
+    def __init__(self, title: str = "espmpui Dashboard", theme: str = "dark", tab_layout: str = "vertical", **kwargs):
         self.title = title
         self.theme = theme
         self.tab_layout = kwargs.get("tab_layout", tab_layout)
@@ -105,9 +105,9 @@ class App:
         self.tasks = []
         self._custom_routes = {}
 
-    def enable_captive_portal(self, ap_ssid: str = "espmui-Setup", ap_password: str = None, ap_ip: str = "192.168.4.1", dns_port: int = 53):
+    def enable_captive_portal(self, ap_ssid: str = "espmpui-Setup", ap_password: str = None, ap_ip: str = "192.168.4.1", dns_port: int = 53):
         """Configures and activates SoftAP captive portal and Wi-Fi provisioner."""
-        from espmui.wifi import CaptivePortal, WiFiManager
+        from espmpui.wifi import CaptivePortal, WiFiManager
         wifi_mgr = WiFiManager()
         wifi_mgr.start_ap(ssid=ap_ssid, password=ap_password, ip=ap_ip)
         self.portal = CaptivePortal(self.server, wifi_manager=wifi_mgr, ap_ip=ap_ip, dns_port=dns_port)
@@ -117,7 +117,7 @@ class App:
 
     def attach_config(self, schema: dict, filepath: str = "config.json", autosave: bool = True):
         """Attaches a persistent configuration store and registers REST endpoints."""
-        from espmui.config import ConfigStore, ConfigValidationError
+        from espmpui.config import ConfigStore, ConfigValidationError
         store = ConfigStore(schema, filepath=filepath, app=self, autosave=autosave)
         self.config_store = store
 
@@ -164,7 +164,7 @@ class App:
 
     def enable_diagnostics(self, title: str = "System Health", icon: str = "cpu", start_loop: bool = True):
         """Attaches an out-of-the-box System Diagnostics tab and REST telemetry endpoints."""
-        from espmui.diagnostics import SystemDiagnostics
+        from espmpui.diagnostics import SystemDiagnostics
         diag = SystemDiagnostics(app=self, tab_title=title, tab_icon=icon)
         self.diagnostics = diag
         if start_loop:
@@ -173,7 +173,7 @@ class App:
 
     def enable_ota(self, partition=None, chunk_size: int = 512):
         """Attaches streaming Web OTA updater routes (/api/ota/status, /api/ota/upload)."""
-        from espmui.ota import OTAHandler, parse_multipart_boundary
+        from espmpui.ota import OTAHandler, parse_multipart_boundary
         handler = OTAHandler(target_partition=partition, chunk_size=chunk_size)
         self.ota = handler
 

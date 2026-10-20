@@ -1,5 +1,5 @@
 """
-Live Diagnostics & System Telemetry Subsystem for espmui.
+Live Diagnostics & System Telemetry Subsystem for espmpui.
 Tracks free heap, GC fragmentation, filesystem usage, Wi-Fi RSSI, and CPU telemetry.
 Provides out-of-the-box administrative controls (manual GC, safe soft reboot).
 """

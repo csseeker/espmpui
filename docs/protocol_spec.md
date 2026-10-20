@@ -1,9 +1,9 @@
-# `espmui` WebSocket Wire Protocol Specification
+# `espmpui` WebSocket Wire Protocol Specification
 
 Version: 1.0.0-draft
 
 ## 1. Overview
-Communication between the MicroPython `espmui` server and connected browser clients uses a bidirectional, text-based JSON WebSocket protocol.
+Communication between the MicroPython `espmpui` server and connected browser clients uses a bidirectional, text-based JSON WebSocket protocol.
 
 The protocol is designed around three practical goals:
 1. **Compact payload size**: State updates are formatted as small JSON objects (typically < 100 bytes).

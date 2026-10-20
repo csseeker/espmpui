@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.app import App
+from espmpui.app import App
 
 
 class TestWidgetHierarchy(unittest.TestCase):

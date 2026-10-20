@@ -20,7 +20,7 @@ try:
 except ImportError:
     import binascii
 
-from espmui.assets import get_asset_payload
+from espmpui.assets import get_asset_payload
 
 def print_exception(exc):
     """Prints exception traceback on both MicroPython and standard Python."""

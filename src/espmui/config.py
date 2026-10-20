@@ -1,5 +1,5 @@
 """
-Persistent Parameter & Schema-Driven Config Store for espmui.
+Persistent Parameter & Schema-Driven Config Store for espmpui.
 Features atomic flash writes (temp file + rename pattern), corruption recovery,
 schema validation, Python variable binding, and change hooks.
 """
@@ -13,7 +13,7 @@ try:
 except ImportError:
     import asyncio
 
-from espmui.widgets import Widget, _generate_id, is_awaitable
+from espmpui.widgets import Widget, _generate_id, is_awaitable
 
 def print_exception(exc):
     """Prints exception traceback on both MicroPython and standard Python."""

@@ -1,12 +1,12 @@
-# `espmui`: Architecture & System Design
+# `espmpui`: Architecture & System Design
 
 ## 1. Overview & Motivation
 
-`espmui` (ESP MicroPython UI) is a lightweight web dashboard library for the MicroPython ecosystem (ESP32, ESP32-S2/S3, ESP32-C2/C3/C6, and Raspberry Pi Pico W).
+`espmpui` (ESP MicroPython UI) is a lightweight web dashboard library for the MicroPython ecosystem (ESP32, ESP32-S2/S3, ESP32-C2/C3/C6, and Raspberry Pi Pico W).
 
 When developing microcontroller projects in MicroPython, creating an on-device web interface often involves assembling custom HTTP handlers, writing manual string formatting, or managing external web assets alongside hardware control code.
 
-`espmui` aims to provide a simple, self-contained approach:
+`espmpui` aims to provide a simple, self-contained approach:
 * Define user interfaces declaratively in Python (`App` -> `Tab` -> `Widget`).
 * Serve a pre-compiled, compact web client directly from the microcontroller's flash memory.
 * Synchronize widget states bidirectionally using small JSON messages over WebSockets.
@@ -16,9 +16,9 @@ When developing microcontroller projects in MicroPython, creating an on-device w
 
 ## 2. Design Principles
 
-`espmui` is designed around several practical considerations common to embedded development:
+`espmpui` is designed around several practical considerations common to embedded development:
 
-| Principle | Approach in `espmui` | Practical Consideration |
+| Principle | Approach in `espmpui` | Practical Consideration |
 | :--- | :--- | :--- |
 | **Pythonic API** | Object-oriented widgets with callback registration (`on_click`, `on_change`) and property assignments. | Keeps setup straightforward and familiar for MicroPython developers. |
 | **Self-Contained Bundle** | Single pre-compressed bundle (< 5 KB gzipped) containing HTML, CSS, and JavaScript. | Avoids external asset dependencies or manual asset deployment steps. |
@@ -123,13 +123,13 @@ When developing microcontroller projects in MicroPython, creating an on-device w
 
 ```python
 import asyncio
-import espmui
+import espmpui
 from machine import Pin
 
 relay = Pin(4, Pin.OUT, value=0)
 
 # 1. Initialize Application
-app = espmui.App(title="S3 Sensor Dashboard", theme="dark")
+app = espmpui.App(title="S3 Sensor Dashboard", theme="dark")
 
 # 2. Add Navigation Tabs
 tab_ctrl = app.tab("Controls", icon="sliders")
@@ -194,13 +194,13 @@ app.run(host="0.0.0.0", port=80)
 ## 6. Directory Structure
 
 ```
-espmui/
+espmpui/
 ├── docs/
 │   ├── architecture.md               # System design and architecture
 │   ├── protocol_spec.md              # WebSocket wire protocol specification
 │   └── concurrency_and_resilience.md # Non-blocking concurrency & resilience specification
 ├── src/
-│   └── espmui/
+│   └── espmpui/
 │       ├── __init__.py               # Library entrypoint
 │       ├── app.py                    # App coordinator and tab management
 │       ├── server.py                 # Async HTTP and WebSocket server
@@ -227,7 +227,7 @@ espmui/
 ## 7. Phased Implementation Roadmap
 
 ### Phase 1: Micro-Server & WebSocket Core
-* Implement `espmui.server`: non-blocking async HTTP/1.1 parser + WebSocket handshake & framing.
+* Implement `espmpui.server`: non-blocking async HTTP/1.1 parser + WebSocket handshake & framing.
 * Implement gzip chunked file streaming directly from flash.
 * Validate memory allocation per connection during handshake.
 

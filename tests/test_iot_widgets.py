@@ -4,8 +4,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.app import App
-from espmui.iot_widgets import Terminal, LineChart, CameraStream, FileManager
+from espmpui.app import App
+from espmpui.iot_widgets import Terminal, LineChart, CameraStream, FileManager
 
 
 class TestIoTWidgets(unittest.TestCase):

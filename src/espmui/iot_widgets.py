@@ -1,5 +1,5 @@
 """
-Specialized IoT Widgets for espmui:
+Specialized IoT Widgets for espmpui:
 - Live Web Terminal (Log streaming / REPL)
 - Real-time Canvas Sparkline / Line Chart
 - Live Camera Viewfinder (MJPEG & Snapshot)
@@ -8,7 +8,7 @@ Specialized IoT Widgets for espmui:
 
 import os
 
-from espmui.widgets import Widget
+from espmpui.widgets import Widget
 
 
 class Terminal(Widget):

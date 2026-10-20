@@ -1,4 +1,4 @@
-# `espmui` Value Proposition & User Personas
+# `espmpui` Value Proposition & User Personas
 
 > **The North Star:** Deliver a modern, reactive, app-like Web UI for microcontrollers in under 15 lines of code — using < 5 KB flash, < 8 KB RAM, and requiring zero frontend build tooling.
 
@@ -10,13 +10,13 @@ In embedded software, projects easily fall into two failure modes:
 1. **Under-engineering (The "Bare Minimum" Trap):** Serving raw, unstyled HTML forms that require page refreshes, look primitive, provide no live feedback, and break on the first network hiccup.
 2. **Over-engineering (The "Full-Stack Bloat" Trap):** Importing complex web frameworks (React, Webpack, Tailwind), blowing past the microcontroller's RAM limits, introducing hundreds of `node_modules` dependencies, and requiring firmware developers to become frontend engineers.
 
-`espmui` strictly focuses on **real-world value** across the complete lifecycle of a physical device.
+`espmpui` strictly focuses on **real-world value** across the complete lifecycle of a physical device.
 
 ---
 
 ## 2. The Three Core Personas
 
-Every feature built in `espmui` must directly serve at least one of these three distinct personas:
+Every feature built in `espmpui` must directly serve at least one of these three distinct personas:
 
 ```mermaid
 flowchart TD
@@ -54,7 +54,7 @@ flowchart TD
   - Embedded web servers that take 200 lines of boilerplate C++/Python just to handle basic routes.
   - Frontends that crash the microcontroller due to heap fragmentation or unhandled callback exceptions.
   - Maintaining separate web codebases alongside firmware code.
-* **What `espmui` Gives Them:**
+* **What `espmpui` Gives Them:**
   - **15 Lines of Clean Python:** Declare widgets (`app.tab()`, `tab.slider()`, `tab.switch()`) directly in firmware code.
   - **Zero Frontend Tooling:** Pre-compiled, pre-gzipped bundle (~4.7 KB) embedded directly into flash. No `npm`, no build step.
   - **Fault-Isolated Callbacks:** Exceptions in user button or slider handlers are trapped and reported to console/toast without crashing the main loop or rebooting the MCU.
@@ -70,7 +70,7 @@ flowchart TD
   - Being told to open a serial monitor or edit a `secrets.py` file to set up Wi-Fi.
   - Clunky web interfaces that feel like 1995 desktop websites on their smartphone.
   - Lost settings after sudden power cuts or accidental unplugging.
-* **What `espmui` Gives Them:**
+* **What `espmpui` Gives Them:**
   - **Captive Portal Provisioning:** Power the device on $\to$ phone auto-detects captive portal $\to$ tap home Wi-Fi and enter password. Setup completed in 30 seconds.
   - **Mobile-First Responsive UI:** Fast, fluid, touch-friendly dark/light controls that look and feel like an installed mobile application.
   - **Persistent Settings:** Changes to sliders and form inputs are saved atomically to flash and survive power outages.
@@ -86,7 +86,7 @@ flowchart TD
   - Devices that silently freeze or drop off Wi-Fi with no diagnostic visibility.
   - Having to physically unmount hardware with screwdrivers just to flash a firmware update.
   - Disassembling waterproof enclosures, destroying seals and gaskets for routine maintenance.
-* **What `espmui` Gives Them:**
+* **What `espmpui` Gives Them:**
   - **Live Diagnostics Tab:** Open any browser on the local network to view live heap memory, GC collection activity, Wi-Fi signal strength (RSSI), and uptime.
   - **Drag-and-Drop Web OTA Updater:** Flash new firmware `.bin` or filesystem images over Wi-Fi with upload progress and automatic post-reboot reconnect.
 
@@ -107,14 +107,14 @@ Every feature in our roadmap must justify its existence through this matrix:
 
 ---
 
-## 4. User Journey: Before vs. After `espmui`
+## 4. User Journey: Before vs. After `espmpui`
 
 ### Journey 1: Setting Up Wi-Fi on a New Device
 
-| Step | Traditional Embedded Approach (Before) | `espmui` Experience (After) |
+| Step | Traditional Embedded Approach (Before) | `espmpui` Experience (After) |
 | :--- | :--- | :--- |
-| **1. Power On** | Device fails to connect; blinks red LED or does nothing. | Device starts SoftAP (`espmui-setup`) and launches background DNS responder. |
-| **2. Discovery** | User must plug in USB, open serial monitor at 115200 baud to read instructions. | User’s smartphone notifies: *"Sign in to Wi-Fi network 'espmui-setup'"*. |
+| **1. Power On** | Device fails to connect; blinks red LED or does nothing. | Device starts SoftAP (`espmpui-setup`) and launches background DNS responder. |
+| **2. Discovery** | User must plug in USB, open serial monitor at 115200 baud to read instructions. | User’s smartphone notifies: *"Sign in to Wi-Fi network 'espmpui-setup'"*. |
 | **3. Interface** | User must manually open a browser and type `192.168.4.1` into the address bar. | Captive portal opens automatically in full-screen modal. |
 | **4. Credentials** | User must manually type network name (error-prone). | User selects their SSID from a scanned list with signal bars, enters password. |
 | **5. Verification** | Device reboots blind; if password was wrong, device is unreachable. | Device tests connection in background; reboots only upon verified connection. |
@@ -123,7 +123,7 @@ Every feature in our roadmap must justify its existence through this matrix:
 
 ### Journey 2: Diagnosing an Unstable Field Node
 
-| Step | Traditional Embedded Approach (Before) | `espmui` Experience (After) |
+| Step | Traditional Embedded Approach (Before) | `espmpui` Experience (After) |
 | :--- | :--- | :--- |
 | **1. Symptom** | Sensor stops sending readings once every 3 days. | Sensor stops sending readings once every 3 days. |
 | **2. Inspection** | Tech climbs ladder, unscrews IP67 waterproof case, connects USB serial cable. | Tech connects laptop to local Wi-Fi, navigates to `http://sensor-node.local/`. |

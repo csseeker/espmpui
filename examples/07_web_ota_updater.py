@@ -5,16 +5,16 @@ direct flash partition writes, incremental SHA-256 verification, and active boot
 """
 
 try:
-    import espmui
+    import espmpui
 except ImportError:
     import os
     import sys
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-    import espmui
+    import espmpui
 
 # 1. Initialize Application
-app = espmui.App(title="OTA Edge Node", theme="dark")
+app = espmpui.App(title="OTA Edge Node", theme="dark")
 
 # 2. Add Standard Operational Tabs
 tab_ctrl = app.tab("Controls", icon="sliders")
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     ip = connect_wifi()
     st = ota.get_status()
     print("==================================================")
-    print(" espmui Web OTA Updater Initialized")
+    print(" espmpui Web OTA Updater Initialized")
     print("==================================================")
     print(f" Active Boot Partition:   {st['running_partition']}")
     print(f" Target Update Partition: {st['next_update_partition']}")

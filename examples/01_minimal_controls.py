@@ -1,16 +1,16 @@
 """
-Example 01: Minimal Hardware Controls with espmui
+Example 01: Minimal Hardware Controls with espmpui
 Demonstrates a clean, 15-line declarative web dashboard for ESP32.
 """
 
 try:
-    import espmui
+    import espmpui
 except ImportError:
     import sys
     import os
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-    import espmui
+    import espmpui
 
 # Hardware Setup (fallback to mock if running on PC)
 try:
@@ -23,8 +23,8 @@ except ImportError:
                 print(f"[Hardware] LED set to {v}")
     led = MockPin()
 
-# 1. Create espmui Application
-app = espmui.App(title="S3 Hardware Controller", theme="dark")
+# 1. Create espmpui Application
+app = espmpui.App(title="S3 Hardware Controller", theme="dark")
 
 # 2. Add Tab
 tab = app.tab("Controls", icon="sliders")
@@ -51,5 +51,5 @@ tab.slider(
 
 # 4. Start Dashboard Server
 if __name__ == "__main__":
-    print("Starting espmui server on http://0.0.0.0:80 ...")
+    print("Starting espmpui server on http://0.0.0.0:80 ...")
     app.run(port=80)

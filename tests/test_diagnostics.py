@@ -5,8 +5,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.diagnostics import SystemDiagnostics, format_uptime
-from espmui.app import App
+from espmpui.diagnostics import SystemDiagnostics, format_uptime
+from espmpui.app import App
 
 
 class TestSystemMetricsCollector(unittest.TestCase):

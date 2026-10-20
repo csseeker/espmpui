@@ -8,8 +8,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.config import ConfigStore, ConfigValidationError
-from espmui.app import App
+from espmpui.config import ConfigStore, ConfigValidationError
+from espmpui.app import App
 
 
 class TestConfigStorePersistence(unittest.TestCase):

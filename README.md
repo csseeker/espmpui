@@ -1,4 +1,4 @@
-# `espmui`: Modern Reactive Web Dashboard for MicroPython
+# `espmpui`: Modern Reactive Web Dashboard for MicroPython
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![MicroPython](https://img.shields.io/badge/MicroPython-v1.20%2B-green.svg)](https://micropython.org/)
@@ -6,12 +6,12 @@
 [![Bundle Size](https://img.shields.io/badge/Bundle%20Size-~13.4%20KB-blueviolet.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-62%20Passing-success.svg)]()
 
-`espmui` is a lightweight, zero-dependency web dashboard and device manager for **MicroPython** (ESP32, ESP32-S2/S3, ESP32-C3/C6, and Raspberry Pi Pico W).
+`espmpui` is a lightweight, zero-dependency web dashboard and device manager for **MicroPython** (ESP32, ESP32-S2/S3, ESP32-C3/C6, and Raspberry Pi Pico W).
 
 It pairs a declarative Python API with a pre-gzipped, CDN-free embedded frontend (~13.4 KB) synchronized in real-time over WebSockets.
 
 <p align="center">
-  <img src="docs/images/dashboard_sensors.png" alt="espmui Sensors Dashboard" width="100%">
+  <img src="docs/images/dashboard_sensors.png" alt="espmpui Sensors Dashboard" width="100%">
 </p>
 
 <details>
@@ -30,11 +30,11 @@ It pairs a declarative Python API with a pre-gzipped, CDN-free embedded frontend
 ## 🚀 Quick Start in 60 Seconds
 
 ### Option A: Test on your Desktop (No Hardware Required)
-You can test `espmui` directly in Python before plugging in your microcontroller:
+You can test `espmpui` directly in Python before plugging in your microcontroller:
 
 ```bash
-git clone https://github.com/csseeker/espmui.git
-cd espmui
+git clone https://github.com/csseeker/espmpui.git
+cd espmpui
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 
@@ -47,22 +47,22 @@ Open **`http://localhost:80/`** in your browser.
 
 ### Option B: Deploy to a Physical ESP32
 
-#### 1. Copy `espmui` to your board
+#### 1. Copy `espmpui` to your board
 Using [`mpremote`](https://docs.micropython.org/en/latest/reference/mpremote.html):
 ```bash
-mpremote fs cp -r src/espmui :
+mpremote fs cp -r src/espmpui :
 ```
-*(Or install directly over Wi-Fi on the board via `mip.install("github:csseeker/espmui")`)*.
+*(Or install directly over Wi-Fi on the board via `mip.install("github:csseeker/espmpui")`)*.
 
 #### 2. Run your first dashboard
 Save this as `main.py` on your ESP32:
 
 ```python
-import espmui
+import espmpui
 from machine import Pin
 import network
 
-# 1. Connect to local Wi-Fi (or use espmui's Captive Portal)
+# 1. Connect to local Wi-Fi (or use espmpui's Captive Portal)
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
 wlan.connect("YOUR_WIFI_SSID", "YOUR_WIFI_PASSWORD")
@@ -70,7 +70,7 @@ wlan.connect("YOUR_WIFI_SSID", "YOUR_WIFI_PASSWORD")
 led = Pin(2, Pin.OUT, value=0)
 
 # 2. Build Dashboard
-app = espmui.App(title="ESP32 IoT Dashboard", theme="dark")
+app = espmpui.App(title="ESP32 IoT Dashboard", theme="dark")
 tab = app.tab("Controls", icon="sliders")
 
 tab.switch("LED", value=False, on_change=lambda w, val: led.value(1 if val else 0))
@@ -93,7 +93,7 @@ Check the serial console for your device IP and navigate to **`http://<ESP32_IP>
 
 ---
 
-## ✨ Why `espmui`?
+## ✨ Why `espmpui`?
 
 * **No Frontend Toolchain Needed**: Zero npm builds or CDN dependencies. The single-page app (~13.4 KB) is served straight from device flash.
 * **Two-Way Reactive Sync**: State changes update connected web clients in real-time (~35 byte WebSocket diffs).

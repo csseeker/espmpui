@@ -6,7 +6,7 @@ import unittest
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 
-from espmui.server import (
+from espmpui.server import (
     calculate_accept_key,
     encode_ws_frame,
     decode_ws_frame,

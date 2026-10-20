@@ -24,11 +24,11 @@ except ImportError:
     import asyncio
 
 try:
-    import espmui
+    import espmpui
 except ImportError:
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-    import espmui
+    import espmpui
 
 # ==============================================================================
 # Hardware Peripheral Setup & Safe Probing
@@ -348,12 +348,12 @@ def get_uptime_str():
 
 
 # ==============================================================================
-# Construct espmui Tabbed Application
+# Construct espmpui Tabbed Application
 # ==============================================================================
 try:
-    app = espmui.App(title="ESP32-S3 IoT Node", theme="dark", tab_layout="vertical")
+    app = espmpui.App(title="ESP32-S3 IoT Node", theme="dark", tab_layout="vertical")
 except TypeError:
-    app = espmui.App(title="ESP32-S3 IoT Node", theme="dark")
+    app = espmpui.App(title="ESP32-S3 IoT Node", theme="dark")
     if hasattr(app, "tab_layout"):
         app.tab_layout = "vertical"
 
@@ -581,7 +581,7 @@ tab_logs.button("", text="⚠️ Reboot ESP32 MCU", accent="danger", on_click=on
 # Non-Blocking Background Sensor Loop
 # ==============================================================================
 async def sensor_loop():
-    terminal.log("[System] espmui multi-tab telemetry engine online.")
+    terminal.log("[System] espmpui multi-tab telemetry engine online.")
     terminal.log(f"[Hardware] ESP32-S3 @ {CPU_FREQ_MHZ}MHz | Octal PSRAM: 8MB")
     if has_camera_hardware:
         terminal.log(f"[Camera] {camera_sensor_name} sensor online over DVP bus.")
@@ -698,7 +698,7 @@ if __name__ == "__main__":
     ip = connect_wifi()
     app.create_task(sensor_loop())
     print("=" * 60)
-    print("  espmui Multi-Tab Sensor Telemetry Station")
+    print("  espmpui Multi-Tab Sensor Telemetry Station")
     print(f"  Live Dashboard: http://{ip}:80")
     print("=" * 60)
     app.run(port=80)

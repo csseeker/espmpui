@@ -37,4 +37,4 @@ jobs:
       - name: Validate web asset compilation
         run: |
           python web/build.py
-          git diff --exit-code src/espmui/assets.py || (echo "Assets are out of sync! Run 'python web/build.py' and commit changes." && exit 1)
+          git diff --exit-code src/espmpui/assets.py || (echo "Assets are out of sync! Run 'python web/build.py' and commit changes." && exit 1)

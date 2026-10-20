@@ -1,5 +1,5 @@
 """
-Declarative UI Widget components for espmui.
+Declarative UI Widget components for espmpui.
 Designed for zero-memory bloat, automatic reactive diff propagation, and ISR safety.
 """
 
@@ -16,7 +16,7 @@ def _generate_id(prefix="w"):
 
 
 class Widget:
-    """Base class for all espmui UI widgets."""
+    """Base class for all espmpui UI widgets."""
 
     def __init__(self, label: str, val=None, id: str = None, app=None, **kwargs):
         self.id = id or _generate_id()

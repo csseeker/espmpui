@@ -3,13 +3,13 @@ Example 03: ESP32-S3 Camera Viewfinder & Remote Controller
 Combines the CameraStream widget with lighting/exposure controls and telemetry.
 """
 try:
-    import espmui
+    import espmpui
 except ImportError:
     import sys
     import os
     if hasattr(os, "path"):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
-    import espmui
+    import espmpui
 
 # Hardware Camera & LED initialization
 has_camera = False
@@ -20,8 +20,8 @@ try:
 except Exception:
     pass
 
-# 1. Initialize espmui
-app = espmui.App(title="ESP32-S3 AI Cam Node", theme="dark")
+# 1. Initialize espmpui
+app = espmpui.App(title="ESP32-S3 AI Cam Node", theme="dark")
 
 tab_cam = app.tab("Live Camera", icon="camera")
 tab_ctrl = app.tab("Camera Settings", icon="sliders")

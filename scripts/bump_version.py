@@ -3,7 +3,7 @@
 scripts/bump_version.py
 
 Automates version bumping across:
-  - src/espmui/__init__.py (__version__)
+  - src/espmpui/__init__.py (__version__)
   - pyproject.toml (project.version)
   - package.json (version for MicroPython mip)
   - CHANGELOG.md (adds new unreleased/version section)
@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
-INIT_PATH = ROOT_DIR / "src" / "espmui" / "__init__.py"
+INIT_PATH = ROOT_DIR / "src" / "espmpui" / "__init__.py"
 PYPROJECT_PATH = ROOT_DIR / "pyproject.toml"
 PACKAGE_JSON_PATH = ROOT_DIR / "package.json"
 CHANGELOG_PATH = ROOT_DIR / "CHANGELOG.md"
@@ -27,7 +27,7 @@ def get_current_version() -> str:
     content = INIT_PATH.read_text(encoding="utf-8")
     match = re.search(r'^__version__\s*=\s*["\']([^"\']+)["\']', content, re.M)
     if not match:
-        raise ValueError("Could not find __version__ in src/espmui/__init__.py")
+        raise ValueError("Could not find __version__ in src/espmpui/__init__.py")
     return match.group(1)
 
 
@@ -62,7 +62,7 @@ def update_init(new_version: str):
         flags=re.M,
     )
     if count == 0:
-        raise ValueError("Failed to replace __version__ in src/espmui/__init__.py")
+        raise ValueError("Failed to replace __version__ in src/espmpui/__init__.py")
     INIT_PATH.write_text(new_content, encoding="utf-8")
     print(f"  ✓ Updated {INIT_PATH.relative_to(ROOT_DIR)} -> {new_version}")
 
@@ -118,7 +118,7 @@ def update_changelog(new_version: str):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Bump version for espmui.")
+    parser = argparse.ArgumentParser(description="Bump version for espmpui.")
     parser.add_argument(
         "target",
         help="Semantic increment ('patch', 'minor', 'major') or explicit version (e.g. '0.2.0')",
