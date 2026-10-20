@@ -173,13 +173,14 @@ flowchart LR
 
 ### 📌 Milestone 3: Live Diagnostics & Telemetry Dashboard (Priority: P1)
 *Target: Provide immediate system health visibility for monitoring and debugging without a serial cable.*
+*Deep-dive documentation: [Feature Reference: Live Diagnostics & Telemetry Dashboard](FEATURES.md#3-live-diagnostics--telemetry-dashboard-subsystem)*
 
-- [ ] **Task 3.1: Built-in System Metrics Collector**
+- [x] **Task 3.1: Built-in System Metrics Collector**
   * **Why do we need it:** MicroPython runs in a garbage-collected heap (often as small as 100–300 KB). Heap fragmentation and gradual memory leaks are the #1 reasons MicroPython devices mysteriously freeze after days of operation. Live metrics tracking of `gc.mem_free()`, `gc.mem_alloc()`, Wi-Fi RSSI, and uptime lets engineers spot memory leaks and poor Wi-Fi reception instantly.
   * **When & Where is it useful:** Bench testing coroutine leaks and GC behavior during development; troubleshooting field devices in hard-to-reach locations (ceilings, waterproof boxes, remote poles) where plugging in a USB cable is impossible.
   * **How often is it needed:** Continuously collected at 1 Hz only while an operator has the diagnostics tab open. Suspends collection when inactive to conserve CPU and RAM.
 
-- [ ] **Task 3.2: Diagnostics Tab in UI**
+- [x] **Task 3.2: Diagnostics Tab in UI**
   * **Why do we need it:** Provides an out-of-the-box "System" tab requiring zero setup lines by the developer. Includes visual RAM meters, Wi-Fi signal gauge, uptime counter, and actionable maintenance controls (manual GC trigger, soft reboot button, flash storage usage).
   * **When & Where is it useful:** Available on every `espmui` dashboard out of the box as an administrative view.
   * **How often is it needed:** Regularly during development and debugging sessions; on-demand during maintenance checks.

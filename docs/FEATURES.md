@@ -19,6 +19,11 @@ This document provides in-depth technical references, architecture diagrams, and
   - [2.3. Schema-Driven Form Generation & Type Validation](#23-schema-driven-form-generation--type-validation)
   - [2.4. Python Variable Binding & Reactive Change Hooks](#24-python-variable-binding--reactive-change-hooks)
   - [2.5. Developer API & Quickstart](#25-developer-api--quickstart)
+- [3. Live Diagnostics & Telemetry Dashboard Subsystem (Milestone 3)](#3-live-diagnostics--telemetry-dashboard-subsystem)
+  - [3.1. The Real-World Problem: Silent MicroPython Heap Fragmentation & Freezes](#31-the-real-world-problem-silent-micropython-heap-fragmentation--freezes)
+  - [3.2. Real-Time Telemetry Metrics Architecture](#32-real-time-telemetry-metrics-architecture)
+  - [3.3. Out-of-the-Box Maintenance Actions (GC & Soft Reset)](#33-out-of-the-box-maintenance-actions-gc--soft-reset)
+  - [3.4. Developer API & Quickstart](#34-developer-api--quickstart)
 
 ---
 
@@ -320,3 +325,115 @@ if __name__ == "__main__":
 
 #### Complete Working Example:
 See [`examples/05_persistent_config_store.py`](../examples/05_persistent_config_store.py).
+
+---
+
+## 3. Live Diagnostics & Telemetry Dashboard Subsystem
+
+* **Milestone / Tasks**: Milestone 3 (Tasks 3.1, 3.2)
+* **Modules**: [`src/espmui/diagnostics.py`](../src/espmui/diagnostics.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Test Suite**: [`tests/test_diagnostics.py`](../tests/test_diagnostics.py)
+
+---
+
+### 3.1. The Real-World Problem: Silent MicroPython Heap Fragmentation & Freezes
+
+MicroPython executes within a limited, garbage-collected heap (typically only 100 KB to 300 KB on standard ESP32 boards without external PSRAM).
+
+```mermaid
+pie title Typical ESP32 Free Heap Breakdown
+    "Allocated by MicroPython Core" : 80
+    "Async Event Loop & Coroutines" : 45
+    "Fragmented Uncollectable Free Space" : 65
+    "Contiguous Free Heap Available" : 130
+```
+
+#### Why MicroPython Nodes Randomly Freeze:
+1. **Gradual Memory Leaks**: Coroutines that retain unclosed sockets or append to unbounded lists gradually exhaust free heap over hours or days.
+2. **Heap Fragmentation**: Repeated string slicing and large dictionary allocations create "swiss cheese" fragmentation where plenty of total bytes are free, but `allocate` fails because no contiguous block exists.
+3. **No Serial Cable in the Field**: Once an IoT node is deployed inside an electrical box, ceiling, or agricultural field, plugging in a USB cable to run `gc.mem_free()` is impossible.
+
+---
+
+### 3.2. Real-Time Telemetry Metrics Architecture
+
+`SystemDiagnostics` aggregates core system health without external dependencies:
+
+```mermaid
+graph TD
+    subgraph MCU ["Microcontroller Telemetry Sources"]
+        GC["gc.mem_free() & gc.mem_alloc()"]
+        FS["os.statvfs('/') - LittleFS Storage"]
+        TIME["time.ticks_ms() with 30-bit wrap compensation"]
+        WIFI["network.WLAN(STA_IF).status('rssi')"]
+        FREQ["machine.freq() Clock Frequency"]
+    end
+
+    subgraph Diag ["SystemDiagnostics Subsystem"]
+        Collector["Metrics Aggregator & Formatter"]
+        REST["REST API: /api/system/metrics"]
+        Loop["Cooperative Background Telemetry Loop"]
+    end
+
+    subgraph UI ["espmui Dashboard (Web)"]
+        Tab["System Health Navigation Tab"]
+        RAM["RAM / Heap Progress Meter"]
+        FlashM["Flash Storage Meter"]
+        UptimeM["Uptime & CPU Metrics"]
+        Acts["GC Trigger & Soft Reset Buttons"]
+    end
+
+    GC --> Collector
+    FS --> Collector
+    TIME --> Collector
+    WIFI --> Collector
+    FREQ --> Collector
+
+    Collector --> REST
+    Collector --> Loop
+    Loop --> RAM
+    Loop --> FlashM
+    Loop --> UptimeM
+    REST --> Tab
+    Acts --> Collector
+```
+
+1. **Heap Allocation Tracking**: Reports allocated bytes, free bytes, and percentage free with zero task thrashing.
+2. **Filesystem Flash Storage**: Queries `os.statvfs('/')` to track LittleFS/FAT storage block usage and prevent flash-full crashes.
+3. **Rollover-Safe Uptime**: Calculates elapsed system uptime safely handling MicroPython 30-bit signed integer tick overflows (`time.ticks_diff()`).
+4. **Wi-Fi Signal Strength**: Live RSSI dBm readout to spot signal degradation before devices drop offline.
+
+---
+
+### 3.3. Out-of-the-Box Maintenance Actions (GC & Soft Reset)
+
+The System Health tab provides two administrative controls:
+
+- **🧹 Manual Garbage Collection**:
+  - Triggers `gc.collect()`, computes exact freed memory (`after - before`), updates the RAM meter immediately, and displays a toast (e.g., `GC Complete: 12,480 bytes freed`).
+- **⚡ Safe Soft Restart**:
+  - Responds to the client with `200 OK` first, flushes HTTP/WebSocket sockets cleanly, and invokes `machine.reset()` after a brief cooperative delay (`asyncio.sleep_ms(800)`), avoiding socket corruption or browser hangs.
+
+---
+
+### 3.4. Developer API & Quickstart
+
+Enabling live diagnostics requires **1 line of code**:
+
+```python
+import espmui
+
+app = espmui.App(title="Solar Monitor", theme="dark")
+tab = app.tab("Controls", icon="sliders")
+tab.switch("Inverter Power", value=True)
+
+# 1. Enable System Diagnostics
+# Automatically creates the "System Health" tab with live meters and maintenance actions.
+diag = app.enable_diagnostics(title="System Health", icon="cpu", start_loop=True)
+
+if __name__ == "__main__":
+    app.run(port=80)
+```
+
+#### Complete Working Example:
+See [`examples/06_live_diagnostics.py`](../examples/06_live_diagnostics.py).

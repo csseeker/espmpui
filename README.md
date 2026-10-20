@@ -64,6 +64,9 @@ if __name__ == "__main__":
   * Atomic write-to-temp and inode rename pattern protecting `/config.json` against 0-byte truncation on brownouts.
   * Schema-driven dynamic form generator with type enforcement, min/max bounds, and dropdown validation.
   * Python variable binding (`config.param`) and reactive sync/async change hooks (`@config.on_change`).
+* **Live System Diagnostics & Telemetry**:
+  * Real-time tracking of `gc.mem_free()` and `gc.mem_alloc()` heap status, LittleFS/FAT storage usage, Wi-Fi RSSI (dBm), and rollover-safe uptime.
+  * Turnkey "System Health" tab with live meters, manual Garbage Collector trigger (`gc.collect()`), and safe remote soft restart (`machine.reset()`).
 * **Included Widgets**:
   * 📑 **Multi-Tab Layout**: Organize dashboards across multiple tabs (e.g., Controls, Sensors, Diagnostics).
   * 📸 **Camera Viewfinder**: Basic snapshot capture and MJPEG streaming for supported camera modules (such as OV2640).

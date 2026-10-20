@@ -100,6 +100,7 @@ class App:
         self.widgets_by_id = {}
         self.server = None
         self.portal = None
+        self.diagnostics = None
         self._on_diff = None  # Hook for tests or custom observers
         self.tasks = []
         self._custom_routes = {}
@@ -160,6 +161,15 @@ class App:
 
         self.add_route("/api/config", _handle_config_endpoint)
         return store
+
+    def enable_diagnostics(self, title: str = "System Health", icon: str = "cpu", start_loop: bool = True):
+        """Attaches an out-of-the-box System Diagnostics tab and REST telemetry endpoints."""
+        from espmui.diagnostics import SystemDiagnostics
+        diag = SystemDiagnostics(app=self, tab_title=title, tab_icon=icon)
+        self.diagnostics = diag
+        if start_loop:
+            diag.start_telemetry_loop()
+        return diag
 
     def add_route(self, path: str, handler):
         """Registers a custom HTTP route handler."""

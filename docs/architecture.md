@@ -90,6 +90,19 @@ When developing microcontroller projects in MicroPython, creating an on-device w
   * `GET /api/config`: Returns active values and schema metadata.
   * `POST /api/config`: Validates incoming payload, commits to flash atomically, triggers change hooks, and returns status.
 
+### 3.6. Live Diagnostics & Telemetry Dashboard Subsystem
+* **System Metrics Aggregator (`SystemDiagnostics`)**:
+  * Gathers real-time hardware telemetry: `gc.mem_free()` and `gc.mem_alloc()` heap status, LittleFS/FAT storage from `os.statvfs('/')`, Wi-Fi RSSI (dBm), CPU clock frequency, and rollover-safe uptime (`time.ticks_diff()`).
+* **Turnkey Administrative UI (`app.enable_diagnostics()`)**:
+  * Injects a turnkey "System Health" navigation tab with visual progress bars, uptime/CPU metrics, and actionable maintenance controls.
+* **Maintenance & Recovery Actions**:
+  * Interactive Garbage Collector trigger (`gc.collect()`) reporting byte recovery in real-time.
+  * Safe soft restart (`machine.reset()`) with delayed scheduling to allow graceful socket teardown.
+* **REST Endpoints**:
+  * `GET /api/system/metrics`: Live JSON metrics payload.
+  * `POST /api/system/gc`: Executes garbage collection and returns freed bytes.
+  * `POST /api/system/reboot`: Acknowledges and schedules soft reboot.
+
 ---
 
 ## 4. Developer Experience & API Design
@@ -181,6 +194,7 @@ espmui/
 │       ├── iot_widgets.py            # Additional widgets (Camera, Terminal, File Manager)
 │       ├── wifi.py                   # Wi-Fi Provisioner, DNS Interceptor, Captive Portal
 │       ├── config.py                 # Persistent Parameter Store & Schema Form
+│       ├── diagnostics.py            # Live Diagnostics & Telemetry Collector
 │       └── assets.py                 # Pre-compressed web assets
 ├── web/                              # Frontend source
 │   ├── index.html                    # Single-page application shell

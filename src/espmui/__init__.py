@@ -7,6 +7,7 @@ from espmui.widgets import Widget, Button, Switch, Slider, Metric, Progress
 from espmui.iot_widgets import Terminal, LineChart, CameraStream, FileManager
 from espmui.wifi import WiFiManager, DNSServer, CaptivePortal
 from espmui.config import ConfigStore, ConfigForm, ConfigValidationError
+from espmui.diagnostics import SystemDiagnostics, format_uptime
 
 __version__ = "0.1.0"
 __all__ = [
@@ -28,4 +29,6 @@ __all__ = [
     "ConfigStore",
     "ConfigForm",
     "ConfigValidationError",
+    "SystemDiagnostics",
+    "format_uptime",
 ]
