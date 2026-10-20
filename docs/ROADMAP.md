@@ -9,7 +9,7 @@ Every microcontroller product (sensors, home automation, industrial nodes) requi
 - **React/Vue SPAs:** Hundreds of kilobytes, requiring Node/npm build pipelines that embedded developers avoid, frequently crashing MCU heaps.
 
 ### `espmpui`'s Unique Value Proposition (UVP)
-> **"A modern, reactive, app-like Web UI for MicroPython in under 15 lines of code — using ~5 KB flash, under 8 KB RAM, and zero frontend build tools."**
+> **"A modern, reactive, app-like Web UI micro-framework for MicroPython in under 15 lines of code — using ~13.2 KB flash, under 8 KB RAM, and zero frontend build tools."**
 
 *For the complete persona breakdown, user journeys, and feature evaluation rules, see [Value Proposition & User Personas](VALUE_PROPOSITION.md).*
 
@@ -40,7 +40,7 @@ flowchart TD
 ```
 
 ### Why Focus on MicroPython First?
-1. **Uncontested Niche:** There is virtually no modern, responsive Web UI library built specifically for MicroPython on ESP32 / Pico W.
+1. **Uncontested Niche:** There is virtually no modern, responsive Web UI micro-framework built specifically for MicroPython on ESP32 / Pico W.
 2. **Speed of Execution:** MicroPython provides rapid iteration on widget schemas, reactive mechanics, and UX without long compile-flash-debug cycles.
 3. **Single Source of Truth:** Locking down the UX, wire protocol, and module contracts in MicroPython first guarantees that any subsequent C++/ESP-IDF port will be clean and battle-tested.
 
@@ -55,7 +55,7 @@ flowchart TD
 ```mermaid
 graph TD
     subgraph Browser ["Client-Side (Browser)"]
-        UI["espmpui Web Bundle (~5 KB Compressed)"]
+        UI["espmpui Web Bundle (~13.2 KB Compressed)"]
         MUI["Responsive Modern Dark/Light Theme"]
         Widgets["Widgets: Gauges, Charts, Sliders, Forms"]
         ProtoEngine["Protocol Engine: JSON Diffs & Events"]
@@ -124,7 +124,7 @@ flowchart LR
 - [x] **Core: Asynchronous HTTP & RFC 6455 WebSocket Server** (`AsyncServer` with chunked asset delivery, cooperative `sleep_ms(0)` yields).
 - [x] **Core: Declarative Python Widget Hierarchy** (`Button`, `Switch`, `Slider`, `Metric`, `Progress`).
 - [x] **Resilience: Fault-Isolated Event Dispatch Barrier** (Traps exceptions in user callbacks without crashing the main loop or rebooting chip).
-- [x] **Frontend: Embedded Single-Page App** (~4.7 KB pre-gzipped bundle, zero external CDN dependencies, mobile-responsive dark theme).
+- [x] **Frontend: Embedded Single-Page App** (~13.2 KB pre-gzipped bundle, zero external CDN dependencies, mobile-responsive dark theme).
 - [x] **IoT Suite: Specialized Widgets** (Real-time HTML5 Canvas Sparkline, Web Terminal log monitor, Flash File Explorer, Camera Viewfinder).
 
 ---

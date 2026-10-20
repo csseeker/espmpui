@@ -2,7 +2,7 @@
 
 ## 1. Overview & Motivation
 
-`espmpui` (ESP MicroPython UI) is a lightweight web dashboard library for the MicroPython ecosystem (ESP32, ESP32-S2/S3, ESP32-C2/C3/C6, and Raspberry Pi Pico W).
+`espmpui` (ESP MicroPython UI) is a reactive web micro-framework and device management toolkit for the MicroPython ecosystem (ESP32, ESP32-S2/S3, ESP32-C2/C3/C6, and Raspberry Pi Pico W).
 
 When developing microcontroller projects in MicroPython, creating an on-device web interface often involves assembling custom HTTP handlers, writing manual string formatting, or managing external web assets alongside hardware control code.
 
@@ -21,7 +21,7 @@ When developing microcontroller projects in MicroPython, creating an on-device w
 | Principle | Approach in `espmpui` | Practical Consideration |
 | :--- | :--- | :--- |
 | **Pythonic API** | Object-oriented widgets with callback registration (`on_click`, `on_change`) and property assignments. | Keeps setup straightforward and familiar for MicroPython developers. |
-| **Self-Contained Bundle** | Single pre-compressed bundle (< 5 KB gzipped) containing HTML, CSS, and JavaScript. | Avoids external asset dependencies or manual asset deployment steps. |
+| **Self-Contained Bundle** | Single pre-compressed bundle (~13.2 KB gzipped, < 15 KB flash) containing HTML, CSS, and JavaScript. | Avoids external asset dependencies or manual asset deployment steps. |
 | **Chunked Streaming** | Serves static assets directly in small chunks (e.g. 512–1024 bytes) with cooperative yields. | Helps prevent socket buffers or memory allocations from blocking the event loop. |
 | **Differential State Sync** | Uses small JSON diffs (~35 bytes) for state updates rather than full page reloads. | Keeps network traffic and serialization overhead modest on resource-limited MCUs. |
 | **Memory Consciousness** | Bounded queues and minimal state dictionaries. | Designed to operate within standard ESP32 RAM limits (~30–40 KB free heap). |
@@ -33,7 +33,7 @@ When developing microcontroller projects in MicroPython, creating an on-device w
 ## 3. Core Architectural Pillars
 
 ### 3.1. Pre-Compressed Asset Pipeline
-* The frontend single-page application is minified and gzipped into an embedded byte stream (`assets.py`, currently ~4.7 KB).
+* The frontend single-page application is minified and gzipped into an embedded byte stream (`assets.py`, currently ~13.2 KB).
 * When an HTTP client requests `GET /`, MicroPython streams the compressed byte stream in small chunks (e.g., 1024 bytes) directly from storage:
   ```http
   HTTP/1.1 200 OK
@@ -201,7 +201,7 @@ espmpui/
 │   └── concurrency_and_resilience.md # Non-blocking concurrency & resilience specification
 ├── src/
 │   └── espmpui/
-│       ├── __init__.py               # Library entrypoint
+│       ├── __init__.py               # Package & micro-framework entrypoint
 │       ├── app.py                    # App coordinator and tab management
 │       ├── server.py                 # Async HTTP and WebSocket server
 │       ├── widgets.py                # Standard widget classes

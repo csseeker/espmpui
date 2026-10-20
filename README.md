@@ -1,4 +1,4 @@
-# `espmpui`: Reactive Web Dashboard & Device Manager for MicroPython
+# `espmpui`: Reactive Web Micro-Framework & Device Management Toolkit for MicroPython
 
 [![PyPI](https://img.shields.io/pypi/v/espmpui.svg)](https://pypi.org/project/espmpui/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -7,9 +7,9 @@
 [![Bundle Size](https://img.shields.io/badge/Bundle%20Size-~13.2%20KB-blueviolet.svg)]()
 [![Tests](https://img.shields.io/badge/Tests-62%20Passing-success.svg)]()
 
-> **Ship an app-like web dashboard, mobile Wi-Fi captive portal, persistent settings, and OTA updater for your ESP32 or Pico W in under 15 lines of pure Python.**
+> **A zero-dependency reactive micro-framework and device management toolkit that brings app-like web dashboards, mobile Wi-Fi captive portals, persistent configuration, and OTA updating to your ESP32 or Pico W in under 15 lines of pure Python.**
 
-`espmpui` is a lightweight, zero-dependency web dashboard and device manager for **MicroPython** (ESP32, ESP32-S2/S3, ESP32-C3/C6, and Raspberry Pi Pico W).
+`espmpui` is an ultra-lightweight, zero-dependency **reactive web micro-framework and device management toolkit** for **MicroPython** (ESP32, ESP32-S2/S3, ESP32-C3/C6, and Raspberry Pi Pico W).
 
 It pairs a declarative Python API with a pre-gzipped, CDN-free embedded frontend (~13.2 KB) synchronized in real-time over WebSockets.
 

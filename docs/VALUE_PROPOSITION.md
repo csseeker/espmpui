@@ -1,6 +1,6 @@
 # `espmpui` Value Proposition & User Personas
 
-> **The North Star:** Deliver a modern, reactive, app-like Web UI for microcontrollers in under 15 lines of code — using < 5 KB flash, < 8 KB RAM, and requiring zero frontend build tooling.
+> **The North Star:** Deliver a modern, reactive, app-like Web UI for microcontrollers in under 15 lines of code — using < 15 KB flash (~13.2 KB gzipped), < 8 KB RAM, and requiring zero frontend build tooling.
 
 ---
 
@@ -45,7 +45,7 @@ flowchart TD
 
 ---
 
-### Persona 1: The Firmware Developer (You / Library Consumer)
+### Persona 1: The Firmware Developer (You / Framework User)
 
 * **Profile:** Embedded software engineer, IoT product creator, maker, or academic researcher writing MicroPython code on ESP32, ESP32-S3/C3, or Raspberry Pi Pico W.
 * **Their Voice:**
@@ -56,7 +56,7 @@ flowchart TD
   - Maintaining separate web codebases alongside firmware code.
 * **What `espmpui` Gives Them:**
   - **15 Lines of Clean Python:** Declare widgets (`app.tab()`, `tab.slider()`, `tab.switch()`) directly in firmware code.
-  - **Zero Frontend Tooling:** Pre-compiled, pre-gzipped bundle (~4.7 KB) embedded directly into flash. No `npm`, no build step.
+  - **Zero Frontend Tooling:** Pre-compiled, pre-gzipped bundle (~13.2 KB) embedded directly into flash. No `npm`, no build step.
   - **Fault-Isolated Callbacks:** Exceptions in user button or slider handlers are trapped and reported to console/toast without crashing the main loop or rebooting the MCU.
 
 ---

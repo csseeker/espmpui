@@ -1319,11 +1319,11 @@
       const tabsContent = document.getElementById('tabs-content');
       const toast = document.getElementById('toast');
 
-      let currentLayout = localStorage.getItem('espmui_tab_layout') || 'vertical';
+      let currentLayout = localStorage.getItem('espmpui_tab_layout') || localStorage.getItem('espmui_tab_layout') || 'vertical';
 
       function setLayout(layout) {
         currentLayout = layout;
-        localStorage.setItem('espmui_tab_layout', layout);
+        localStorage.setItem('espmpui_tab_layout', layout);
         const layoutEl = document.getElementById('dashboard-layout');
         if (layoutEl) {
           layoutEl.className = `dashboard-layout ${layout}`;
@@ -1377,7 +1377,7 @@
         if (msg.op === 'init') {
           appTitle.textContent = msg.title || 'espmpui Dashboard';
           const serverLayout = msg.tab_layout || 'vertical';
-          const initialLayout = localStorage.getItem('espmui_tab_layout') || serverLayout;
+          const initialLayout = localStorage.getItem('espmpui_tab_layout') || localStorage.getItem('espmui_tab_layout') || serverLayout;
           setLayout(initialLayout);
           renderTabs(msg.tabs || []);
         } else if (msg.op === 'set') {
