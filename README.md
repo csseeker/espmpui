@@ -138,3 +138,15 @@ make lint
 * [Architecture & System Design](docs/architecture.md) — System architecture, component trees, and dataflow.
 * [WebSocket Wire Protocol Specification](docs/protocol_spec.md) — JSON opcode schemas, event flows, and diff formats.
 * [Concurrency & Resilience Specification](docs/concurrency_and_resilience.md) — Cooperative slicing, backpressure queues, and fault isolation.
+
+---
+
+## 📄 License & Disclaimer
+
+This project is licensed under the [MIT License](LICENSE).
+
+### Disclaimer of Warranty
+
+> **Important**: This software is provided **"as is"**, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, non-infringement, or system uptime. 
+>
+> In no event shall the authors, maintainers, or contributors be held liable for any claim, damages, hardware damage (including but not limited to bricked microcontrollers, corrupted flash memory, or electrical hazards), data loss, or other liabilities arising from the use of, or inability to use, this software. Users and developers are solely responsible for testing and validating their device configurations, wiring, and firmware updates.

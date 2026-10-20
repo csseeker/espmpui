@@ -5,7 +5,11 @@
     ["espmui/server.py", "src/espmui/server.py"],
     ["espmui/widgets.py", "src/espmui/widgets.py"],
     ["espmui/iot_widgets.py", "src/espmui/iot_widgets.py"],
-    ["espmui/assets.py", "src/espmui/assets.py"]
+    ["espmui/assets.py", "src/espmui/assets.py"],
+    ["espmui/wifi.py", "src/espmui/wifi.py"],
+    ["espmui/config.py", "src/espmui/config.py"],
+    ["espmui/diagnostics.py", "src/espmui/diagnostics.py"],
+    ["espmui/ota.py", "src/espmui/ota.py"]
   ],
   "deps": [],
   "version": "0.1.0"

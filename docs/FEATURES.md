@@ -552,3 +552,11 @@ if __name__ == "__main__":
 
 #### Complete Working Example:
 See [`examples/07_web_ota_updater.py`](../examples/07_web_ota_updater.py).
+
+---
+
+## 5. Disclaimer & Warranty
+
+This project is open-source software provided under the [MIT License](../LICENSE).
+
+> **Disclaimer**: This software and accompanying documentation are provided **"as is"**, without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, non-infringement, or hardware operation. In no event shall the authors or copyright holders be liable for any claim, damages, data loss, device bricking, or other liability arising from the use of this software. Users are solely responsible for verifying hardware wiring, electrical safety, and OTA firmware compatibility prior to deployment.
