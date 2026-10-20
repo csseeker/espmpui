@@ -95,9 +95,20 @@ class App:
         self.tabs = []
         self.widgets_by_id = {}
         self.server = None
+        self.portal = None
         self._on_diff = None  # Hook for tests or custom observers
         self.tasks = []
         self._custom_routes = {}
+
+    def enable_captive_portal(self, ap_ssid: str = "espmui-Setup", ap_password: str = None, ap_ip: str = "192.168.4.1", dns_port: int = 53):
+        """Configures and activates SoftAP captive portal and Wi-Fi provisioner."""
+        from espmui.wifi import CaptivePortal, WiFiManager
+        wifi_mgr = WiFiManager()
+        wifi_mgr.start_ap(ssid=ap_ssid, password=ap_password, ip=ap_ip)
+        self.portal = CaptivePortal(self.server, wifi_manager=wifi_mgr, ap_ip=ap_ip, dns_port=dns_port)
+        if self.server:
+            self.portal.attach()
+        return self.portal
 
     def add_route(self, path: str, handler):
         """Registers a custom HTTP route handler."""
@@ -191,6 +202,10 @@ class App:
         self.server = AsyncServer(host=host, port=port)
         for p, h in self._custom_routes.items():
             self.server.add_route(p, h)
+        if self.portal:
+            self.portal.server = self.server
+            self.portal.attach()
+            await self.portal.start()
         self.server.on_ws_message = lambda client, text: asyncio.create_task(self.handle_inbound_message(client, text))
         self.server.on_ws_connect = self._on_ws_connect
         await self.server.start()

@@ -131,18 +131,19 @@ flowchart LR
 
 ### 📌 Milestone 1: Wi-Fi Provisioner & Captive Portal (Priority: P0)
 *Target: Eliminate hardcoded Wi-Fi credentials and provide instant zero-friction onboarding.*
+*Deep-dive documentation: [Feature Reference: Wi-Fi Provisioner & Captive Portal](FEATURES.md#1-wi-fi-provisioner--captive-portal-subsystem)*
 
-- [ ] **Task 1.1: SoftAP & DNS Captive Redirection Server**
+- [x] **Task 1.1: SoftAP & DNS Captive Redirection Server**
   * **Why do we need it:** Without DNS interception (`port 53`), connecting to an unconfigured device AP displays an annoying "Connected without internet" warning on phones and silently fails to prompt the user. Captive redirection intercepts standard probe requests (`/generate_204` for Android, `/hotspot-detect.html` for iOS/macOS, `/ncsi.txt` for Windows) and instantly pops up the setup page on the user's screen without requiring them to know or type `192.168.4.1`.
   * **When & Where is it useful:** First-time out-of-the-box unboxing, relocation to a new room/site, or recovering from router password changes.
   * **How often is it needed:** Low runtime frequency (1–2x per device lifecycle), but **Critical (P0 gatekeeper)**: if onboarding fails, non-technical users cannot use the device.
 
-- [ ] **Task 1.2: Asynchronous Wi-Fi Scanner & Credential Handler**
+- [x] **Task 1.2: Asynchronous Wi-Fi Scanner & Credential Handler**
   * **Why do we need it:** Typing 24-character hex Wi-Fi passwords and exact SSIDs on mobile touchscreens is error-prone. Background scanning lists nearby networks with visual RSSI signal bars so users just tap their SSID. Asynchronously testing the connection before tearing down SoftAP prevents "bricking" connectivity if the user mistypes credentials.
   * **When & Where is it useful:** Directly inside the onboarding captive portal flow on the user's mobile or laptop browser.
   * **How often is it needed:** Every time the device is provisioned or reconfigured.
 
-- [ ] **Task 1.3: Captive Portal Mobile-First Frontend View**
+- [x] **Task 1.3: Captive Portal Mobile-First Frontend View**
   * **Why do we need it:** Over 95% of captive setups happen from smartphones. Standard desktop dashboards are cramped and hard to navigate on phones. A dedicated, clean, single-purpose mobile onboarding dialog ensures immediate clarity and confidence.
   * **When & Where is it useful:** Rendered immediately when the mobile OS captive sheet opens.
   * **How often is it needed:** Whenever entering setup/provisioning mode.

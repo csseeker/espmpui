@@ -270,6 +270,170 @@
         display: none;
       }
     }
+
+    /* Setup & Captive Portal View */
+    .setup-container {
+      width: 100%;
+      max-width: 480px;
+      margin: 8px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .setup-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 16px 36px -6px rgba(0,0,0,0.55);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .setup-hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .setup-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+    }
+    .setup-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+    .setup-subtitle { font-size: 13px; color: var(--text-dim); line-height: 1.4; max-width: 360px; }
+    
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+    .btn-icon {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--card-border);
+      color: var(--primary);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-icon:hover { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.3); }
+    .btn-icon.spinning #scan-icon { animation: spin 0.8s linear infinite; display: inline-block; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .network-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .network-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .network-item:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(56,189,248,0.3);
+      transform: translateY(-1px);
+    }
+    .network-item.selected {
+      background: rgba(37,99,235,0.22);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56,189,248,0.2);
+    }
+    .network-info { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #fff; }
+    .network-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-dim); }
+    .wifi-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+    .bar { width: 3px; background: rgba(255,255,255,0.2); border-radius: 1px; }
+    .bar.active { background: var(--primary); }
+    .bar-1 { height: 4px; }
+    .bar-2 { height: 7px; }
+    .bar-3 { height: 10px; }
+    .bar-4 { height: 14px; }
+
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+    .input-group input {
+      width: 100%;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .input-group input:focus { border-color: var(--primary); }
+    .input-with-action { position: relative; display: flex; align-items: center; }
+    .input-with-action input { padding-right: 40px; }
+    .btn-reveal {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--text-dim);
+      padding: 4px;
+    }
+    .btn-reveal:hover { color: #fff; }
+
+    .setup-status-box {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .setup-status-box.connecting {
+      background: rgba(56,189,248,0.1);
+      border: 1px solid rgba(56,189,248,0.25);
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .setup-status-box.success {
+      background: rgba(16,185,129,0.12);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #34d399;
+    }
+    .setup-status-box.error {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+    }
+
+    .setup-actions { display: flex; flex-direction: column; gap: 8px; }
+    .btn-block { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; }
+    .link-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      padding: 4px 0;
+      margin-top: 4px;
+    }
+    .link-btn:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -279,6 +443,10 @@
         <div class="title" id="app-title">espmui Dashboard</div>
       </div>
       <div class="header-right">
+        <button class="layout-toggle-btn" id="wifi-setup-toggle" title="Wi-Fi Configuration">
+          <span>📶</span>
+          <span id="wifi-btn-label">Setup</span>
+        </button>
         <button class="layout-toggle-btn" id="layout-toggle" title="Toggle Tab Layout">
           <span id="layout-icon">◫</span>
           <span id="layout-label">Vertical</span>
@@ -289,6 +457,53 @@
     <div class="dashboard-layout vertical" id="dashboard-layout">
       <nav class="tabs-nav" id="tabs-nav"></nav>
       <main class="tabs-content" id="tabs-content"></main>
+    </div>
+
+    <!-- Mobile-First Captive Portal & Wi-Fi Provisioner View -->
+    <div class="setup-container" id="setup-view" style="display:none;">
+      <div class="setup-card">
+        <div class="setup-hero">
+          <div class="setup-badge">📶 Wi-Fi Provisioner</div>
+          <h2 class="setup-title">Connect to Wi-Fi</h2>
+          <p class="setup-subtitle">Select your local network to connect this device to your Wi-Fi.</p>
+        </div>
+
+        <div class="setup-section">
+          <div class="section-header">
+            <span class="section-title">Nearby Networks</span>
+            <button class="btn-icon" id="btn-scan" title="Rescan Networks">
+              <span id="scan-icon">🔄</span> Scan
+            </button>
+          </div>
+          <div class="network-list" id="network-list">
+            <div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">Scanning for networks...</div>
+          </div>
+          <div style="margin-top:6px;">
+            <button class="link-btn" id="btn-toggle-manual">+ Enter hidden or custom SSID</button>
+          </div>
+        </div>
+
+        <div class="setup-section" style="display:flex;flex-direction:column;gap:10px;">
+          <div class="input-group">
+            <label for="wifi-ssid">Network Name (SSID)</label>
+            <input type="text" id="wifi-ssid" placeholder="Network Name" autocomplete="off" />
+          </div>
+          <div class="input-group">
+            <label for="wifi-pass">Password</label>
+            <div class="input-with-action">
+              <input type="password" id="wifi-pass" placeholder="Enter network password" autocomplete="off" />
+              <button type="button" class="btn-reveal" id="btn-reveal-pass" title="Show Password">👁️</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-status-box" id="setup-status" style="display:none;"></div>
+
+        <div class="setup-actions">
+          <button class="btn btn-block" id="btn-connect" style="background:#2563eb;color:#fff;">Connect Device</button>
+          <button class="btn secondary btn-block" id="btn-goto-dashboard">Continue to Dashboard →</button>
+        </div>
+      </div>
     </div>
   </div>
   <div id="toast" class="toast"></div>
@@ -798,7 +1013,189 @@
       });
     });
 
-    window.onload = connect;
+    /* Wi-Fi Setup Controller */
+    const setupView = document.getElementById('setup-view');
+    const dashboardLayout = document.getElementById('dashboard-layout');
+    const wifiToggleBtn = document.getElementById('wifi-setup-toggle');
+    const wifiBtnLabel = document.getElementById('wifi-btn-label');
+    const btnScan = document.getElementById('btn-scan');
+    const networkList = document.getElementById('network-list');
+    const wifiSsid = document.getElementById('wifi-ssid');
+    const wifiPass = document.getElementById('wifi-pass');
+    const btnRevealPass = document.getElementById('btn-reveal-pass');
+    const btnConnect = document.getElementById('btn-connect');
+    const setupStatus = document.getElementById('setup-status');
+    const btnGotoDashboard = document.getElementById('btn-goto-dashboard');
+    const btnToggleManual = document.getElementById('btn-toggle-manual');
+
+    let isSetupViewActive = false;
+
+    function showSetupView() {
+      isSetupViewActive = true;
+      setupView.style.display = 'flex';
+      dashboardLayout.style.display = 'none';
+      wifiBtnLabel.textContent = 'Dashboard';
+      scanWifiNetworks();
+    }
+
+    function showDashboardView() {
+      isSetupViewActive = false;
+      setupView.style.display = 'none';
+      dashboardLayout.style.display = currentLayout === 'vertical' ? 'flex' : 'flex';
+      wifiBtnLabel.textContent = 'Setup';
+      if (!ws || ws.readyState > 1) {
+        connect();
+      }
+    }
+
+    wifiToggleBtn.onclick = () => {
+      if (isSetupViewActive) showDashboardView();
+      else showSetupView();
+    };
+
+    btnGotoDashboard.onclick = showDashboardView;
+
+    btnRevealPass.onclick = () => {
+      wifiPass.type = wifiPass.type === 'password' ? 'text' : 'password';
+      btnRevealPass.textContent = wifiPass.type === 'password' ? '👁️' : '🔒';
+    };
+
+    btnToggleManual.onclick = () => {
+      document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
+      wifiSsid.value = '';
+      wifiSsid.focus();
+    };
+
+    btnScan.onclick = scanWifiNetworks;
+
+    function renderBarsHtml(bars) {
+      return `
+        <div class="wifi-bars">
+          <div class="bar bar-1 active"></div>
+          <div class="bar bar-2 ${bars >= 2 ? 'active' : ''}"></div>
+          <div class="bar bar-3 ${bars >= 3 ? 'active' : ''}"></div>
+          <div class="bar bar-4 ${bars >= 4 ? 'active' : ''}"></div>
+        </div>
+      `;
+    }
+
+    function scanWifiNetworks() {
+      btnScan.classList.add('spinning');
+      networkList.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">Scanning for nearby networks...</div>';
+
+      fetch('/api/wifi/scan')
+        .then(r => r.json())
+        .then(data => {
+          btnScan.classList.remove('spinning');
+          const nets = data.networks || [];
+          if (!nets.length) {
+            networkList.innerHTML = '<div style="padding:14px;text-align:center;color:var(--text-dim);font-size:13px;">No networks discovered. Tap Scan to retry.</div>';
+            return;
+          }
+          networkList.innerHTML = '';
+          nets.forEach(net => {
+            const item = document.createElement('div');
+            item.className = 'network-item';
+            item.innerHTML = `
+              <div class="network-info">
+                <span>${net.secure ? '🔒' : '🌐'}</span>
+                <span>${net.ssid}</span>
+              </div>
+              <div class="network-meta">
+                <span>${net.rssi} dBm</span>
+                ${renderBarsHtml(net.bars)}
+              </div>
+            `;
+            item.onclick = () => {
+              document.querySelectorAll('.network-item').forEach(el => el.classList.remove('selected'));
+              item.classList.add('selected');
+              wifiSsid.value = net.ssid;
+              if (net.secure) {
+                wifiPass.focus();
+              } else {
+                wifiPass.value = '';
+              }
+            };
+            networkList.appendChild(item);
+          });
+        })
+        .catch(err => {
+          btnScan.classList.remove('spinning');
+          networkList.innerHTML = '<div style="padding:14px;text-align:center;color:#f87171;font-size:13px;">Failed to scan networks.</div>';
+        });
+    }
+
+    btnConnect.onclick = () => {
+      const ssid = wifiSsid.value.trim();
+      const password = wifiPass.value;
+
+      if (!ssid) {
+        showToast('Please select or enter an SSID');
+        return;
+      }
+
+      setupStatus.style.display = 'flex';
+      setupStatus.className = 'setup-status-box connecting';
+      setupStatus.innerHTML = `<span class="pulse-dot"></span><span>Connecting to <b>${ssid}</b>... Verifying credentials</span>`;
+      btnConnect.disabled = true;
+
+      fetch('/api/wifi/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ssid, password })
+      })
+      .then(r => r.json())
+      .then(res => {
+        btnConnect.disabled = false;
+        if (res.status === 'connected') {
+          setupStatus.className = 'setup-status-box success';
+          setupStatus.innerHTML = `
+            🎉 <b>Connected successfully!</b><br>
+            Device IP: <b>${res.ip}</b><br>
+            <div style="margin-top:6px;font-size:12px;color:var(--text-dim);">
+              Switch your device to Wi-Fi <b>${res.ssid}</b> and visit
+              <a href="http://${res.ip}/" target="_blank" style="color:#38bdf8;font-weight:600;text-decoration:underline;">http://${res.ip}/</a>
+            </div>
+          `;
+          showToast('Wi-Fi Connected!', '#10b981');
+        } else {
+          setupStatus.className = 'setup-status-box error';
+          setupStatus.innerHTML = `⚠️ <b>Connection Failed</b>: ${res.error || 'Check password and try again'}`;
+          showToast('Failed to connect', '#ef4444');
+        }
+      })
+      .catch(err => {
+        btnConnect.disabled = false;
+        setupStatus.className = 'setup-status-box error';
+        setupStatus.innerHTML = `⚠️ <b>Request Error</b>: Could not reach provisioner API.`;
+      });
+    };
+
+    window.onload = () => {
+      // Check if URL specifies setup mode
+      const isSetupUrl = location.pathname === '/setup' || location.hash === '#setup';
+
+      // Check Wi-Fi status
+      fetch('/api/wifi/status')
+        .then(r => r.json())
+        .then(data => {
+          const w = data.wifi || {};
+          if (isSetupUrl || (w.ap_active && !w.connected)) {
+            showSetupView();
+          } else {
+            showDashboardView();
+            connect();
+          }
+        })
+        .catch(() => {
+          if (isSetupUrl) {
+            showSetupView();
+          } else {
+            showDashboardView();
+            connect();
+          }
+        });
+    };
   </script>
 </body>
 </html>

@@ -62,6 +62,21 @@ When developing microcontroller projects in MicroPython, creating an on-device w
   * Python setter automatically broadcasts diff: `{"op": "set", "id": "w_temp", "val": 42.1}`.
   * Connected browser clients receive the diff and update their local controls without a full page reload.
 
+### 3.4. Wi-Fi Provisioner & Captive Portal Subsystem
+* **DNS Interception Server (`DNSServer`)**:
+  * Asynchronous UDP listener on port 53.
+  * Intercepts all standard OS domain resolution probes (`connectivitycheck.gstatic.com`, `captive.apple.com`, `msftconnecttest.com`) and resolves them with RFC 1035 A-records pointing to the device's SoftAP IP (`192.168.4.1`).
+* **Captive HTTP Redirection (`CaptivePortal`)**:
+  * Traps captive probe URLs (`/generate_204`, `/gen_204`, `/hotspot-detect.html`, `/ncsi.txt`, `/connecttest.txt`) and responds with HTTP 302 redirects to `http://192.168.4.1/`.
+  * Immediately prompts mobile operating systems (iOS CNA sheet, Android captive notification) to display the onboarding screen.
+* **Asynchronous Wi-Fi Manager (`WiFiManager`)**:
+  * Non-blocking background scanning with SSID deduplication and RSSI signal quality bars.
+  * Robust credential verification that tests station connection asynchronously without terminating SoftAP, preventing user lockout if credentials are mistyped.
+* **REST Provisioning Endpoints**:
+  * `GET /api/wifi/scan`: Discovers nearby networks with signal bars and security status.
+  * `POST /api/wifi/connect`: Receives credentials, verifies link, and returns assigned station IP.
+  * `GET /api/wifi/status`: Returns current Wi-Fi status and mode.
+
 ---
 
 ## 4. Developer Experience & API Design
@@ -151,6 +166,7 @@ espmui/
 │       ├── server.py                 # Async HTTP and WebSocket server
 │       ├── widgets.py                # Standard widget classes
 │       ├── iot_widgets.py            # Additional widgets (Camera, Terminal, File Manager)
+│       ├── wifi.py                   # Wi-Fi Provisioner, DNS Interceptor, Captive Portal
 │       └── assets.py                 # Pre-compressed web assets
 ├── web/                              # Frontend source
 │   ├── index.html                    # Single-page application shell

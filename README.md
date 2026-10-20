@@ -56,6 +56,10 @@ if __name__ == "__main__":
   * User inputs (such as buttons, sliders, and switches) invoke Python callbacks directly.
 * **Callback Exception Handling**: Exceptions inside user callbacks are caught and reported to the serial console and web interface, helping keep the main event loop running.
 * **Bounded Queues**: Telemetry updates use bounded queues with a latest-state-wins policy to help conserve RAM if clients are slow or disconnected.
+* **Wi-Fi Provisioner & Captive Portal**:
+  * Zero-friction mobile onboarding with SoftAP and RFC 1035 UDP DNS interception (port 53).
+  * Traps captive probe URLs (`/generate_204`, `/hotspot-detect.html`, `/ncsi.txt`) with instant 302 redirects.
+  * Mobile-first frontend onboarding card with background scanning, RSSI signal bars, password reveal, and safe connection testing without AP teardown.
 * **Included Widgets**:
   * 📑 **Multi-Tab Layout**: Organize dashboards across multiple tabs (e.g., Controls, Sensors, Diagnostics).
   * 📸 **Camera Viewfinder**: Basic snapshot capture and MJPEG streaming for supported camera modules (such as OV2640).
@@ -124,6 +128,7 @@ make test
 ## 📚 Documentation & Specifications
 
 * [Value Proposition & User Personas](docs/VALUE_PROPOSITION.md)
+* [Feature Reference & Deep Dive](docs/FEATURES.md)
 * [Product & Technical Roadmap](docs/ROADMAP.md)
 * [Architecture & System Design](docs/architecture.md)
 * [WebSocket Wire Protocol Specification](docs/protocol_spec.md)
