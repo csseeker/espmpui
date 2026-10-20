@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # Needed to create GitHub Releases and upload release assets
+      id-token: write       # Needed for PyPI OIDC Trusted Publishing
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build and packaging dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[dev]
+
+      - name: Run verification test suite
+        run: |
+          python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Check code formatting and linting
+        run: |
+          ruff check .
+
+      - name: Validate web assets synchronization
+        run: |
+          python web/build.py
+          git diff --exit-code src/espmpui/assets.py || (echo "Assets are out of sync! Rebuild and commit web assets." && exit 1)
+
+      - name: Build sdist and wheel distributions
+        run: |
+          python -m build
+
+      - name: Verify package integrity with twine
+        run: |
+          python -m twine check dist/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        continue-on-error: true # Allows workflow to succeed even if PyPI trusted publisher token is not configured yet
