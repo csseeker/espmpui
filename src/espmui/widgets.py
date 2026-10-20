@@ -18,15 +18,16 @@ def _generate_id(prefix="w"):
 class Widget:
     """Base class for all espmui UI widgets."""
 
-    def __init__(self, label: str, val=None, id: str = None, app=None):
+    def __init__(self, label: str, val=None, id: str = None, app=None, **kwargs):
         self.id = id or _generate_id()
         self.label = label
         self._val = val
         self.app = app
         self.type = "generic"
-        self.debounce_ms = 0
-        self.drop_if_busy = False
+        self.debounce_ms = kwargs.get("debounce_ms", 0)
+        self.drop_if_busy = kwargs.get("drop_if_busy", False)
         self._is_busy = False
+        self.extra_attrs = kwargs
 
     @property
     def value(self):
@@ -114,12 +115,13 @@ class Switch(Widget):
 class Slider(Widget):
     """Continuous range slider with min/max and step."""
 
-    def __init__(self, label: str, min: float = 0, max: float = 100, step: float = 1, value: float = 0, on_change=None, **kwargs):
+    def __init__(self, label: str, min: float = 0, max: float = 100, step: float = 1, value: float = 0, on_change=None, unit: str = "", **kwargs):
         super().__init__(label, val=value, **kwargs)
         self.type = "slider"
         self.min = min
         self.max = max
         self.step = step
+        self.unit = unit
         self.on_change = on_change
 
     def to_dict(self) -> dict:
@@ -128,6 +130,7 @@ class Slider(Widget):
             "min": self.min,
             "max": self.max,
             "step": self.step,
+            "unit": self.unit,
         })
         return d
 

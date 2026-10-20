@@ -103,6 +103,20 @@ When developing microcontroller projects in MicroPython, creating an on-device w
   * `POST /api/system/gc`: Executes garbage collection and returns freed bytes.
   * `POST /api/system/reboot`: Acknowledges and schedules soft reboot.
 
+### 3.7. Web-Based Drag-and-Drop OTA Updater Subsystem
+* **Streaming Multipart Parser (`OTAHandler`)**:
+  * Streams incoming multipart HTTP payloads in small 512–1024 byte buffers directly to flash without buffering the complete binary in RAM, preventing the Out-Of-Memory crashes that plague microcontrollers during 1MB–3MB uploads.
+  * Sliding window buffer algorithm that identifies multipart boundaries across chunk splits, keeping peak buffer size strictly under 4 KB.
+* **Dual-Partition Rollback & Toggling**:
+  * Leverages ESP32 hardware dual-OTA partitions (`esp32.Partition(esp32.Partition.RUNNING).get_next_update()`), streaming writes directly to the inactive partition.
+  * Atomic boot partition activation (`set_boot()`) is only triggered once the full binary stream is validated and verified complete.
+* **Incremental SHA-256 Checksum**:
+  * Computes cryptographic digest on the fly across incoming chunks using `hashlib.sha256()`.
+* **REST & Frontend Integration**:
+  * `GET /api/ota/status`: Returns current active boot partition and target flash partition names.
+  * `POST /api/ota/upload`: Streaming multipart upload endpoint.
+  * Embedded frontend dialog with drag-and-drop dropzone, live upload percentage & byte counter, amber flashing hazard warning, SHA-256 chip, and post-reboot reconnect countdown.
+
 ---
 
 ## 4. Developer Experience & API Design

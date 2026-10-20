@@ -171,6 +171,68 @@ class App:
             diag.start_telemetry_loop()
         return diag
 
+    def enable_ota(self, partition=None, chunk_size: int = 512):
+        """Attaches streaming Web OTA updater routes (/api/ota/status, /api/ota/upload)."""
+        from espmui.ota import OTAHandler, parse_multipart_boundary
+        handler = OTAHandler(target_partition=partition, chunk_size=chunk_size)
+        self.ota = handler
+
+        async def _handle_ota_status(reader, writer, path, headers):
+            st = handler.get_status()
+            body = json.dumps(st).encode("utf-8")
+            resp = (
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: application/json\r\n"
+                f"Content-Length: {len(body)}\r\n"
+                "Connection: close\r\n\r\n"
+            ).encode("ascii") + body
+            writer.write(resp)
+            await writer.drain()
+
+        async def _handle_ota_upload(reader, writer, path, headers):
+            method = headers.get("method", "GET").upper()
+            if method != "POST":
+                resp = (
+                    "HTTP/1.1 405 Method Not Allowed\r\n"
+                    "Content-Length: 0\r\n"
+                    "Connection: close\r\n\r\n"
+                ).encode("ascii")
+                writer.write(resp)
+                await writer.drain()
+                return
+
+            ctype = headers.get("content-type", "")
+            boundary = parse_multipart_boundary(ctype)
+            if not boundary:
+                body = json.dumps({"status": "error", "message": "Missing multipart boundary"}).encode("utf-8")
+                resp = (
+                    "HTTP/1.1 400 Bad Request\r\n"
+                    "Content-Type: application/json\r\n"
+                    f"Content-Length: {len(body)}\r\n"
+                    "Connection: close\r\n\r\n"
+                ).encode("ascii") + body
+                writer.write(resp)
+                await writer.drain()
+                return
+
+            content_len = int(headers.get("content-length", 0))
+            result = await handler.process_upload_stream(reader, boundary, content_len)
+            status_code = 200 if result.get("status") == "ok" else 400
+            status_text = "OK" if status_code == 200 else "Bad Request"
+            body = json.dumps(result).encode("utf-8")
+            resp = (
+                f"HTTP/1.1 {status_code} {status_text}\r\n"
+                "Content-Type: application/json\r\n"
+                f"Content-Length: {len(body)}\r\n"
+                "Connection: close\r\n\r\n"
+            ).encode("ascii") + body
+            writer.write(resp)
+            await writer.drain()
+
+        self.add_route("/api/ota/status", _handle_ota_status)
+        self.add_route("/api/ota/upload", _handle_ota_upload)
+        return handler
+
     def add_route(self, path: str, handler):
         """Registers a custom HTTP route handler."""
         self._custom_routes[path] = handler

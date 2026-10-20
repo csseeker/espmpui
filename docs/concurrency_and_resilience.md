@@ -164,7 +164,26 @@ pir_pin.irq(trigger=Pin.IRQ_RISING, handler=gpio_isr_handler)
 
 ---
 
-## 7. Summary of Concurrency & Reliability Practices
+## 7. Principle 6: Flash Persistence & Atomic Brownout Recovery
+
+Microcontrollers frequently experience unexpected power brownouts or watchdog resets:
+* Naive file writes (`open('config.json', 'w')`) truncate the file to 0 bytes upon opening. A power cut during the write destroys all saved parameters.
+* `espmui.ConfigStore` prevents corruption by writing to a temporary file first (`config.json.tmp`), executing `f.flush()` and `os.sync()`, and then executing an atomic inode switch (`os.rename`).
+* On boot, if `config.json` is missing or truncated, `ConfigStore` automatically checks for and recovers from `.tmp`, guaranteeing parameter integrity under all power failure scenarios.
+
+---
+
+## 8. Principle 7: Streaming Multipart OTA Under Strict RAM Budgets
+
+Firmware binaries are typically 1 MB to 3 MB, while an ESP32 in MicroPython often has only 100 KB–200 KB free heap:
+* Traditional web handlers that buffer request bodies in memory (`await reader.read()`) cause immediate Out-Of-Memory crashes.
+* `espmui.OTAHandler` implements a **sliding-window streaming parser** that reads chunks in 512-byte slices directly from the socket into flash partitions (`esp32.Partition`).
+* The RAM buffer peak remains strictly **under 4 KB** throughout a multi-megabyte firmware upload.
+* An incremental SHA-256 digest is computed on the fly, and `partition.set_boot()` is only invoked if the full binary stream was completed with a non-zero payload, preventing half-written corrupted boot states.
+
+---
+
+## 9. Summary of Concurrency & Reliability Practices
 
 | Area | Challenge / Consideration | `espmui` Approach |
 | :--- | :--- | :--- |
@@ -176,3 +195,5 @@ pir_pin.irq(trigger=Pin.IRQ_RISING, handler=gpio_isr_handler)
 | **Rapid Button Taps** | Rapid repeated triggers overwhelming I/O | Optional debounce intervals and busy rejection |
 | **Concurrent Task Writes** | Interleaved writes corrupting WebSocket frames | Dedicated FIFO serialization task per client |
 | **Hardware Interrupts** | Heap allocation forbidden in hard ISR | Defers event handling via `micropython.schedule()` |
+| **Power Brownouts** | Flash file truncation on sudden power cut | Atomic write-temp and inode rename (`config.tmp` $\to$ `config.json`) |
+| **OTA Firmware Upload** | 1–3 MB binary causing RAM Out-Of-Memory crash | 512B sliding window parser streaming directly to flash (<4 KB peak RAM) |

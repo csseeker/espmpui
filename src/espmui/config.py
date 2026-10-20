@@ -24,6 +24,15 @@ def print_exception(exc):
         traceback.print_exception(exc)
 
 
+def _file_exists(filepath: str) -> bool:
+    """Checks file existence compatible with both MicroPython (os.stat) and standard Python."""
+    try:
+        os.stat(filepath)
+        return True
+    except OSError:
+        return False
+
+
 class ConfigValidationError(ValueError):
     """Raised when configuration parameter fails schema validation."""
     pass
@@ -108,7 +117,7 @@ class ConfigStore:
         data = None
 
         # 1. Try reading primary config file
-        if os.path.exists(self._filepath):
+        if _file_exists(self._filepath):
             try:
                 with open(self._filepath, encoding="utf-8") as f:
                     content = f.read().strip()
@@ -119,7 +128,7 @@ class ConfigStore:
 
         # 2. Recovery: Check if .tmp exists if main file is missing or corrupted
         tmp_path = self._filepath + ".tmp"
-        if data is None and os.path.exists(tmp_path):
+        if data is None and _file_exists(tmp_path):
             try:
                 with open(tmp_path, encoding="utf-8") as f:
                     content = f.read().strip()
@@ -161,12 +170,12 @@ class ConfigStore:
                         pass
 
             # Atomic rename (POSIX & LittleFS atomic inode switch)
-            if sys.platform == "win32" and os.path.exists(self._filepath):
+            if sys.platform == "win32" and _file_exists(self._filepath):
                 os.remove(self._filepath)
             os.rename(tmp_path, self._filepath)
         except Exception as exc:
             print_exception(exc)
-            if os.path.exists(tmp_path):
+            if _file_exists(tmp_path):
                 try:
                     os.remove(tmp_path)
                 except Exception:

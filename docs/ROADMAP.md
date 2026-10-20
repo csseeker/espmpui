@@ -189,13 +189,14 @@ flowchart LR
 
 ### 📌 Milestone 4: Web-Based Drag-and-Drop OTA Updater (Priority: P1)
 *Target: Eliminate USB cable tethering for firmware updates.*
+*Deep-dive documentation: [Feature Reference: Web-Based Drag-and-Drop OTA Updater](FEATURES.md#4-web-based-drag-and-drop-ota-updater-subsystem)*
 
-- [ ] **Task 4.1: Streaming Multipart File Upload Handler**
+- [x] **Task 4.1: Streaming Multipart File Upload Handler**
   * **Why do we need it:** ESP32 boards have very limited RAM (typically 320 KB SRAM without external PSRAM). A firmware binary or filesystem image is typically 1 MB to 3 MB. Attempting to buffer the uploaded file in RAM causes an immediate Out-Of-Memory (OOM) crash. A chunked streaming handler reads incoming HTTP multipart streams in small 512–1024 byte buffers and streams them directly into the inactive OTA flash partition.
   * **When & Where is it useful:** When updating deployed devices in consumer homes, agricultural fields, or industrial ceilings without unplugging/replugging physical cables.
   * **How often is it needed:** Occasional (firmware release cycles); mandatory prerequisite for any commercially deployable IoT product.
 
-- [ ] **Task 4.2: Frontend Upload Dialog & Progress Bar**
+- [x] **Task 4.2: Frontend Upload Dialog & Progress Bar**
   * **Why do we need it:** Flashing firmware is high-risk. If a user closes the browser mid-upload or doesn't know if the board is still flashing, they might power-cycle the board mid-write. A clear modal with upload percentage, byte counter, SHA-256 verification indicator, and automatic post-reboot reconnect countdown prevents user panic and corrupted flash states.
-  * **When & Where is it useful:** Integrated into the System / Settings tab of the dashboard.
+  * **When & Where is it useful:** Integrated into the System / Settings tab and top navigation of the dashboard.
   * **How often is it needed:** Every time a firmware update is executed.

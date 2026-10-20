@@ -75,11 +75,47 @@ tab_status.metric("Target Temp", value=config.target_temp, unit="°C", badge="Se
 tab_settings = app.tab("Settings", icon="sliders")
 tab_settings.config_form(config, label="System Configuration")
 
+def connect_wifi():
+    """Connects to Wi-Fi using .env credentials on MicroPython, or returns IP/localhost."""
+    try:
+        import network
+        import time
+        wlan = network.WLAN(network.STA_IF)
+        wlan.active(True)
+        if not wlan.isconnected():
+            ssid, pwd = "", ""
+            for p in (".env", "/.env", "../.env"):
+                try:
+                    with open(p) as f:
+                        for line in f:
+                            clean_line = line.split("#", 1)[0].strip()
+                            if clean_line.startswith("WIFI_SSID") and "=" in clean_line:
+                                ssid = clean_line.split("=", 1)[1].strip().strip("'\"")
+                            elif clean_line.startswith("WIFI_PASSWORD") and "=" in clean_line:
+                                pwd = clean_line.split("=", 1)[1].strip().strip("'\"")
+                except Exception:
+                    pass
+            if ssid:
+                print(f"Connecting to Wi-Fi '{ssid}'...")
+                wlan.connect(ssid, pwd)
+                for _ in range(25):
+                    if wlan.isconnected():
+                        break
+                    time.sleep(0.4)
+        if wlan.isconnected():
+            return wlan.ifconfig()[0]
+    except Exception:
+        pass
+    return "localhost"
+
+
 if __name__ == "__main__":
+    ip = connect_wifi()
     print("==================================================")
     print(f" Loaded node_name:   {config.node_name}")
     print(f" Loaded sample_rate: {config.sample_rate}s")
     print(f" Loaded target_temp: {config.target_temp}°C")
-    print(" Open http://localhost:80/ in your browser to tune settings.")
+    print(f" Dashboard URL:      http://{ip}:80/")
+    print(f" (Open http://{ip}:80/ in Safari on your Mac/Phone)")
     print("==================================================")
     app.run(port=80)

@@ -434,6 +434,155 @@
       margin-top: 4px;
     }
     .link-btn:hover { text-decoration: underline; }
+
+    /* OTA Modal & Dropzone Styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.78);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 480px;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 24px 56px -12px rgba(0, 0, 0, 0.75);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+    .modal-title-wrap { display: flex; align-items: center; gap: 10px; }
+    .modal-icon { font-size: 20px; }
+    .modal-title { font-size: 17px; font-weight: 700; color: #fff; }
+    .modal-subtitle { font-size: 12px; color: var(--text-dim); }
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.15s;
+    }
+    .btn-close:hover { color: #fff; }
+
+    .ota-partition-info {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 8px 12px;
+    }
+    .ota-part-item { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .ota-part-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+    .ota-part-val { font-size: 12px; font-weight: 600; color: #fff; font-family: ui-monospace, monospace; }
+    .ota-part-val.target { color: var(--primary); }
+
+    .ota-dropzone {
+      border: 2px dashed rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 26px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(56, 189, 248, 0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .ota-dropzone:hover, .ota-dropzone.dragover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.08);
+      transform: scale(1.01);
+    }
+    .drop-icon { font-size: 32px; margin-bottom: 2px; }
+    .drop-text { font-size: 13px; color: #fff; }
+    .drop-hint { font-size: 11px; color: var(--text-dim); }
+
+    .selected-file-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #38bdf8;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .file-size { color: var(--text-dim); font-size: 11px; font-weight: 500; }
+
+    .ota-warning-banner {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .ota-status-box {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .ota-status-box.success {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+    .ota-status-box.error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #f87171;
+    }
+    .sha-chip {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 10.5px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -443,6 +592,10 @@
         <div class="title" id="app-title">espmui Dashboard</div>
       </div>
       <div class="header-right">
+        <button class="layout-toggle-btn" id="ota-toggle" title="Firmware OTA Update">
+          <span>⬆</span>
+          <span id="ota-btn-label">OTA</span>
+        </button>
         <button class="layout-toggle-btn" id="wifi-setup-toggle" title="Wi-Fi Configuration">
           <span>📶</span>
           <span id="wifi-btn-label">Setup</span>
@@ -504,8 +657,80 @@
           <button class="btn secondary btn-block" id="btn-goto-dashboard">Continue to Dashboard →</button>
         </div>
       </div>
+  </div>
+
+  <!-- Firmware Drag-and-Drop OTA Update Modal -->
+  <div class="modal-backdrop" id="ota-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">⬆</span>
+          <div>
+            <h3 class="modal-title">Firmware OTA Update</h3>
+            <div class="modal-subtitle">Web-based drag-and-drop firmware flasher</div>
+          </div>
+        </div>
+        <button class="btn-close" id="btn-close-ota" title="Close">&times;</button>
+      </div>
+
+      <!-- Partition Status Banner -->
+      <div class="ota-partition-info" id="ota-partition-info">
+        <div class="ota-part-item">
+          <span class="ota-part-label">Active Boot:</span>
+          <span class="ota-part-val" id="ota-running-part">Detecting...</span>
+        </div>
+        <div class="ota-part-item">
+          <span class="ota-part-label">Target Flash:</span>
+          <span class="ota-part-val target" id="ota-target-part">Detecting...</span>
+        </div>
+      </div>
+
+      <!-- Drag & Drop Dropzone -->
+      <div class="ota-dropzone" id="ota-dropzone">
+        <input type="file" id="ota-file-input" accept=".bin" style="display:none;" />
+        <div class="drop-icon">📦</div>
+        <div class="drop-text">Drag & drop your <b>.bin</b> firmware here</div>
+        <div class="drop-hint">or <button type="button" class="link-btn" id="btn-browse-firmware" style="color:#38bdf8;font-weight:600;display:inline-block;padding:0;">browse files</button> from your computer</div>
+        <div class="selected-file-info" id="ota-file-details" style="display:none;">
+          <span id="ota-selected-filename" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;">firmware.bin</span>
+          <span class="file-size" id="ota-selected-filesize">0 KB</span>
+        </div>
+      </div>
+
+      <!-- Amber Risk Warning Banner during Flashing -->
+      <div class="ota-warning-banner" id="ota-warning-banner" style="display:none;">
+        <span style="font-size:18px;">⚠️</span>
+        <div>
+          <b>Flashing in Progress:</b> DO NOT disconnect power or close this browser window.
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="ota-progress-container" id="ota-progress-container" style="display:none;">
+        <div class="row" style="justify-content:space-between;font-size:12px;margin-bottom:6px;">
+          <span id="ota-progress-status" style="font-weight:600;color:#38bdf8;">Uploading firmware...</span>
+          <span id="ota-progress-pct" style="font-weight:700;color:#fff;">0%</span>
+        </div>
+        <div class="progress-bar-bg" style="height:10px;">
+          <div class="progress-bar-fill" id="ota-progress-bar" style="width:0%;"></div>
+        </div>
+        <div class="row" style="justify-content:space-between;font-size:11px;color:var(--text-dim);margin-top:6px;">
+          <span id="ota-bytes-uploaded">0 KB</span>
+          <span id="ota-bytes-total">0 KB</span>
+        </div>
+      </div>
+
+      <!-- Result / SHA-256 / Countdown Status Box -->
+      <div class="ota-status-box" id="ota-status-box" style="display:none;"></div>
+
+      <!-- Modal Action Buttons -->
+      <div class="modal-actions">
+        <button class="btn secondary" id="btn-cancel-ota">Cancel</button>
+        <button class="btn" id="btn-start-ota" style="background:#2563eb;color:#fff;" disabled>Flash Firmware</button>
+      </div>
     </div>
   </div>
+
   <div id="toast" class="toast"></div>
 
   <script>
@@ -1310,6 +1535,217 @@
         setupStatus.innerHTML = `⚠️ <b>Request Error</b>: Could not reach provisioner API.`;
       });
     };
+
+    // --- OTA Firmware Updater Logic ---
+    const otaModal = document.getElementById('ota-modal');
+    const otaToggleBtn = document.getElementById('ota-toggle');
+    const btnCloseOta = document.getElementById('btn-close-ota');
+    const btnCancelOta = document.getElementById('btn-cancel-ota');
+    const otaDropzone = document.getElementById('ota-dropzone');
+    const otaFileInput = document.getElementById('ota-file-input');
+    const btnBrowseFirmware = document.getElementById('btn-browse-firmware');
+    const otaFileDetails = document.getElementById('ota-file-details');
+    const otaSelectedFilename = document.getElementById('ota-selected-filename');
+    const otaSelectedFilesize = document.getElementById('ota-selected-filesize');
+    const otaWarningBanner = document.getElementById('ota-warning-banner');
+    const otaProgressContainer = document.getElementById('ota-progress-container');
+    const otaProgressStatus = document.getElementById('ota-progress-status');
+    const otaProgressPct = document.getElementById('ota-progress-pct');
+    const otaProgressBar = document.getElementById('ota-progress-bar');
+    const otaBytesUploaded = document.getElementById('ota-bytes-uploaded');
+    const otaBytesTotal = document.getElementById('ota-bytes-total');
+    const otaStatusBox = document.getElementById('ota-status-box');
+    const btnStartOta = document.getElementById('btn-start-ota');
+    const otaRunningPart = document.getElementById('ota-running-part');
+    const otaTargetPart = document.getElementById('ota-target-part');
+
+    let selectedFirmwareFile = null;
+    let isFlashingInProgress = false;
+
+    function openOtaModal() {
+      otaModal.style.display = 'flex';
+      otaStatusBox.style.display = 'none';
+      otaWarningBanner.style.display = 'none';
+      otaProgressContainer.style.display = 'none';
+
+      // Fetch status & partition information
+      fetch('/api/ota/status')
+        .then(r => r.json())
+        .then(data => {
+          otaRunningPart.textContent = data.running_partition || 'ota_0';
+          otaTargetPart.textContent = data.next_update_partition || 'ota_1';
+        })
+        .catch(() => {
+          otaRunningPart.textContent = 'ota_0';
+          otaTargetPart.textContent = 'ota_1';
+        });
+    }
+
+    function closeOtaModal() {
+      if (isFlashingInProgress) return;
+      otaModal.style.display = 'none';
+      resetOtaState();
+    }
+
+    function resetOtaState() {
+      selectedFirmwareFile = null;
+      otaFileInput.value = '';
+      otaFileDetails.style.display = 'none';
+      btnStartOta.disabled = true;
+      otaProgressContainer.style.display = 'none';
+      otaWarningBanner.style.display = 'none';
+      otaStatusBox.style.display = 'none';
+      otaProgressBar.style.width = '0%';
+      otaProgressPct.textContent = '0%';
+    }
+
+    function setSelectedFile(file) {
+      if (!file) return;
+      selectedFirmwareFile = file;
+      otaSelectedFilename.textContent = file.name;
+      const sizeKb = (file.size / 1024).toFixed(1);
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      otaSelectedFilesize.textContent = file.size > 1024 * 1024 ? `${sizeMb} MB` : `${sizeKb} KB`;
+      otaFileDetails.style.display = 'flex';
+      btnStartOta.disabled = false;
+      otaStatusBox.style.display = 'none';
+    }
+
+    if (otaToggleBtn) otaToggleBtn.onclick = openOtaModal;
+    if (btnCloseOta) btnCloseOta.onclick = closeOtaModal;
+    if (btnCancelOta) btnCancelOta.onclick = closeOtaModal;
+    if (btnBrowseFirmware) btnBrowseFirmware.onclick = (e) => { e.stopPropagation(); otaFileInput.click(); };
+    if (otaDropzone) otaDropzone.onclick = () => otaFileInput.click();
+
+    // Drag-and-drop events
+    if (otaDropzone) {
+      ['dragenter', 'dragover'].forEach(name => {
+        otaDropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          otaDropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        otaDropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          otaDropzone.classList.remove('dragover');
+        });
+      });
+
+      otaDropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+          setSelectedFile(dt.files[0]);
+        }
+      });
+    }
+
+    if (otaFileInput) {
+      otaFileInput.onchange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          setSelectedFile(e.target.files[0]);
+        }
+      };
+    }
+
+    if (btnStartOta) {
+      btnStartOta.onclick = () => {
+        if (!selectedFirmwareFile || isFlashingInProgress) return;
+
+        isFlashingInProgress = true;
+        btnStartOta.disabled = true;
+        btnCancelOta.disabled = true;
+        btnCloseOta.disabled = true;
+        otaWarningBanner.style.display = 'flex';
+        otaProgressContainer.style.display = 'block';
+        otaStatusBox.style.display = 'none';
+        otaProgressStatus.textContent = 'Streaming firmware directly to partition...';
+        otaProgressBar.style.width = '0%';
+        otaProgressPct.textContent = '0%';
+
+        const formData = new FormData();
+        formData.append('firmware', selectedFirmwareFile, selectedFirmwareFile.name);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/ota/upload', true);
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            otaProgressBar.style.width = pct + '%';
+            otaProgressPct.textContent = pct + '%';
+            otaBytesUploaded.textContent = `${(e.loaded / 1024).toFixed(0)} KB`;
+            otaBytesTotal.textContent = `${(e.total / 1024).toFixed(0)} KB`;
+            if (pct >= 100) {
+              otaProgressStatus.textContent = 'Finalizing partition write & verifying SHA-256...';
+            }
+          }
+        };
+
+        xhr.onload = () => {
+          isFlashingInProgress = false;
+          otaWarningBanner.style.display = 'none';
+
+          if (xhr.status === 200) {
+            let res = {};
+            try { res = JSON.parse(xhr.responseText); } catch (err) {}
+            const sha = res.sha256 || 'Verified';
+            otaStatusBox.style.display = 'block';
+            otaStatusBox.className = 'ota-status-box success';
+
+            let countdown = 10;
+            const renderSuccessCountdown = () => {
+              otaStatusBox.innerHTML = `
+                <div style="font-weight:700;margin-bottom:6px;font-size:14px;">🎉 Firmware Flashed Successfully!</div>
+                <div style="font-size:11.5px;margin-bottom:6px;">SHA-256: <code class="sha-chip">${sha}</code></div>
+                <div style="margin-top:8px;font-size:12.5px;color:#38bdf8;font-weight:600;">
+                  Device rebooting into new partition. Reconnecting in ${countdown}s...
+                </div>
+              `;
+            };
+            renderSuccessCountdown();
+
+            const timer = setInterval(() => {
+              countdown--;
+              if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.reload();
+              } else {
+                renderSuccessCountdown();
+              }
+            }, 1000);
+          } else {
+            let errMsg = 'Upload failed';
+            try {
+              const res = JSON.parse(xhr.responseText);
+              if (res.message) errMsg = res.message;
+            } catch (err) {}
+            otaStatusBox.style.display = 'block';
+            otaStatusBox.className = 'ota-status-box error';
+            otaStatusBox.innerHTML = `⚠️ <b>Flash Error:</b> ${errMsg}`;
+            btnStartOta.disabled = false;
+            btnCancelOta.disabled = false;
+            btnCloseOta.disabled = false;
+          }
+        };
+
+        xhr.onerror = () => {
+          isFlashingInProgress = false;
+          otaWarningBanner.style.display = 'none';
+          otaStatusBox.style.display = 'block';
+          otaStatusBox.className = 'ota-status-box error';
+          otaStatusBox.innerHTML = '⚠️ <b>Network Error:</b> Connection interrupted during upload.';
+          btnStartOta.disabled = false;
+          btnCancelOta.disabled = false;
+          btnCloseOta.disabled = false;
+        };
+
+        xhr.send(formData);
+      };
+    }
 
     window.onload = () => {
       // Check if URL specifies setup mode

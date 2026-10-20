@@ -24,6 +24,12 @@ This document provides in-depth technical references, architecture diagrams, and
   - [3.2. Real-Time Telemetry Metrics Architecture](#32-real-time-telemetry-metrics-architecture)
   - [3.3. Out-of-the-Box Maintenance Actions (GC & Soft Reset)](#33-out-of-the-box-maintenance-actions-gc--soft-reset)
   - [3.4. Developer API & Quickstart](#34-developer-api--quickstart)
+- [4. Web-Based Drag-and-Drop OTA Updater Subsystem (Milestone 4)](#4-web-based-drag-and-drop-ota-updater-subsystem)
+  - [4.1. The Real-World Problem: Physical Tethering & RAM OOM Crashes](#41-the-real-world-problem-physical-tethering--ram-oom-crashes)
+  - [4.2. Streaming Multipart Architecture (OOM Avoidance)](#42-streaming-multipart-architecture-oom-avoidance)
+  - [4.3. Partition Toggling & Incremental SHA-256 Verification](#43-partition-toggling--incremental-sha-256-verification)
+  - [4.4. Frontend UX: Drag-and-Drop, Progress Bar & Reconnection Countdown](#44-frontend-ux-drag-and-drop-progress-bar--reconnection-countdown)
+  - [4.5. Developer API & Quickstart](#45-developer-api--quickstart)
 
 ---
 
@@ -437,3 +443,112 @@ if __name__ == "__main__":
 
 #### Complete Working Example:
 See [`examples/06_live_diagnostics.py`](../examples/06_live_diagnostics.py).
+
+---
+
+## 4. Web-Based Drag-and-Drop OTA Updater Subsystem
+
+* **Milestone / Tasks**: Milestone 4 (Tasks 4.1, 4.2)
+* **Modules**: [`src/espmui/ota.py`](../src/espmui/ota.py), [`src/espmui/app.py`](../src/espmui/app.py), [`web/index.html`](../web/index.html)
+* **Test Suite**: [`tests/test_ota.py`](../tests/test_ota.py)
+
+---
+
+### 4.1. The Real-World Problem: Physical Tethering & RAM OOM Crashes
+
+In commercial IoT and edge hardware deployments, devices are often installed in ceiling mounts, waterproof junction boxes, agriculture fields, or customer premises where attaching a physical USB cable and running `esptool.py` is impossible or cost-prohibitive.
+
+However, implementing web-based OTA on resource-constrained microcontrollers introduces severe engineering challenges:
+
+1. **Catastrophic Out-Of-Memory (OOM) Crashes**:
+   - ESP32 microcontrollers typically have ~320 KB SRAM with 100 KB–200 KB free heap in MicroPython.
+   - Compiled firmware binaries and filesystem images are typically **1 MB to 3 MB**.
+   - Traditional web framework handlers that buffer the incoming HTTP POST body in memory (`await reader.read()` or `request.body()`) crash the MCU with an immediate `MemoryError` within the first few packets, before even 5% of the file arrives.
+
+2. **Flash Corruption / Device Bricking**:
+   - If an OTA flasher begins writing bytes to flash without validating that the stream is complete and intact, a network timeout or premature disconnect leaves the flash partition half-written.
+   - If the device attempts to boot into a half-written partition, it enters a boot loop (`crash / panic`).
+
+3. **User Anxiety & Accidental Power Interruption**:
+   - Flashing firmware takes between 15 and 45 seconds over Wi-Fi.
+   - Without real-time upload progress, explicit risk warnings, and clear reconnection countdowns, users assume the browser has hung, close the tab, or power-cycle the board mid-write.
+
+---
+
+### 4.2. Streaming Multipart Architecture (OOM Avoidance)
+
+`espmui` solves the RAM ceiling through a **zero-buffering streaming sliding window engine**:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Browser as Operator Browser
+    participant Server as AsyncServer (Chunked)
+    participant OTA as OTAHandler (Sliding Window)
+    participant Flash as Target Flash Partition (OTA_1)
+
+    Browser->>Server: POST /api/ota/upload (multipart/form-data)
+    Server->>OTA: Passes active StreamReader directly (headers parsed)
+    
+    loop Stream in Small 512-Byte Chunks
+        OTA->>Server: await reader.read(512)
+        OTA->>OTA: Buffer peak strictly < 4 KB
+        OTA->>Flash: Stream binary chunk directly to partition
+        OTA->>OTA: hasher.update(chunk) (incremental SHA-256)
+        OTA->>OTA: await asyncio.sleep(0) (cooperative yield)
+    end
+
+    Note over OTA: Closing boundary encountered (\r\n--boundary--)
+    OTA->>Flash: partition.set_boot() (Mark as next active partition)
+    OTA->>Server: {"status": "ok", "sha256": "4b2e...", "bytes_written": 1458296}
+    Server-->>Browser: HTTP 200 OK
+    Note over Browser: Displays SHA-256 & 10s reboot countdown
+```
+
+#### Key Architecture Principles:
+1. **Direct Socket-to-Flash Streaming**: Reads fixed-size chunks (default: 512 bytes). The sliding window buffer stays strictly under 4 KB at all times.
+2. **Boundary Delimiter Tracking**: Detects the trailing multipart delimiter (`\r\n--` + boundary) across chunk boundaries by writing only bytes outside the trailing delimiter window.
+3. **Cooperative Multitasking Yield**: Yields execution with `await asyncio.sleep(0)` between chunks so the network stack and background tasks don't starve or drop packets.
+
+---
+
+### 4.3. Partition Toggling & Incremental SHA-256 Verification
+
+ESP32 dual-OTA partitioning provides hardware-level rollback safety:
+- **Partition Discovery**: Automatically queries `esp32.Partition(esp32.Partition.RUNNING).get_next_update()`. If running on `ota_0`, updates target `ota_1` (and vice-versa).
+- **Incremental SHA-256 Checksum**: Employs `hashlib.sha256()` across each streamed chunk as it arrives, computing the final digest without ever keeping the full payload in RAM.
+- **Atomic Boot Switch**: `partition.set_boot()` is **only** invoked if the entire file was streamed successfully with a non-zero payload. If the stream is truncated or malformed, the boot partition remains untouched and safe.
+
+---
+
+### 4.4. Frontend UX: Drag-and-Drop, Progress Bar & Reconnection Countdown
+
+The embedded frontend provides a consumer-grade OTA dialog:
+
+1. **Interactive Dropzone**: Drag-and-drop or file browser supporting `.bin` firmware files.
+2. **Active Partition Badges**: Displays current running partition (`Active Boot: ota_0`) and target partition (`Target Flash: ota_1`).
+3. **Flashing Hazard Warning**: Prominent amber alert during flashing: *"⚠️ Flashing in Progress: DO NOT disconnect power or close this browser window."*
+4. **Live Progress Tracking**: Uses `XMLHttpRequest.upload.onprogress` to display percentage, animated progress bar fill, and uploaded/total KB counters.
+5. **Post-Reboot Reconnect Countdown**: Displays computed SHA-256 checksum and a 10-second automatic reconnection timer before automatically refreshing the dashboard.
+
+---
+
+### 4.5. Developer API & Quickstart
+
+Enabling web-based OTA in `espmui` requires **1 line of code**:
+
+```python
+import espmui
+
+app = espmui.App(title="S3 Sensor Gateway", theme="dark")
+
+# 1. Enable Drag-and-Drop Web OTA Updater
+# Attaches /api/ota/status, /api/ota/upload, and the top-navigation OTA dialog
+ota = app.enable_ota()
+
+if __name__ == "__main__":
+    app.run(port=80)
+```
+
+#### Complete Working Example:
+See [`examples/07_web_ota_updater.py`](../examples/07_web_ota_updater.py).
